@@ -1,0 +1,19 @@
+{
+    "data": {
+        "dataset": {
+            "incidents": {
+                "total": 1,
+                "incidents": [
+                    {
+                        "urn": "urn:li:incident:f01f744b-50fb-446d-96a1-4ecf43bc3001",
+                        "title": "raw.users.user_id renamed to customer_id \u2014 dbt build red, ML model silently training on a stale feature table",
+                        "status": {
+                            "state": "ACTIVE"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "extensions": {}
+}

@@ -1,0 +1,8 @@
+{
+  "tool": "update_description",
+  "arguments": {
+    "entity_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+    "column_path": "user_id",
+    "description": "raw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence \u2014 NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).\n\nRESOLVED. The exact signal that failed now passes.\n\nVERIFIED INCIDENT KNOWLEDGE \u2014 WRITTEN BACK BY DEVGUARD\nevidence: EV-D6115219-001, EV-D6115219-002, EV-D6115219-003, EV-D6115219-004, EV-D6115219-005, EV-D6115219-006, EV-D6115219-007, EV-D6115219-008, EV-D6115219-009, EV-D6115219-010, EV-D6115219-011, EV-D6115219-012, EV-D6115219-013, EV-D6115219-014, EV-D6115219-015, EV-D6115219-016, EV-D6115219-017, EV-D6115219-018, EV-D6115219-019, EV-D6115219-020, EV-D6115219-021, EV-D6115219-022, EV-D6115219-023, EV-D6115219-024, EV-D6115219-025, EV-D6115219-026\nevidence-chain-digest: 4fa04758636d841d\nwritten_at_utc: 2026-08-01T11:52:35.223992+00:00\ndevguard_version: 2.0-d6"
+  }
+}

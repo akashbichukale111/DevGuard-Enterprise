@@ -1,0 +1,13 @@
+{
+  "tool": "add_structured_properties",
+  "arguments": {
+    "entity_urns": [
+      "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    ],
+    "property_values": {
+      "urn:li:structuredProperty:devguard.verified_at": [
+        "2026-08-01T11:52:35.225514+00:00"
+      ]
+    }
+  }
+}

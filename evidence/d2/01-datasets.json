@@ -1,0 +1,21 @@
+{
+  "data": {
+    "search": {
+      "total": 1,
+      "searchResults": [
+        {
+          "entity": {
+            "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+            "platform": {
+              "name": "postgres"
+            },
+            "properties": {
+              "name": "users"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "extensions": {}
+}

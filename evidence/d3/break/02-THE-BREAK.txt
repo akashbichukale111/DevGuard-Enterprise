@@ -1,0 +1,18 @@
+break_at_utc=2026-08-01T02:16:51Z
+$ psql -c "ALTER TABLE raw.users RENAME COLUMN user_id TO customer_id;"
+ALTER TABLE
+
+$ \d raw.users   (after)
+                            Table "raw.users"
+   Column    |           Type           | Collation | Nullable | Default
+-------------+--------------------------+-----------+----------+---------
+ customer_id | bigint                   |           | not null |
+ email       | text                     |           | not null |
+ country     | text                     |           | not null |
+ signup_ts   | timestamp with time zone |           | not null |
+ is_active   | boolean                  |           | not null | true
+Indexes:
+    "users_pkey" PRIMARY KEY, btree (customer_id)
+Referenced by:
+    TABLE "raw.orders" CONSTRAINT "orders_user_id_fkey" FOREIGN KEY (user_id) REFERENCES raw.users(customer_id)
+

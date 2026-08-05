@@ -1,0 +1,103 @@
+{
+  "version": 0,
+  "aspect": {
+    "com.linkedin.dataset.UpstreamLineage": {
+      "upstreams": [
+        {
+          "auditStamp": {
+            "actor": "urn:li:corpuser:unknown",
+            "time": 1785503465277
+          },
+          "type": "COPY",
+          "dataset": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)"
+        }
+      ],
+      "fineGrainedLineages": [
+        {
+          "downstreamType": "FIELD",
+          "transformOperation": "NONE",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),user_id)"
+          ],
+          "confidenceScore": 1.0,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),user_id)"
+          ]
+        },
+        {
+          "downstreamType": "FIELD",
+          "transformOperation": "NONE",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),country)"
+          ],
+          "confidenceScore": 1.0,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),country)"
+          ]
+        },
+        {
+          "downstreamType": "FIELD",
+          "transformOperation": "NONE",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),order_count)"
+          ],
+          "confidenceScore": 1.0,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),order_count)"
+          ]
+        },
+        {
+          "downstreamType": "FIELD",
+          "transformOperation": "NONE",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),lifetime_value_cents)"
+          ],
+          "confidenceScore": 1.0,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),lifetime_value_cents)"
+          ]
+        },
+        {
+          "downstreamType": "FIELD",
+          "transformOperation": "NONE",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),avg_order_cents)"
+          ],
+          "confidenceScore": 1.0,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),avg_order_cents)"
+          ]
+        },
+        {
+          "downstreamType": "FIELD",
+          "transformOperation": "NONE",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),refund_count)"
+          ],
+          "confidenceScore": 1.0,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),refund_count)"
+          ]
+        },
+        {
+          "downstreamType": "FIELD",
+          "transformOperation": "NONE",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),last_order_at)"
+          ],
+          "confidenceScore": 1.0,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),last_order_at)"
+          ]
+        }
+      ]
+    }
+  }
+}

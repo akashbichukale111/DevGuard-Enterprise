@@ -1,0 +1,11 @@
+--- a/substrate/dbt/models/staging/stg_users.sql
++++ b/substrate/dbt/models/staging/stg_users.sql
+@@ -4,7 +4,7 @@
+ -- column to customer_id, this model fails to compile — a real dbt failure with a
+ -- real error message, which is the runtime evidence the Watcher picks up.
+ select
+-    user_id,
++    definitely_not_a_real_column as user_id,
+     email,
+     country,
+     signup_ts,

@@ -1,0 +1,213 @@
+{
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "urn": {
+        "type": "string"
+      },
+      "column": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "source": {
+        "anyOf": [
+          {
+            "enum": [
+              "MANUAL",
+              "SYSTEM"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "start": {
+        "default": 0,
+        "type": "integer"
+      },
+      "count": {
+        "default": 10,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "urn"
+    ],
+    "type": "object"
+  },
+  "results": [
+    {
+      "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)"
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 10,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"start\":0,\"total\":0,\"count\":10}"
+            }
+          ],
+          "structuredContent": {
+            "start": 0,
+            "total": 0,
+            "count": 10
+          },
+          "isError": false
+        }
+      }
+    },
+    {
+      "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+        "column": "user_id"
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 11,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"start\":0,\"total\":0,\"count\":10}"
+            }
+          ],
+          "structuredContent": {
+            "start": 0,
+            "total": 0,
+            "count": 10
+          },
+          "isError": false
+        }
+      }
+    },
+    {
+      "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 12,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"start\":0,\"total\":1,\"count\":10,\"queries\":[{\"urn\":\"urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8\",\"properties\":{\"source\":\"SYSTEM\",\"statement\":{\"value\":\"SELECT\\n  user_id,\\n  email,\\n  country,\\n  signup_ts,\\n  is_active\\nFROM raw.users\\nWHERE\\n  is_active\",\"language\":\"SQL\"},\"lastModified\":{\"actor\":\"urn:li:corpuser:_ingestion\"}},\"platform\":{\"urn\":\"urn:li:dataPlatform:postgres\",\"name\":\"postgres\"},\"subjects\":[\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\"]}]}"
+            }
+          ],
+          "structuredContent": {
+            "start": 0,
+            "total": 1,
+            "count": 10,
+            "queries": [
+              {
+                "urn": "urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8",
+                "properties": {
+                  "source": "SYSTEM",
+                  "statement": {
+                    "value": "SELECT\n  user_id,\n  email,\n  country,\n  signup_ts,\n  is_active\nFROM raw.users\nWHERE\n  is_active",
+                    "language": "SQL"
+                  },
+                  "lastModified": {
+                    "actor": "urn:li:corpuser:_ingestion"
+                  }
+                },
+                "platform": {
+                  "urn": "urn:li:dataPlatform:postgres",
+                  "name": "postgres"
+                },
+                "subjects": [
+                  "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+                  "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+                ]
+              }
+            ]
+          },
+          "isError": false
+        }
+      }
+    },
+    {
+      "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "column": "user_id"
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 13,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"start\":0,\"total\":1,\"count\":10,\"queries\":[{\"urn\":\"urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8\",\"properties\":{\"source\":\"SYSTEM\",\"statement\":{\"value\":\"SELECT\\n  user_id,\\n  email,\\n  country,\\n  signup_ts,\\n  is_active\\nFROM raw.users\\nWHERE\\n  is_active\",\"language\":\"SQL\"},\"lastModified\":{\"actor\":\"urn:li:corpuser:_ingestion\"}},\"platform\":{\"urn\":\"urn:li:dataPlatform:postgres\",\"name\":\"postgres\"},\"subjects\":[\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\"]}]}"
+            }
+          ],
+          "structuredContent": {
+            "start": 0,
+            "total": 1,
+            "count": 10,
+            "queries": [
+              {
+                "urn": "urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8",
+                "properties": {
+                  "source": "SYSTEM",
+                  "statement": {
+                    "value": "SELECT\n  user_id,\n  email,\n  country,\n  signup_ts,\n  is_active\nFROM raw.users\nWHERE\n  is_active",
+                    "language": "SQL"
+                  },
+                  "lastModified": {
+                    "actor": "urn:li:corpuser:_ingestion"
+                  }
+                },
+                "platform": {
+                  "urn": "urn:li:dataPlatform:postgres",
+                  "name": "postgres"
+                },
+                "subjects": [
+                  "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+                  "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+                ]
+              }
+            ]
+          },
+          "isError": false
+        }
+      }
+    },
+    {
+      "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)"
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 14,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"start\":0,\"total\":0,\"count\":10}"
+            }
+          ],
+          "structuredContent": {
+            "start": 0,
+            "total": 0,
+            "count": 10
+          },
+          "isError": false
+        }
+      }
+    }
+  ]
+}

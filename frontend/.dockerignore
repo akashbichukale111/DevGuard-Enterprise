@@ -1,0 +1,11 @@
+# Context is ./frontend. node_modules and .next are rebuilt inside the image;
+# shipping the host copies would be slower and can break on platform-specific
+# binaries (sharp, @next/swc-*).
+node_modules
+.next
+out
+.env
+.env.local
+npm-debug.log*
+Dockerfile
+.dockerignore

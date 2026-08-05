@@ -1,0 +1,13 @@
+{
+  "name": "artifact 5 \u2014 add owner",
+  "expectation": "ALLOW",
+  "observed": "ALLOW",
+  "passed": true,
+  "detail": "EDIT_ENTITY_OWNERS on a scoped dataset",
+  "response": {
+    "data": {
+      "addOwners": true
+    },
+    "extensions": {}
+  }
+}

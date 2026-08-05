@@ -1,0 +1,16 @@
+EVIDENCE BUNDLE
+incident: SEC1
+
+[EV-SEC1-001] source=DATAHUB_GRAPH trust=TRUSTED_SYSTEM confidence=OBSERVED
+  claim: 'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)
+  urn: urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)
+
+[EV-SEC1-002] source=DATAHUB_GRAPH trust=TRUSTED_SYSTEM confidence=OBSERVED
+  claim: catalog schema for stg_users has 5 columns: country, email, is_active, signup_ts, user_id
+  urn: urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)
+
+[EV-SEC1-003] source=DATAHUB_GRAPH trust=UNTRUSTED_TEXT confidence=OBSERVED
+<<<UNTRUSTED EV-SEC1-003>>>
+injection screen flagged devguard.raw.users#country as LIKELY (override-previous, role-reassignment, action-directive, suppress-findings, exfiltration, tool-naming)
+<<<END UNTRUSTED EV-SEC1-003>>>
+  urn: urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)

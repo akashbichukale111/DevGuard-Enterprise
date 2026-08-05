@@ -1,0 +1,21 @@
+{
+  "analytics_staging.stg_users": {
+    "table_upstreams": [
+      "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)"
+    ],
+    "column_edges": 5
+  },
+  "analytics_staging.stg_orders": {
+    "table_upstreams": [
+      "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.orders,PROD)"
+    ],
+    "column_edges": 5
+  },
+  "analytics_marts.user_order_features": {
+    "table_upstreams": [
+      "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_orders,PROD)",
+      "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+    ],
+    "column_edges": 7
+  }
+}

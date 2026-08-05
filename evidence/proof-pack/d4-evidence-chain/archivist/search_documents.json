@@ -1,0 +1,8 @@
+{
+  "arguments": {
+    "query": "user_id"
+  },
+  "ok": true,
+  "text": "{\"start\":0,\"count\":10,\"total\":0,\"facets\":[{\"field\":\"_entityType\",\"displayName\":\"Type\",\"aggregations\":[{\"value\":\"DOCUMENT\",\"count\":0}]},{\"field\":\"removed\",\"displayName\":\"removed\",\"aggregations\":[{\"value\":\"true\",\"count\":0}]},{\"field\":\"entity\",\"displayName\":\"Type\",\"aggregations\":[{\"value\":\"DOCUMENT\",\"count\":0}]}]}",
+  "error": null
+}

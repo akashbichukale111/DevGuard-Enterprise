@@ -1,0 +1,18 @@
+{
+  "model_name": "devguard_churn_risk",
+  "framework": "scikit-learn",
+  "estimator": "LogisticRegression",
+  "trained_at": "2026-08-01T02:17:19.045123+00:00",
+  "feature_table": "analytics_marts.user_order_features",
+  "id_column": "user_id",
+  "feature_columns": [
+    "order_count",
+    "lifetime_value_cents",
+    "avg_order_cents"
+  ],
+  "label": "refund_count > 0",
+  "rows_total": 1715,
+  "rows_train": 1286,
+  "rows_test": 429,
+  "test_accuracy": 0.7995337995337995
+}

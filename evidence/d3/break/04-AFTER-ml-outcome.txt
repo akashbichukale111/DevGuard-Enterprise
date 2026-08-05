@@ -1,0 +1,5 @@
+$ python substrate/ml/train_churn_model.py  (AFTER the rename)
+trained on 1715 rows from analytics_marts.user_order_features
+test accuracy: 0.7995
+metadata: substrate/ml/artifacts/model_metadata.json
+train exit code: 0

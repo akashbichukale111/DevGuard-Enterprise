@@ -1,0 +1,98 @@
+{
+  "run_id": "ablation-off-01",
+  "written_at": "2026-08-01T12:31:34.210756+00:00",
+  "artifact_count": 11,
+  "artifacts": [
+    {
+      "name": "watcher/dbt-run.txt",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-off-01/watcher/dbt-run.txt",
+      "bytes": 1427,
+      "truncated": false,
+      "note": "Raw output of the command the Watcher observed.",
+      "written_at": "2026-08-01T12:31:31.223465+00:00"
+    },
+    {
+      "name": "watcher/column-probe.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-off-01/watcher/column-probe.json",
+      "bytes": 102,
+      "truncated": false,
+      "note": "Live information_schema.",
+      "written_at": "2026-08-01T12:31:31.258112+00:00"
+    },
+    {
+      "name": "archivist/capabilities.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-off-01/archivist/capabilities.json",
+      "bytes": 8371,
+      "truncated": false,
+      "note": "The negotiated capability set for THIS run. Not a constant.",
+      "written_at": "2026-08-01T12:31:33.315181+00:00"
+    },
+    {
+      "name": "archivist/retrieval-disabled.txt",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-off-01/archivist/retrieval-disabled.txt",
+      "bytes": 380,
+      "truncated": false,
+      "note": "Ablation off-arm. No lookup attempted.",
+      "written_at": "2026-08-01T12:31:33.315506+00:00"
+    },
+    {
+      "name": "cartographer/search-stg_users.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-off-01/cartographer/search-stg_users.json",
+      "bytes": 3366,
+      "truncated": false,
+      "note": "Name -> URN resolution. The seam where analysis can go to the wrong asset.",
+      "written_at": "2026-08-01T12:31:33.444783+00:00"
+    },
+    {
+      "name": "cartographer/schema-stg_users.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-off-01/cartographer/schema-stg_users.json",
+      "bytes": 771,
+      "truncated": false,
+      "note": "The CATALOG's schema. During drift this deliberately disagrees with the database, and that gap is the incident.",
+      "written_at": "2026-08-01T12:31:33.509459+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage-downstream.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-off-01/pathfinder/get_lineage-downstream.json",
+      "bytes": 8332,
+      "truncated": false,
+      "note": "Dataset-level blast radius. Reaches the dataJob and the mlModel.",
+      "written_at": "2026-08-01T12:31:33.762596+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage-downstream-column.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-off-01/pathfinder/get_lineage-downstream-column.json",
+      "bytes": 7157,
+      "truncated": false,
+      "note": "Column-level blast radius. Every hit carries lineageColumns. Does NOT reach the mlModel \u2014 that edge is dataset-level (integration finding 14).",
+      "written_at": "2026-08-01T12:31:33.934612+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage_paths_between.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-off-01/pathfinder/get_lineage_paths_between.json",
+      "bytes": 2543,
+      "truncated": false,
+      "note": "Column-level path. The middle element is the real SQL.",
+      "written_at": "2026-08-01T12:31:34.129290+00:00"
+    },
+    {
+      "name": "pathfinder/get_dataset_queries.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-off-01/pathfinder/get_dataset_queries.json",
+      "bytes": 847,
+      "truncated": false,
+      "note": "Real SQL touching the column, ingested rather than authored.",
+      "written_at": "2026-08-01T12:31:34.177030+00:00"
+    },
+    {
+      "name": "run-metrics.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-off-01/run-metrics.json",
+      "bytes": 1045,
+      "truncated": false,
+      "note": "\u00a79A metrics for this run.",
+      "written_at": "2026-08-01T12:31:34.210734+00:00"
+    }
+  ],
+  "arm": "off",
+  "run_index": 1,
+  "time_to_root_cause_s": 6.3861
+}

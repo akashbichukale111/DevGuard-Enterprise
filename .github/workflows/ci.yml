@@ -1,0 +1,201 @@
+name: CI
+
+# Lint, typecheck, backend tests, frontend build and secret scan, on every push.
+#
+# Every job here runs with NO GROQ_API_KEY and NO collector, because that is the
+# state a reviewer's machine is in on a clean clone. If CI needed a paid API key
+# to go green it would not be testing what a new contributor experiences.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend — import, tests, OTLP verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Backend must import without an API key
+        # This is the regression guard for AUDIT.md B4: the backend used to
+        # raise at import time when GROQ_API_KEY was unset, which made it
+        # untestable and unbootable without a paid key.
+        run: python -c "import backend.main; print('import backend.main OK')"
+
+      - name: Preflight (make doctor)
+        run: python scripts/doctor.py
+
+      - name: Tests
+        run: python -m pytest
+
+      - name: Verify OTLP export, trace context and log correlation
+        # Real OTLP/gRPC receiver, real backend, assertions against decoded
+        # protobuf. Exits non-zero on any failed assertion.
+        run: python scripts/verify_otel.py
+
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: otel-verification
+          path: docs/verification/otel-verification.json
+          if-no-files-found: warn
+
+  frontend:
+    name: Frontend — lint, typecheck, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Do NOT lower this. `next@16` declares `engines: { node: ">=20.9.0" }`
+          # and refuses to build below it. "20" resolves to the newest 20.x, which
+          # satisfies that; Node 18 does not.
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        # Explicit, so a type error is reported as a type error rather than as
+        # a build failure buried in Next.js output.
+        run: npx tsc --noEmit
+
+      - name: Build
+        # No .env.local exists in CI, which is exactly the clean-clone case —
+        # the committed .env.local used to bake a dead host into the bundle.
+        run: npm run build
+
+  dependencies:
+    name: Dependency advisories (report-only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # DELIBERATELY NON-BLOCKING, and the reason matters.
+    #
+    # SECURITY.md listed "no automated dependency-vulnerability scanning" as an
+    # open gap. This closes it in the only way that is honest here: the reports
+    # are produced on every push and uploaded as artifacts, so a human always has
+    # current numbers — but the job does not fail the build.
+    #
+    # Why not gate on it: both trees still carry known advisories that cannot be
+    # fixed in range, even after the three approved dependency upgrades (aiohttp,
+    # fastapi/starlette, next 14 -> 16). On the frontend that is `sharp` and the
+    # ESLint toolchain — `npm audit fix` clears nothing further and `--force`
+    # would downgrade `next` to 9.3.3. On the backend it is `transformers`,
+    # reached only through the unimportable `sentence-transformers` (see
+    # SECURITY.md and HANDOFF open issue 4). Gating would mean CI is red with no
+    # code change available to fix it, and would go red again whenever an upstream
+    # advisory is published against a pinned version — a failure with no code
+    # change behind it, which trains people to ignore CI.
+    #
+    # So: this step INFORMS, it does not gate. Do not read a green tick here as
+    # "no advisories". Read the report.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Audit Python dependencies (pip-audit)
+        run: |
+          set -uo pipefail
+          python -m pip install --upgrade pip
+          pip install pip-audit
+          # pip-audit exits non-zero when it finds anything, which is the whole
+          # point of the report — so the exit code is captured, not propagated.
+          pip-audit -r requirements.txt --progress-spinner=off \
+            | tee pip-audit.txt || true
+          echo "### Python dependencies" >> "$GITHUB_STEP_SUMMARY"
+          head -1 pip-audit.txt >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Audit frontend dependencies (npm audit)
+        working-directory: frontend
+        run: |
+          set -uo pipefail
+          npm ci
+          npm audit 2>&1 | tee ../npm-audit.txt || true
+          echo "### Frontend dependencies" >> "$GITHUB_STEP_SUMMARY"
+          grep -E "vulnerabilities" ../npm-audit.txt | tail -1 >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Upload advisory reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-advisories
+          path: |
+            pip-audit.txt
+            npm-audit.txt
+          if-no-files-found: warn
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history — a secret in an old commit still counts
+
+      - name: Scan history for credential patterns
+        run: |
+          set -uo pipefail
+          echo "Scanning full history for credential patterns..."
+          PATTERN='gsk_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
+          if git grep -I -n -E "$PATTERN" $(git rev-list --all) > /tmp/hits.txt 2>/dev/null; then
+            echo "::error::Potential credential found in git history:"
+            cut -c1-200 /tmp/hits.txt | head -20
+            exit 1
+          fi
+          echo "No credential patterns found in history."
+
+      - name: Scan the working tree (05 the secret-hygiene rule, same scanner as `make verify`)
+        run: python scripts/scan_secrets.py
+
+      - name: Ensure no .env file is tracked
+        run: |
+          set -uo pipefail
+          if git ls-files --error-unmatch .env frontend/.env.local 2>/dev/null; then
+            echo "::error::An environment file is tracked. Untrack it: git rm --cached <file>"
+            exit 1
+          fi
+          echo "No tracked .env / .env.local."

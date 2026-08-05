@@ -1,0 +1,13 @@
+{
+  "name": "artifact 1 \u2014 raise incident",
+  "expectation": "ALLOW",
+  "observed": "ALLOW",
+  "passed": true,
+  "detail": "EDIT_ENTITY_INCIDENTS on a scoped dataset",
+  "response": {
+    "data": {
+      "raiseIncident": "urn:li:incident:138f8ba9-79ce-4de5-87cc-6d324822b249"
+    },
+    "extensions": {}
+  }
+}

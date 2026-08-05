@@ -1,0 +1,9 @@
+{
+  "columns": [
+    "customer_id",
+    "email",
+    "country",
+    "signup_ts",
+    "is_active"
+  ]
+}

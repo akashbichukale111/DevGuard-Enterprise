@@ -1,0 +1,181 @@
+[
+  {
+    "from_agent": "watcher",
+    "to_agent": "cartographer",
+    "incident_id": "D5FUL",
+    "evidence_ids": [
+      "EV-D5FUL-001",
+      "EV-D5FUL-002",
+      "EV-D5FUL-003",
+      "EV-D5FUL-004"
+    ],
+    "decision": "OK",
+    "rationale": "Observed a real failure in dbt run.",
+    "started_at": "2026-08-01T10:00:25.613801Z",
+    "ended_at": "2026-08-01T10:00:25.614464Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [],
+    "duration_ms": 0.7
+  },
+  {
+    "from_agent": "archivist",
+    "to_agent": "cartographer",
+    "incident_id": "D5FUL",
+    "evidence_ids": [
+      "EV-D5FUL-005"
+    ],
+    "decision": "OK",
+    "rationale": "NO PRIOR KNOWLEDGE \u2014 document retrieval ran and matched nothing.",
+    "started_at": "2026-08-01T10:00:27.856225Z",
+    "ended_at": "2026-08-01T10:00:27.922043Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [
+      {
+        "tool": "grep_documents",
+        "arguments": {
+          "pattern": "user_id"
+        },
+        "ok": false,
+        "duration_ms": 7.196487000328489,
+        "raw_ref": "evidence/proof-pack/d5-full/archivist/grep_documents.json",
+        "error": "1 validation error for call[grep_documents]\nurns\n  Missing required argument [type=missing_argument, input_value={'pattern': 'user_id'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing_argument"
+      },
+      {
+        "tool": "search_documents",
+        "arguments": {
+          "query": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 56.17515300036757,
+        "raw_ref": "evidence/proof-pack/d5-full/archivist/search_documents.json",
+        "error": null
+      }
+    ],
+    "duration_ms": 65.8
+  },
+  {
+    "from_agent": "cartographer",
+    "to_agent": "pathfinder",
+    "incident_id": "D5FUL",
+    "evidence_ids": [
+      "EV-D5FUL-006",
+      "EV-D5FUL-007"
+    ],
+    "decision": "OK",
+    "rationale": "Resolved 'stg_users' to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD) and read 5 columns from the catalog.",
+    "started_at": "2026-08-01T10:00:27.922099Z",
+    "ended_at": "2026-08-01T10:00:28.155261Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [
+      {
+        "tool": "search",
+        "arguments": {
+          "query": "stg_users"
+        },
+        "ok": true,
+        "duration_ms": 152.50143200137245,
+        "raw_ref": "evidence/proof-pack/d5-full/cartographer/search-stg_users.json",
+        "error": null
+      },
+      {
+        "tool": "list_schema_fields",
+        "arguments": {
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+        },
+        "ok": true,
+        "duration_ms": 79.14800500111596,
+        "raw_ref": "evidence/proof-pack/d5-full/cartographer/schema-stg_users.json",
+        "error": null
+      }
+    ],
+    "duration_ms": 233.2
+  },
+  {
+    "from_agent": "pathfinder",
+    "to_agent": "diagnostician",
+    "incident_id": "D5FUL",
+    "evidence_ids": [
+      "EV-D5FUL-008",
+      "EV-D5FUL-009",
+      "EV-D5FUL-010",
+      "EV-D5FUL-011",
+      "EV-D5FUL-012"
+    ],
+    "decision": "OK",
+    "rationale": "7 impacted entities dataset-level, 5 carrying column user_id (terminates at urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)).",
+    "started_at": "2026-08-01T10:00:28.155321Z",
+    "ended_at": "2026-08-01T10:00:28.783209Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [
+      {
+        "tool": "get_lineage",
+        "arguments": {
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "upstream": false,
+          "max_hops": 5
+        },
+        "ok": true,
+        "duration_ms": 249.3161689999397,
+        "raw_ref": "evidence/proof-pack/d5-full/pathfinder/get_lineage-downstream.json",
+        "error": null
+      },
+      {
+        "tool": "get_lineage",
+        "arguments": {
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "upstream": false,
+          "max_hops": 5,
+          "column": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 171.53377999966324,
+        "raw_ref": "evidence/proof-pack/d5-full/pathfinder/get_lineage-downstream-column.json",
+        "error": null
+      },
+      {
+        "tool": "get_lineage_paths_between",
+        "arguments": {
+          "source_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+          "direction": "downstream",
+          "source_column": "user_id",
+          "target_column": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 150.24088800055324,
+        "raw_ref": "evidence/proof-pack/d5-full/pathfinder/get_lineage_paths_between.json",
+        "error": null
+      },
+      {
+        "tool": "get_dataset_queries",
+        "arguments": {
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "column": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 52.055874999496154,
+        "raw_ref": "evidence/proof-pack/d5-full/pathfinder/get_dataset_queries.json",
+        "error": null
+      }
+    ],
+    "duration_ms": 627.9
+  },
+  {
+    "from_agent": "diagnostician",
+    "to_agent": "scribe",
+    "incident_id": "D5FUL",
+    "evidence_ids": [],
+    "decision": "BLOCKED",
+    "rationale": "No reasoner configured. The evidence chain is sufficient, so this is NOT a refusal \u2014 the question was never asked.",
+    "started_at": "2026-08-01T10:00:28.803333Z",
+    "ended_at": "2026-08-01T10:00:28.803366Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [],
+    "duration_ms": 0.0
+  }
+]

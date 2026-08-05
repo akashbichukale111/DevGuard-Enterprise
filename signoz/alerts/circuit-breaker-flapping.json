@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "v2alpha1",
+  "alert": "devguard-circuit-breaker-flapping",
+  "alertType": "METRIC_BASED_ALERT",
+  "ruleType": "threshold_rule",
+  "condition": {
+    "thresholds": {
+      "kind": "basic",
+      "spec": [
+        {
+          "name": "critical",
+          "target": 3.0,
+          "matchType": "1",
+          "op": ">",
+          "channels": [],
+          "targetUnit": ""
+        }
+      ]
+    },
+    "compositeQuery": {
+      "queries": [
+        {
+          "type": "builder_query",
+          "spec": {
+            "name": "A",
+            "signal": "metrics",
+            "disabled": false,
+            "aggregations": [
+              {
+                "metricName": "devguard.circuit_breaker.state_changes_total",
+                "temporality": "",
+                "timeAggregation": "increase",
+                "spaceAggregation": "sum"
+              }
+            ],
+            "stepInterval": 60,
+            "filter": {
+              "expression": ""
+            },
+            "groupBy": [],
+            "having": {
+              "expression": ""
+            },
+            "order": [],
+            "limit": 0,
+            "functions": [],
+            "legend": ""
+          }
+        }
+      ]
+    },
+    "selectedQueryName": "A",
+    "alertOnAbsent": false
+  },
+  "evaluation": {
+    "kind": "rolling",
+    "spec": {
+      "evalWindow": "5m0s",
+      "frequency": "1m0s"
+    }
+  },
+  "labels": {
+    "severity": "critical",
+    "team": "devguard"
+  },
+  "annotations": {
+    "summary": "DevGuard circuit breaker is changing state repeatedly",
+    "description": "The breaker transitioned more than 3 times in 5 minutes: the primary LLM path is not stabilising."
+  },
+  "notificationSettings": {
+    "groupBy": [],
+    "usePolicy": true,
+    "renotify": {
+      "enabled": false,
+      "interval": "30m0s",
+      "alertStates": []
+    }
+  }
+}

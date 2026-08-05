@@ -1,0 +1,22 @@
+$ dbt run   (proposed fix, isolated schema analytics_devguard_check)
+exit code: 0
+
+10:59:08  Running with dbt=1.12.0
+10:59:09  Registered adapter: postgres=1.11.0
+10:59:09  Unable to do partial parsing because saved manifest not found. Starting full parse.
+10:59:10  Found 3 models, 2 sources, 477 macros
+10:59:10
+10:59:10  Concurrency: 4 threads (target='dev')
+10:59:10
+10:59:10  1 of 3 START sql view model analytics_devguard_check_staging.stg_orders ........ [RUN]
+10:59:10  2 of 3 START sql view model analytics_devguard_check_staging.stg_users ......... [RUN]
+10:59:10  2 of 3 OK created sql view model analytics_devguard_check_staging.stg_users .... [CREATE VIEW in 0.13s]
+10:59:10  1 of 3 OK created sql view model analytics_devguard_check_staging.stg_orders ... [CREATE VIEW in 0.14s]
+10:59:10  3 of 3 START sql table model analytics_devguard_check_marts.user_order_features  [RUN]
+10:59:11  3 of 3 OK created sql table model analytics_devguard_check_marts.user_order_features  [SELECT 1715 in 0.08s]
+10:59:11
+10:59:11  Finished running 1 table model, 2 view models in 0 hours 0 minutes and 0.38 seconds (0.38s).
+10:59:11
+10:59:11  Completed successfully
+10:59:11
+10:59:11  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=3

@@ -1,0 +1,82 @@
+{
+  "serverInfo": {
+    "name": "datahub",
+    "version": "3.4.5"
+  },
+  "protocolVersion": "2024-11-05",
+  "tool_count": 18,
+  "tools": [
+    {
+      "name": "search",
+      "description": "Search across DataHub entities using structured full-text search.\n    Results are ordered by relevance and importance - examine top results first.\n\n    SEARCH SYNTAX:\n    - Structured full-text search"
+    },
+    {
+      "name": "get_lineage",
+      "description": "Get upstream or downstream lineage for any entity, including datasets, schemaFields, dashboards, charts, etc.\n\n    Set upstream to True for upstream lineage, False for downstream lineage.\n    Set `col"
+    },
+    {
+      "name": "get_dataset_queries",
+      "description": "Get SQL queries associated with a dataset or column to understand usage patterns.\n\n    This tool retrieves actual SQL queries that reference a specific dataset or column.\n    Useful for understanding "
+    },
+    {
+      "name": "get_entities",
+      "description": "Get detailed information about one or more entities by their DataHub URNs.\n\n    IMPORTANT: Pass an array of URNs to retrieve multiple entities in a single call - this is much\n    more efficient than c"
+    },
+    {
+      "name": "list_schema_fields",
+      "description": "List schema fields for a dataset, with optional keyword filtering and pagination.\n\n    Useful when schema fields were truncated in search results (schemaFieldsTruncated present)\n    and you need to ex"
+    },
+    {
+      "name": "get_lineage_paths_between",
+      "description": "Get detailed lineage path(s) between two specific entities or columns.\n\n    Returns the paths array from searchAcrossLineage, showing the exact transformation\n    chain(s) including intermediate entit"
+    },
+    {
+      "name": "add_tags",
+      "description": "Add one or more tags to multiple DataHub entities or their columns (e.g., schema fields).\n\n    This tool allows you to tag multiple entities or their columns with multiple tags in a single operation.\n"
+    },
+    {
+      "name": "remove_tags",
+      "description": "Remove one or more tags from multiple DataHub entities or their column_paths (e.g., schema fields).\n\n    This tool allows you to untag multiple entities or their columns with multiple tags in a single"
+    },
+    {
+      "name": "add_terms",
+      "description": "Add one or more glossary terms (terms) to multiple DataHub entities or their columns (e.g., schema fields).\n\n    This tool allows you to associate multiple entities or their columns with multiple glos"
+    },
+    {
+      "name": "remove_terms",
+      "description": "Remove one or more glossary terms (terms) from multiple DataHub entities or their column_paths (e.g., schema fields).\n\n    This tool allows you to disassociate multiple entities or their columns from "
+    },
+    {
+      "name": "add_owners",
+      "description": "Add one or more owners to multiple DataHub entities.\n\n    This tool allows you to assign multiple entities with multiple owners in a single operation.\n    Useful for bulk ownership assignment operatio"
+    },
+    {
+      "name": "remove_owners",
+      "description": "Remove one or more owners from multiple DataHub entities.\n\n    This tool allows you to unassign multiple entities from multiple owners in a single operation.\n    Useful for bulk ownership removal oper"
+    },
+    {
+      "name": "set_domains",
+      "description": "Set domain for multiple DataHub entities.\n\n    This tool allows you to assign a domain to multiple entities in a single operation.\n    Useful for organizing datasets, dashboards, and other entities in"
+    },
+    {
+      "name": "remove_domains",
+      "description": "Remove domain assignment from multiple DataHub entities.\n\n    This tool allows you to unset the domain for multiple entities in a single operation.\n    Useful for removing domain assignments when reor"
+    },
+    {
+      "name": "update_description",
+      "description": "Update description for a DataHub entity or its column (e.g., schema field).\n\n    This tool allows you to set, append to, or remove a description for an entity or its column.\n    Useful for documenting"
+    },
+    {
+      "name": "add_structured_properties",
+      "description": "Add structured properties with values to multiple DataHub entities.\n\n    This tool allows you to assign structured properties to multiple entities in a single operation.\n    Structured properties are "
+    },
+    {
+      "name": "remove_structured_properties",
+      "description": "Remove structured properties from multiple DataHub entities.\n\n    This tool allows you to remove structured property assignments from multiple entities in a single operation.\n\n    Args:\n        proper"
+    },
+    {
+      "name": "save_document",
+      "description": "Save or update a STANDALONE document in DataHub's knowledge base. Once saved,\n    a document will be visible to all users of DataHub and to Ask DataHub AI assistant.\n\n    NOTE: This tool is for creati"
+    }
+  ]
+}

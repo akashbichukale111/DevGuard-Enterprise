@@ -1,0 +1,13 @@
+{
+  "name": "artifact 3 \u2014 column tag",
+  "expectation": "ALLOW",
+  "observed": "ALLOW",
+  "passed": true,
+  "detail": "EDIT_DATASET_COL_TAGS on a scoped dataset",
+  "response": {
+    "data": {
+      "addTags": true
+    },
+    "extensions": {}
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "run_id": "ablation-on-03",
+  "written_at": "2026-08-01T12:32:00.314166+00:00",
+  "artifact_count": 17,
+  "artifacts": [
+    {
+      "name": "watcher/dbt-run.txt",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/watcher/dbt-run.txt",
+      "bytes": 1427,
+      "truncated": false,
+      "note": "Raw output of the command the Watcher observed.",
+      "written_at": "2026-08-01T12:31:58.469199+00:00"
+    },
+    {
+      "name": "watcher/column-probe.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/watcher/column-probe.json",
+      "bytes": 102,
+      "truncated": false,
+      "note": "Live information_schema.",
+      "written_at": "2026-08-01T12:31:58.482399+00:00"
+    },
+    {
+      "name": "archivist/capabilities.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/archivist/capabilities.json",
+      "bytes": 8371,
+      "truncated": false,
+      "note": "The negotiated capability set for THIS run. Not a constant.",
+      "written_at": "2026-08-01T12:31:59.764904+00:00"
+    },
+    {
+      "name": "archivist/search_documents.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/archivist/search_documents.json",
+      "bytes": 3387,
+      "truncated": false,
+      "note": "Stage 1 \u2014 document discovery. Returns URNs and titles, not bodies.",
+      "written_at": "2026-08-01T12:31:59.823634+00:00"
+    },
+    {
+      "name": "archivist/grep_documents.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/archivist/grep_documents.json",
+      "bytes": 11494,
+      "truncated": false,
+      "note": "Stage 2 \u2014 content for the URNs stage 1 found.",
+      "written_at": "2026-08-01T12:31:59.843279+00:00"
+    },
+    {
+      "name": "archivist/document-urn_li_document_shared-5547ea0e-ade2-4ac2-bfa9-36f629ba1b0c.txt",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/archivist/document-urn_li_document_shared-5547ea0e-ade2-4ac2-bfa9-36f629ba1b0c.txt",
+      "bytes": 1969,
+      "truncated": false,
+      "note": "UNTRUSTED. Fenced before entering any prompt.",
+      "written_at": "2026-08-01T12:31:59.845699+00:00"
+    },
+    {
+      "name": "archivist/document-urn_li_document_shared-7cb47d8f-d08c-4297-81cc-3b823f5d018c.txt",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/archivist/document-urn_li_document_shared-7cb47d8f-d08c-4297-81cc-3b823f5d018c.txt",
+      "bytes": 1969,
+      "truncated": false,
+      "note": "UNTRUSTED. Fenced before entering any prompt.",
+      "written_at": "2026-08-01T12:31:59.846143+00:00"
+    },
+    {
+      "name": "archivist/document-urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f.txt",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/archivist/document-urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f.txt",
+      "bytes": 1969,
+      "truncated": false,
+      "note": "UNTRUSTED. Fenced before entering any prompt.",
+      "written_at": "2026-08-01T12:31:59.846545+00:00"
+    },
+    {
+      "name": "archivist/document-urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af.txt",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/archivist/document-urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af.txt",
+      "bytes": 1969,
+      "truncated": false,
+      "note": "UNTRUSTED. Fenced before entering any prompt.",
+      "written_at": "2026-08-01T12:31:59.846919+00:00"
+    },
+    {
+      "name": "archivist/document-urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d.txt",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/archivist/document-urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d.txt",
+      "bytes": 1969,
+      "truncated": false,
+      "note": "UNTRUSTED. Fenced before entering any prompt.",
+      "written_at": "2026-08-01T12:31:59.847268+00:00"
+    },
+    {
+      "name": "cartographer/search-stg_users.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/cartographer/search-stg_users.json",
+      "bytes": 3366,
+      "truncated": false,
+      "note": "Name -> URN resolution. The seam where analysis can go to the wrong asset.",
+      "written_at": "2026-08-01T12:31:59.942516+00:00"
+    },
+    {
+      "name": "cartographer/schema-stg_users.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/cartographer/schema-stg_users.json",
+      "bytes": 771,
+      "truncated": false,
+      "note": "The CATALOG's schema. During drift this deliberately disagrees with the database, and that gap is the incident.",
+      "written_at": "2026-08-01T12:31:59.997711+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage-downstream.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/pathfinder/get_lineage-downstream.json",
+      "bytes": 8332,
+      "truncated": false,
+      "note": "Dataset-level blast radius. Reaches the dataJob and the mlModel.",
+      "written_at": "2026-08-01T12:32:00.101283+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage-downstream-column.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/pathfinder/get_lineage-downstream-column.json",
+      "bytes": 7157,
+      "truncated": false,
+      "note": "Column-level blast radius. Every hit carries lineageColumns. Does NOT reach the mlModel \u2014 that edge is dataset-level (integration finding 14).",
+      "written_at": "2026-08-01T12:32:00.179735+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage_paths_between.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/pathfinder/get_lineage_paths_between.json",
+      "bytes": 2543,
+      "truncated": false,
+      "note": "Column-level path. The middle element is the real SQL.",
+      "written_at": "2026-08-01T12:32:00.262583+00:00"
+    },
+    {
+      "name": "pathfinder/get_dataset_queries.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/pathfinder/get_dataset_queries.json",
+      "bytes": 847,
+      "truncated": false,
+      "note": "Real SQL touching the column, ingested rather than authored.",
+      "written_at": "2026-08-01T12:32:00.297044+00:00"
+    },
+    {
+      "name": "run-metrics.json",
+      "raw_ref": "evidence/proof-pack/ablation/ablation-on-03/run-metrics.json",
+      "bytes": 1043,
+      "truncated": false,
+      "note": "\u00a79A metrics for this run.",
+      "written_at": "2026-08-01T12:32:00.314146+00:00"
+    }
+  ],
+  "arm": "on",
+  "run_index": 3,
+  "time_to_root_cause_s": 4.8899
+}

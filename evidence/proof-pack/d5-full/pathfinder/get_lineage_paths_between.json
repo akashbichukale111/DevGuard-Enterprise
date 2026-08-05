@@ -1,0 +1,12 @@
+{
+  "arguments": {
+    "source_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+    "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+    "direction": "downstream",
+    "source_column": "user_id",
+    "target_column": "user_id"
+  },
+  "ok": true,
+  "text": "{\"metadata\":{\"queryType\":\"lineage-path-trace\",\"direction\":\"downstream\",\"pathType\":\"column-level\",\"fields\":{\"paths\":{\"description\":\"Array of lineage paths showing transformation chains from source to target\",\"structure\":\"Each path contains alternating entities (SCHEMA_FIELD or DATASET) and optional transformation QUERY entities\",\"queryEntities\":\"QUERY entities are returned as URNs only. Use get_entities(query_urn) to fetch SQL statement and other query details.\"}}},\"source\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\"column\":\"user_id\"},\"target\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\",\"column\":\"user_id\"},\"pathCount\":1,\"paths\":[{\"path\":[{\"urn\":\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD),user_id)\",\"type\":\"SCHEMA_FIELD\",\"fieldPath\":\"user_id\",\"parent\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\"type\":\"DATASET\"}},{\"urn\":\"urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8\",\"type\":\"QUERY\"},{\"urn\":\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD),user_id)\",\"type\":\"SCHEMA_FIELD\",\"fieldPath\":\"user_id\",\"parent\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\",\"type\":\"DATASET\"}},{\"urn\":\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),user_id)\",\"type\":\"SCHEMA_FIELD\",\"fieldPath\":\"user_id\",\"parent\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)\",\"type\":\"DATASET\"}},{\"urn\":\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),user_id)\",\"type\":\"SCHEMA_FIELD\",\"fieldPath\":\"user_id\",\"parent\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\",\"type\":\"DATASET\"}}]}]}",
+  "error": null
+}

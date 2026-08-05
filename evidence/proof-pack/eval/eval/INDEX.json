@@ -1,0 +1,73 @@
+{
+  "run_id": "eval",
+  "written_at": "2026-08-01T13:16:38.161758+00:00",
+  "artifact_count": 8,
+  "artifacts": [
+    {
+      "name": "baseline/dbt-build.txt",
+      "raw_ref": "evidence/proof-pack/eval/eval/baseline/dbt-build.txt",
+      "bytes": 2780,
+      "truncated": false,
+      "note": "Green baseline. Everything after this is attributable to a fault.",
+      "written_at": "2026-08-01T13:16:14.211676+00:00"
+    },
+    {
+      "name": "column_rename/dbt-build.txt",
+      "raw_ref": "evidence/proof-pack/eval/eval/column_rename/dbt-build.txt",
+      "bytes": 2949,
+      "truncated": false,
+      "note": "Real dbt build with column_rename injected into the live database.",
+      "written_at": "2026-08-01T13:16:17.659825+00:00"
+    },
+    {
+      "name": "type_change/dbt-build.txt",
+      "raw_ref": "evidence/proof-pack/eval/eval/type_change/dbt-build.txt",
+      "bytes": 3626,
+      "truncated": false,
+      "note": "Real dbt build with type_change injected into the live database.",
+      "written_at": "2026-08-01T13:16:21.026219+00:00"
+    },
+    {
+      "name": "upstream_table_dropped/dbt-build.txt",
+      "raw_ref": "evidence/proof-pack/eval/eval/upstream_table_dropped/dbt-build.txt",
+      "bytes": 2779,
+      "truncated": false,
+      "note": "Real dbt build with upstream_table_dropped injected into the live database.",
+      "written_at": "2026-08-01T13:16:24.256955+00:00"
+    },
+    {
+      "name": "permission_revoked/dbt-build.txt",
+      "raw_ref": "evidence/proof-pack/eval/eval/permission_revoked/dbt-build.txt",
+      "bytes": 5184,
+      "truncated": false,
+      "note": "Real dbt build with permission_revoked injected into the live database.",
+      "written_at": "2026-08-01T13:16:27.667839+00:00"
+    },
+    {
+      "name": "null_rate_spike/dbt-build.txt",
+      "raw_ref": "evidence/proof-pack/eval/eval/null_rate_spike/dbt-build.txt",
+      "bytes": 3167,
+      "truncated": false,
+      "note": "Real dbt build with null_rate_spike injected into the live database.",
+      "written_at": "2026-08-01T13:16:31.059742+00:00"
+    },
+    {
+      "name": "silent_value_drift/dbt-build.txt",
+      "raw_ref": "evidence/proof-pack/eval/eval/silent_value_drift/dbt-build.txt",
+      "bytes": 2937,
+      "truncated": false,
+      "note": "Real dbt build with silent_value_drift injected into the live database.",
+      "written_at": "2026-08-01T13:16:34.578773+00:00"
+    },
+    {
+      "name": "control_no_fault/dbt-build.txt",
+      "raw_ref": "evidence/proof-pack/eval/eval/control_no_fault/dbt-build.txt",
+      "bytes": 3029,
+      "truncated": false,
+      "note": "Real dbt build with control_no_fault injected into the live database.",
+      "written_at": "2026-08-01T13:16:38.134731+00:00"
+    }
+  ],
+  "accuracy": 1.0,
+  "false_positive_rate": 0.0
+}

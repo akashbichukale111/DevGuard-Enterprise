@@ -1,0 +1,128 @@
+{
+  "incident_id": "D4",
+  "digest": "a16d2927e4e56487",
+  "is_sufficient": true,
+  "missing_for_sufficiency": [],
+  "items": [
+    {
+      "id": "EV-D4-001",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T07:13:48.413203Z",
+      "claim": "`dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D4-002",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T07:13:48.413255Z",
+      "claim": "model stg_users failed to build (models/staging/stg_users.sql)",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D4-003",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T07:13:48.413273Z",
+      "claim": "database reports column \"user_id\" does not exist",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D4-004",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T07:13:48.413280Z",
+      "claim": "1 downstream model(s) SKIPped \u2014 not rebuilt, not dropped, therefore stale",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D4-005",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T07:13:50.703604Z",
+      "claim": "MCP server offered 8 tools; document tools present",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/archivist/capabilities.json",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D4-006",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T07:13:50.905405Z",
+      "claim": "'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/cartographer/search-stg_users.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+    },
+    {
+      "id": "EV-D4-007",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T07:13:51.016424Z",
+      "claim": "catalog schema for stg_users has 5 columns: country, email, is_active, signup_ts, user_id",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/cartographer/schema-stg_users.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+    },
+    {
+      "id": "EV-D4-008",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T07:13:51.353790Z",
+      "claim": "7 downstream entities impacted within 5 hops of devguard.raw.users (dataset-level)",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    },
+    {
+      "id": "EV-D4-009",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T07:13:51.556492Z",
+      "claim": "5 entities carry column user_id downstream of devguard.raw.users (column-level)",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream-column.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    },
+    {
+      "id": "EV-D4-010",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T07:13:51.556525Z",
+      "claim": "blast radius terminates at registered ML model urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream.json",
+      "datahub_urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)"
+    },
+    {
+      "id": "EV-D4-011",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T07:13:51.829702Z",
+      "claim": "column-level path is 5 hops via column user_id",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage_paths_between.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    },
+    {
+      "id": "EV-D4-012",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T07:13:51.868672Z",
+      "claim": "1 catalog query references user_id (source: SYSTEM)",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_dataset_queries.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    }
+  ]
+}

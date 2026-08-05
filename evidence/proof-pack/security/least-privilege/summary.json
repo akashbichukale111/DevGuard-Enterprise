@@ -1,0 +1,76 @@
+{
+  "schema": "devguard.least-privilege/1",
+  "generated_at_utc": "2026-08-01T13:46:41.555596+00:00",
+  "service_account": "urn:li:corpuser:devguard_agent",
+  "total": 9,
+  "passed": 9,
+  "allow_checks": 4,
+  "allow_passed": 4,
+  "deny_checks": 5,
+  "deny_passed": 5,
+  "checks": [
+    {
+      "name": "read in-scope dataset",
+      "expectation": "ALLOW",
+      "observed": "ALLOW",
+      "passed": true,
+      "detail": "VIEW_ENTITY_PAGE on a scoped dataset"
+    },
+    {
+      "name": "artifact 1 \u2014 raise incident",
+      "expectation": "ALLOW",
+      "observed": "ALLOW",
+      "passed": true,
+      "detail": "EDIT_ENTITY_INCIDENTS on a scoped dataset"
+    },
+    {
+      "name": "artifact 3 \u2014 column tag",
+      "expectation": "ALLOW",
+      "observed": "ALLOW",
+      "passed": true,
+      "detail": "EDIT_DATASET_COL_TAGS on a scoped dataset"
+    },
+    {
+      "name": "artifact 5 \u2014 add owner",
+      "expectation": "ALLOW",
+      "observed": "ALLOW",
+      "passed": true,
+      "detail": "EDIT_ENTITY_OWNERS on a scoped dataset"
+    },
+    {
+      "name": "delete a scoped dataset",
+      "expectation": "DENY",
+      "observed": "DENY",
+      "passed": true,
+      "detail": "DELETE_ENTITY was never granted \u2014 an agent must not remove assets"
+    },
+    {
+      "name": "edit lineage",
+      "expectation": "DENY",
+      "observed": "DENY",
+      "passed": true,
+      "detail": "EDIT_LINEAGE was never granted \u2014 lineage is ingested, never authored (\u00a73)"
+    },
+    {
+      "name": "write to an OUT-OF-SCOPE dataset",
+      "expectation": "DENY",
+      "observed": "DENY",
+      "passed": true,
+      "detail": "the dbt sibling is real and ingested, but outside the five-URN scope"
+    },
+    {
+      "name": "create a policy (widen its own grants)",
+      "expectation": "DENY",
+      "observed": "DENY",
+      "passed": true,
+      "detail": "MANAGE_POLICIES was never granted \u2014 it must not escalate itself"
+    },
+    {
+      "name": "create an ingestion source",
+      "expectation": "DENY",
+      "observed": "DENY",
+      "passed": true,
+      "detail": "MANAGE_INGESTION was never granted \u2014 it must not change what enters the catalog"
+    }
+  ]
+}

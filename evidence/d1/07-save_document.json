@@ -1,0 +1,19 @@
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"urn\":\"urn:li:document:shared-7f391065-b01a-425f-ae96-2f76b91b575f\",\"message\":\"Successfully created document: DevGuard D1 write-path smoke test\",\"author\":\"__datahub_system\"}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "urn": "urn:li:document:shared-7f391065-b01a-425f-ae96-2f76b91b575f",
+      "message": "Successfully created document: DevGuard D1 write-path smoke test",
+      "author": "__datahub_system"
+    },
+    "isError": false
+  }
+}

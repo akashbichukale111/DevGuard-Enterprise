@@ -1,0 +1,277 @@
+{
+  "run_id": "d6-loop-pass1",
+  "written_at": "2026-08-01T10:59:17.238022+00:00",
+  "artifact_count": 31,
+  "artifacts": [
+    {
+      "name": "watcher/dbt-run.txt",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/watcher/dbt-run.txt",
+      "bytes": 1427,
+      "truncated": false,
+      "note": "Raw output of the command the Watcher observed.",
+      "written_at": "2026-08-01T10:59:03.148476+00:00"
+    },
+    {
+      "name": "watcher/column-probe.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/watcher/column-probe.json",
+      "bytes": 181,
+      "truncated": false,
+      "note": "information_schema, read live. The catalog is stale during drift; this is the ground truth.",
+      "written_at": "2026-08-01T10:59:03.172782+00:00"
+    },
+    {
+      "name": "archivist/capabilities.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/capabilities.json",
+      "bytes": 8371,
+      "truncated": false,
+      "note": "The negotiated capability set for THIS run. Not a constant.",
+      "written_at": "2026-08-01T10:59:05.293760+00:00"
+    },
+    {
+      "name": "archivist/search_documents.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/search_documents.json",
+      "bytes": 2397,
+      "truncated": false,
+      "note": "Stage 1 \u2014 document discovery. Returns URNs and titles, not bodies.",
+      "written_at": "2026-08-01T10:59:05.362375+00:00"
+    },
+    {
+      "name": "archivist/grep_documents.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/grep_documents.json",
+      "bytes": 6968,
+      "truncated": false,
+      "note": "Stage 2 \u2014 content for the URNs stage 1 found.",
+      "written_at": "2026-08-01T10:59:05.387518+00:00"
+    },
+    {
+      "name": "archivist/document-urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f.txt",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f.txt",
+      "bytes": 1969,
+      "truncated": false,
+      "note": "UNTRUSTED. Fenced before entering any prompt.",
+      "written_at": "2026-08-01T10:59:05.389239+00:00"
+    },
+    {
+      "name": "archivist/document-urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af.txt",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af.txt",
+      "bytes": 1969,
+      "truncated": false,
+      "note": "UNTRUSTED. Fenced before entering any prompt.",
+      "written_at": "2026-08-01T10:59:05.389693+00:00"
+    },
+    {
+      "name": "archivist/document-urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d.txt",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d.txt",
+      "bytes": 1969,
+      "truncated": false,
+      "note": "UNTRUSTED. Fenced before entering any prompt.",
+      "written_at": "2026-08-01T10:59:05.390113+00:00"
+    },
+    {
+      "name": "cartographer/search-stg_users.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/cartographer/search-stg_users.json",
+      "bytes": 3192,
+      "truncated": false,
+      "note": "Name -> URN resolution. The seam where analysis can go to the wrong asset.",
+      "written_at": "2026-08-01T10:59:05.564316+00:00"
+    },
+    {
+      "name": "cartographer/schema-stg_users.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/cartographer/schema-stg_users.json",
+      "bytes": 771,
+      "truncated": false,
+      "note": "The CATALOG's schema. During drift this deliberately disagrees with the database, and that gap is the incident.",
+      "written_at": "2026-08-01T10:59:05.643359+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage-downstream.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream.json",
+      "bytes": 8332,
+      "truncated": false,
+      "note": "Dataset-level blast radius. Reaches the dataJob and the mlModel.",
+      "written_at": "2026-08-01T10:59:06.064503+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage-downstream-column.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream-column.json",
+      "bytes": 7157,
+      "truncated": false,
+      "note": "Column-level blast radius. Every hit carries lineageColumns. Does NOT reach the mlModel \u2014 that edge is dataset-level (integration finding 14).",
+      "written_at": "2026-08-01T10:59:06.271308+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage_paths_between.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage_paths_between.json",
+      "bytes": 2543,
+      "truncated": false,
+      "note": "Column-level path. The middle element is the real SQL.",
+      "written_at": "2026-08-01T10:59:06.525825+00:00"
+    },
+    {
+      "name": "pathfinder/get_dataset_queries.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_dataset_queries.json",
+      "bytes": 847,
+      "truncated": false,
+      "note": "Real SQL touching the column, ingested rather than authored.",
+      "written_at": "2026-08-01T10:59:06.581807+00:00"
+    },
+    {
+      "name": "diagnostician/derived-root-cause.txt",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/diagnostician/derived-root-cause.txt",
+      "bytes": 334,
+      "truncated": false,
+      "note": "DERIVED from runtime evidence. The Diagnostician could not run \u2014 see its handoff.",
+      "written_at": "2026-08-01T10:59:06.583072+00:00"
+    },
+    {
+      "name": "surgeon/proposed.patch",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/surgeon/proposed.patch",
+      "bytes": 368,
+      "truncated": false,
+      "note": "Proposed diff, committed to devguard/fix-d6105859. Working tree untouched.",
+      "written_at": "2026-08-01T10:59:06.603267+00:00"
+    },
+    {
+      "name": "sentinel/patch-scan.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/sentinel/patch-scan.json",
+      "bytes": 162,
+      "truncated": false,
+      "note": "\u00a74 step 12 \u2014 the proposed diff, classified.",
+      "written_at": "2026-08-01T10:59:06.603882+00:00"
+    },
+    {
+      "name": "referee/validation.txt",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/referee/validation.txt",
+      "bytes": 1252,
+      "truncated": false,
+      "note": "The proposed fix built in a throwaway schema. Working tree untouched.",
+      "written_at": "2026-08-01T10:59:11.738721+00:00"
+    },
+    {
+      "name": "magistrate/get_entities.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/magistrate/get_entities.json",
+      "bytes": 3341,
+      "truncated": false,
+      "note": "Owner lookup \u2014 read-only, from the graph.",
+      "written_at": "2026-08-01T10:59:11.856758+00:00"
+    },
+    {
+      "name": "magistrate/autonomy-decision.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/magistrate/autonomy-decision.json",
+      "bytes": 508,
+      "truncated": false,
+      "note": "\u00a711.5's policy table, as applied to this change.",
+      "written_at": "2026-08-01T10:59:11.857191+00:00"
+    },
+    {
+      "name": "magistrate/approval.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/magistrate/approval.json",
+      "bytes": 385,
+      "truncated": false,
+      "note": "\u00a74 step 15 \u2014 explicit, logged, identity recorded.",
+      "written_at": "2026-08-01T10:59:11.857438+00:00"
+    },
+    {
+      "name": "referee/recovery.txt",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/referee/recovery.txt",
+      "bytes": 1116,
+      "truncated": false,
+      "note": "The exact signal that failed, re-run after the fix was applied.",
+      "written_at": "2026-08-01T10:59:15.328661+00:00"
+    },
+    {
+      "name": "scribe/artifact1-raiseIncident.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact1-raiseIncident.json",
+      "bytes": 115,
+      "truncated": false,
+      "note": "\u00a78 artifact 1, raise half.",
+      "written_at": "2026-08-01T10:59:15.391446+00:00"
+    },
+    {
+      "name": "scribe/artifact3-add_tags.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact3-add_tags.json",
+      "bytes": 390,
+      "truncated": false,
+      "note": "Raw write-back response.",
+      "written_at": "2026-08-01T10:59:16.856849+00:00"
+    },
+    {
+      "name": "scribe/artifact3-update_description.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact3-update_description.json",
+      "bytes": 1409,
+      "truncated": false,
+      "note": "Raw write-back response.",
+      "written_at": "2026-08-01T10:59:16.924857+00:00"
+    },
+    {
+      "name": "scribe/artifact2-save_document.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact2-save_document.json",
+      "bytes": 3802,
+      "truncated": false,
+      "note": "Raw write-back response.",
+      "written_at": "2026-08-01T10:59:17.034763+00:00"
+    },
+    {
+      "name": "scribe/artifact4-add_structured_properties.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact4-add_structured_properties.json",
+      "bytes": 568,
+      "truncated": false,
+      "note": "Raw write-back response.",
+      "written_at": "2026-08-01T10:59:17.166322+00:00"
+    },
+    {
+      "name": "scribe/artifact1-updateIncidentStatus.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact1-updateIncidentStatus.json",
+      "bytes": 72,
+      "truncated": false,
+      "note": "Incident resolved \u2014 written LAST.",
+      "written_at": "2026-08-01T10:59:17.216249+00:00"
+    },
+    {
+      "name": "scribe/write-back-summary.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/write-back-summary.json",
+      "bytes": 2508,
+      "truncated": false,
+      "note": "\u00a78's per-artifact outcomes.",
+      "written_at": "2026-08-01T10:59:17.217096+00:00"
+    },
+    {
+      "name": "evidence-chain.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/evidence-chain.json",
+      "bytes": 12748,
+      "truncated": false,
+      "note": "\u00a77's chain for the full loop.",
+      "written_at": "2026-08-01T10:59:17.236246+00:00"
+    },
+    {
+      "name": "handoff-rail.json",
+      "raw_ref": "evidence/proof-pack/d6-loop-pass1/handoff-rail.json",
+      "bytes": 8576,
+      "truncated": false,
+      "note": "\u00a76's envelopes, in order.",
+      "written_at": "2026-08-01T10:59:17.237951+00:00"
+    }
+  ],
+  "incident_id": "D6105859",
+  "dry_run": false,
+  "fail_the_fix": false,
+  "chain_is_sufficient": true,
+  "recovery_verified": true,
+  "write_back_performed": true,
+  "write_back_all_landed": true,
+  "incident_resolved": true,
+  "incident_urn": "urn:li:incident:c2226569-9b88-4754-9a29-eef7b57c9b9c",
+  "document_urn": "urn:li:document:shared-7cb47d8f-d08c-4297-81cc-3b823f5d018c",
+  "handoffs": [
+    "watcher->cartographer:OK",
+    "archivist->cartographer:OK",
+    "cartographer->pathfinder:OK",
+    "pathfinder->diagnostician:OK",
+    "diagnostician->scribe:BLOCKED",
+    "surgeon->sentinel:OK",
+    "referee->magistrate:OK",
+    "magistrate->human:OK",
+    "referee->scribe:OK",
+    "scribe->auditor:OK"
+  ]
+}

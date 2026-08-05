@@ -1,0 +1,11 @@
+{
+  "verdict": "INSUFFICIENT_EVIDENCE",
+  "is_refusal": true,
+  "statement": "INSUFFICIENT_EVIDENCE (NO_GRAPH_EVIDENCE). \u00a77 requires at least one RUNTIME and one DATAHUB_GRAPH item; this chain is missing DATAHUB_GRAPH. Stopping the loop rather than guessing.",
+  "cited_evidence_ids": [],
+  "refusal_reasons": [
+    "NO_GRAPH_EVIDENCE"
+  ],
+  "model": null,
+  "tokens": 0
+}

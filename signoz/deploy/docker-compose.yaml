@@ -1,0 +1,213 @@
+# Self-hosted SigNoz for DevGuard — plain docker compose.
+#
+# WHY THIS FILE EXISTS, and why it is not `foundryctl cast -f casting.yaml`:
+#
+# The contract (the observability requirement) says to "stand up SigNoz for real
+# and pin the version. Choose the lightest path that works on the available
+# machine and document it. **If the Foundry/`casting.yaml` route is heavy or
+# brittle, a documented plain docker-compose SigNoz is a better judge
+# experience — the criterion rewards a working stack, not an exotic one.**"
+#
+# The Foundry route is not merely brittle here, it is unavailable: `foundryctl`
+# cannot be installed. Its install script host (`signoz.io`) is denied by this
+# environment's egress policy, and its release archive sits behind the session's
+# GitHub repo-scope control — two different mechanisms, both documented in
+# a blocked container-registry CDN host. So this file takes the
+# option the observability requirement explicitly offers.
+#
+# NOTHING HERE IS INVENTED. Every service, image, environment variable, DSN and
+# config file below is lifted from the committed `casting.yaml.lock` — the
+# artifact foundryctl itself produced. The five files in ./conf/ are extracted
+# VERBATIM from `spec.<component>.spec.config.data` and keep their original
+# filenames, and the service names below are exactly the hostnames those configs
+# already reference (e.g. `signoz-telemetrystore-clickhouse-0-0`), so not one
+# byte of SigNoz's own configuration had to be edited to make this run.
+#
+# VERSIONS ARE PINNED, as the observability requirement requires. `casting.yaml.lock` says `latest` for
+# The three SigNoz images, which is not a pin. Each was resolved to the concrete
+# release tag that `latest` pointed at, verified by comparing manifest digests:
+#
+#   signoz/signoz:v0.135.0                latest == v0.135.0  sha256:9b0ea7ad6648…
+#   signoz/signoz-otel-collector:v0.144.6 latest == v0.144.6  sha256:7e4e539a73f1…
+#   signoz/signoz-mcp-server:v0.9.0       latest == v0.9.0    sha256:75327a2cea4b…
+#
+# ClickHouse and Postgres were already pinned in the lock file and are unchanged.
+#
+#   Start:  docker compose -f signoz/deploy/docker-compose.yaml up -d
+#   UI:     http://localhost:3301        (3301 is the port this repo's
+#                                         NEXT_PUBLIC_SIGNOZ_URL already defaults to)
+#   OTLP:   localhost:4317 (gRPC) / localhost:4318 (HTTP)
+#   Stop:   docker compose -f signoz/deploy/docker-compose.yaml down -v
+
+name: signoz
+
+services:
+  # --- coordination -------------------------------------------------------
+  signoz-telemetrykeeper-clickhousekeeper-0:
+    image: clickhouse/clickhouse-keeper:25.12.5
+    restart: unless-stopped
+    # KEEPER_CONFIG, not `command:`. The entrypoint defaults to
+    # keeper_config.xml and silently ignores a mounted YAML file (observed: it
+    # logged "Processing configuration file '/etc/clickhouse-keeper/
+    # keeper_config.xml'"). Passing --config-file as `command:` does NOT work
+    # either — the entrypoint already supplies that flag, and the second copy
+    # aborts startup with "Option must not be given more than once: config-file"
+    # (also observed, container in a restart loop). The env var is the supported
+    # hook: entrypoint.sh line 35 reads
+    # KEEPER_CONFIG="${KEEPER_CONFIG:-/etc/clickhouse-keeper/keeper_config.xml}".
+    # ClickHouse picks the parser from the file extension, so .yaml is fine.
+    environment:
+      KEEPER_CONFIG: /etc/clickhouse-keeper/keeper-0.yaml
+    volumes:
+      - ./conf/keeper-0.yaml:/etc/clickhouse-keeper/keeper-0.yaml:ro
+      - keeper-data:/var/lib/clickhouse-keeper
+    healthcheck:
+      # The keeper's four-letter-word interface: `ruok` answers `imok`.
+      # `four_letter_word_white_list: "*"` in keeper-0.yaml is what permits it.
+      test: ["CMD-SHELL", "echo ruok | nc -w 2 127.0.0.1 9181 | grep -q imok"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  # --- telemetry store ----------------------------------------------------
+  signoz-telemetrystore-clickhouse-0-0:
+    image: clickhouse/clickhouse-server:25.12.5
+    restart: unless-stopped
+    # config-0-0.yaml carries BOTH the server config and the `users:` block —
+    # its own `user_directories.users_xml.path` points back at itself by
+    # relative name, which is why the file keeps that exact filename and is
+    # mounted into the config directory rather than config.d/.
+    # CLICKHOUSE_CONFIG for the same reason as KEEPER_CONFIG above: the
+    # entrypoint already passes --config-file, so `command:` would duplicate it.
+    environment:
+      CLICKHOUSE_CONFIG: /etc/clickhouse-server/config-0-0.yaml
+    volumes:
+      - ./conf/config-0-0.yaml:/etc/clickhouse-server/config-0-0.yaml:ro
+      - clickhouse-data:/var/lib/clickhouse
+    # NOTE: SigNoz's own compose sets `ulimits: nofile 262144` here. It is
+    # deliberately NOT set, because it cannot be honoured in every environment
+    # and failing loudly is worse than running with the default. In this
+    # container the hard limit is 4096 and Docker cannot raise it — attempting to
+    # produces a hard startup failure, not a warning:
+    #   "error setting rlimit type 7: operation not permitted"
+    # ClickHouse runs fine at the default for a single-node dev/demo stack; raise
+    # it on a real host (where the parent limit allows) before any production or
+    # high-cardinality use.
+    depends_on:
+      signoz-telemetrykeeper-clickhousekeeper-0:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8123/ping | grep -q Ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 15s
+
+  # --- metadata store -----------------------------------------------------
+  signoz-metastore-postgres-0:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: signoz
+      POSTGRES_USER: signoz
+      POSTGRES_PASSWORD: signoz
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U signoz -d signoz"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  # --- SigNoz application (UI + query service + opamp) --------------------
+  signoz-signoz-0:
+    image: signoz/signoz:v0.135.0
+    restart: unless-stopped
+    environment:
+      SIGNOZ_SQLSTORE_PROVIDER: postgres
+      SIGNOZ_SQLSTORE_POSTGRES_DSN: postgres://signoz:signoz@signoz-metastore-postgres-0:5432/signoz?sslmode=disable
+      SIGNOZ_TELEMETRYSTORE_PROVIDER: clickhouse
+      SIGNOZ_TELEMETRYSTORE_CLICKHOUSE_DSN: tcp://signoz-telemetrystore-clickhouse-0-0:9000
+    ports:
+      - "3301:8080"     # UI + API
+    depends_on:
+      # The app queries signoz_traces/signoz_logs/signoz_metrics, so it needs the
+      # schema too — not just the ingester that writes into it.
+      signoz-schema-migrator-sync:
+        condition: service_completed_successfully
+      signoz-telemetrystore-clickhouse-0-0:
+        condition: service_healthy
+      signoz-metastore-postgres-0:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 40
+      start_period: 30s
+
+  # --- schema migrations --------------------------------------------------
+  # NOT in casting.yaml.lock — foundryctl runs migrations internally, so the
+  # lock file never names this image. Translating the lock to plain compose
+  # without it produces a stack that starts clean and then silently drops every
+  # span: ClickHouse has no `signoz_traces` database, so the collector's
+  # clickhousetraces exporter has nowhere to write. Verified the hard way —
+  # `SHOW DATABASES` returned only default/system/INFORMATION_SCHEMA, and
+  # `SELECT ... FROM signoz_traces.signoz_index_v3` failed with
+  # "Code: 81 ... Database signoz_traces does not exist".
+  #
+  # `sync` creates the trace/log/metric schemas and must finish before the
+  # collector starts; `async` runs longer-running backfills.
+  signoz-schema-migrator-sync:
+    image: signoz/signoz-schema-migrator:v0.144.6
+    restart: on-failure
+    command:
+      - sync
+      - --dsn=tcp://signoz-telemetrystore-clickhouse-0-0:9000
+      - --up=
+    depends_on:
+      signoz-telemetrystore-clickhouse-0-0:
+        condition: service_healthy
+
+  signoz-schema-migrator-async:
+    image: signoz/signoz-schema-migrator:v0.144.6
+    restart: on-failure
+    command:
+      - async
+      - --dsn=tcp://signoz-telemetrystore-clickhouse-0-0:9000
+      - --up=
+    depends_on:
+      signoz-schema-migrator-sync:
+        condition: service_completed_successfully
+
+  # --- ingester (the OTLP endpoint DevGuard exports to) -------------------
+  signoz-ingester:
+    image: signoz/signoz-otel-collector:v0.144.6
+    restart: unless-stopped
+    command:
+      - --config=/etc/signoz/ingester.yaml
+      - --manager-config=/etc/signoz/opamp.yaml
+      - --copy-path=/var/tmp/collector-config.yaml
+    environment:
+      SIGNOZ_OTEL_COLLECTOR_TIMEOUT: 10m
+      LOW_CARDINAL_EXCEPTION_GROUPING: "false"   # ingester.yaml reads this via ${env:…}
+    volumes:
+      - ./conf/ingester.yaml:/etc/signoz/ingester.yaml:ro
+      - ./conf/opamp.yaml:/etc/signoz/opamp.yaml:ro
+    ports:
+      - "4317:4317"     # OTLP gRPC  <- OTEL_EXPORTER_OTLP_ENDPOINT
+      - "4318:4318"     # OTLP HTTP
+      - "13133:13133"   # health
+    depends_on:
+      signoz-schema-migrator-sync:
+        condition: service_completed_successfully
+      signoz-telemetrystore-clickhouse-0-0:
+        condition: service_healthy
+      signoz-signoz-0:
+        condition: service_healthy
+
+volumes:
+  keeper-data:
+  clickhouse-data:
+  postgres-data:

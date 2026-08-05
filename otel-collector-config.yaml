@@ -1,0 +1,88 @@
+# OpenTelemetry Collector configuration for DevGuard AI.
+#
+# Mounted by the `obs` profile in docker-compose.yml:
+#     docker compose --profile obs up
+#
+# STATUS: structurally validated, NOT yet run against a real collector.
+# The collector image cannot be pulled in the environment where this was
+# authored — every container registry is refused by the egress policy (see
+# container-registry egress was blocked). This file is written
+# against the otel/opentelemetry-collector-contrib:0.96.0 schema that
+# docker-compose.yml pins. Treat "it starts cleanly" as unverified until
+# someone runs it; the first person who can pull the image should run
+#     docker compose --profile obs config
+#     docker compose --profile obs up
+# and record the result.
+#
+# Design intent: this collector is a *local landing zone* so traces have
+# somewhere to go without the full SigNoz stack. Point `otlp/signoz` at a real
+# SigNoz when one is available; until then the debug exporter makes the data
+# visible in `docker compose logs otel-collector`.
+
+receivers:
+  # DevGuard's backend exports over gRPC by default (see telemetry.py:
+  # OTEL_EXPORTER_OTLP_ENDPOINT defaults to http://localhost:4317).
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  # Bound memory before the collector becomes the thing that falls over.
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 75
+    spike_limit_percentage: 20
+
+  # Batching is what keeps export efficient under load.
+  batch:
+    timeout: 5s
+    send_batch_size: 1024
+    send_batch_max_size: 2048
+
+exporters:
+  # Visible in `docker compose logs otel-collector` — the cheapest way to
+  # confirm spans are actually arriving before any backend is wired up.
+  debug:
+    verbosity: normal
+    sampling_initial: 5
+    sampling_thereafter: 200
+
+  # Forward to SigNoz when one exists. Left commented rather than pointed at a
+  # guessed hostname: a config that silently fails to a wrong host is exactly
+  # the failure mode that produced the MCP overclaim (docs/MCP_DECISION.md).
+  #
+  # otlp/signoz:
+  #   endpoint: signoz-otel-collector:4317
+  #   tls:
+  #     insecure: true
+
+extensions:
+  # Lets docker-compose healthcheck the collector rather than assuming it is up.
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+service:
+  extensions: [health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+    # DevGuard bridges stdlib logging into OTLP (telemetry.py's LoggingHandler),
+    # so the logs pipeline is not optional here — without it, the log<->trace
+    # correlation verified by scripts/verify_otel.py has nowhere to land.
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+
+  telemetry:
+    logs:
+      level: info

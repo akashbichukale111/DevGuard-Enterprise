@@ -1,0 +1,16 @@
+# Backend image builds from the REPOSITORY ROOT (see backend/Dockerfile), so this
+# file is what keeps the build context from including several GB of frontend
+# tooling, virtualenvs and build output.
+.git
+.github
+venv/
+.venv/
+**/__pycache__/
+**/*.pyc
+frontend/
+signoz/deploy/
+docs/
+data/benchmark_report.json
+.env
+.env.local
+*.log

@@ -1,0 +1,32 @@
+{
+  "name": "delete a scoped dataset",
+  "expectation": "DENY",
+  "observed": "DENY",
+  "passed": true,
+  "detail": "DELETE_ENTITY was never granted \u2014 an agent must not remove assets",
+  "response": {
+    "errors": [
+      {
+        "message": "Unauthorized to perform this action. Please contact your DataHub administrator.",
+        "locations": [
+          {
+            "line": 1,
+            "column": 27
+          }
+        ],
+        "path": [
+          "batchUpdateSoftDeleted"
+        ],
+        "extensions": {
+          "code": 403,
+          "type": "UNAUTHORIZED",
+          "classification": "DataFetchingException"
+        }
+      }
+    ],
+    "data": {
+      "batchUpdateSoftDeleted": null
+    },
+    "extensions": {}
+  }
+}

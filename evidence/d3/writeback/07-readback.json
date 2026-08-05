@@ -1,0 +1,41 @@
+{
+    "data": {
+        "dataset": {
+            "structuredProperties": {
+                "properties": [
+                    {
+                        "structuredProperty": {
+                            "urn": "urn:li:structuredProperty:devguard.last_incident_id"
+                        },
+                        "values": [
+                            {
+                                "stringValue": "f01f744b-50fb-446d-96a1-4ecf43bc3001"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "editableSchemaMetadata": {
+                "editableSchemaFieldInfo": [
+                    {
+                        "fieldPath": "user_id",
+                        "description": "DRIFTED 2026-08-01T02:16:51Z: this column no longer exists in PostgreSQL \u2014 it was renamed to customer_id. The dbt model stg_users still references user_id and fails to build (exit 1). The already-deployed view kept working because PostgreSQL rewrote it to 'SELECT customer_id AS user_id', so nothing downstream reported an error. Open DevGuard incident: urn:li:incident:f01f744b-50fb-446d-96a1-4ecf43bc3001",
+                        "globalTags": {
+                            "tags": [
+                                {
+                                    "tag": {
+                                        "urn": "urn:li:tag:devguard_incident_impacted"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "incidents": {
+                "total": 1
+            }
+        }
+    },
+    "extensions": {}
+}

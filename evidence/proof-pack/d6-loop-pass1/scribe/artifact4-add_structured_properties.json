@@ -1,0 +1,19 @@
+{
+  "tool": "add_structured_properties",
+  "arguments": {
+    "entity_urns": [
+      "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    ],
+    "property_values": {
+      "urn:li:structuredProperty:devguard.verified_at": [
+        "2026-08-01T10:59:17.034861+00:00"
+      ],
+      "urn:li:structuredProperty:devguard.last_incident_id": [
+        "c2226569-9b88-4754-9a29-eef7b57c9b9c"
+      ]
+    }
+  },
+  "ok": true,
+  "text": "{\"success\":true,\"message\":\"Successfully added 2 structured propert(ies) to 1 entit(ies)\"}",
+  "error": null
+}

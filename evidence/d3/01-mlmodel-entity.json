@@ -1,0 +1,71 @@
+{
+    "data": {
+        "mlModel": {
+            "urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+            "type": "MLMODEL",
+            "name": "devguard_churn_risk",
+            "platform": {
+                "name": "devguard_ml"
+            },
+            "properties": {
+                "description": "DevGuard churn-risk model. Real scikit-learn LogisticRegression trained on 1715 rows from analytics_marts.user_order_features.",
+                "customProperties": [
+                    {
+                        "key": "feature_columns",
+                        "value": "order_count,lifetime_value_cents,avg_order_cents"
+                    },
+                    {
+                        "key": "rows_total",
+                        "value": "1715"
+                    },
+                    {
+                        "key": "framework",
+                        "value": "scikit-learn"
+                    },
+                    {
+                        "key": "estimator",
+                        "value": "LogisticRegression"
+                    },
+                    {
+                        "key": "rows_test",
+                        "value": "429"
+                    },
+                    {
+                        "key": "test_accuracy",
+                        "value": "0.7995337995337995"
+                    },
+                    {
+                        "key": "label",
+                        "value": "refund_count > 0"
+                    },
+                    {
+                        "key": "feature_table",
+                        "value": "analytics_marts.user_order_features"
+                    },
+                    {
+                        "key": "rows_train",
+                        "value": "1286"
+                    },
+                    {
+                        "key": "trained_at",
+                        "value": "2026-07-31T13:13:46.002949+00:00"
+                    }
+                ]
+            },
+            "trainingData": null,
+            "upstream": {
+                "total": 1,
+                "relationships": [
+                    {
+                        "type": "TrainedBy",
+                        "entity": {
+                            "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard_ml,substrate_ml,PROD),train_churn_model)",
+                            "type": "DATA_JOB"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "extensions": {}
+}

@@ -1,0 +1,53 @@
+{
+  "run_id": "d5-refusal",
+  "written_at": "2026-08-01T09:50:31.727726+00:00",
+  "artifact_count": 5,
+  "artifacts": [
+    {
+      "name": "watcher/dbt-run.txt",
+      "raw_ref": "evidence/proof-pack/d5-refusal/watcher/dbt-run.txt",
+      "bytes": 1427,
+      "truncated": false,
+      "note": "Raw output of the command the Watcher observed.",
+      "written_at": "2026-08-01T09:49:58.677256+00:00"
+    },
+    {
+      "name": "datahub-unavailable.txt",
+      "raw_ref": "evidence/proof-pack/d5-refusal/datahub-unavailable.txt",
+      "bytes": 1819,
+      "truncated": false,
+      "note": "The catalog could not be reached. No DATAHUB_GRAPH evidence exists for this run.",
+      "written_at": "2026-08-01T09:50:31.724832+00:00"
+    },
+    {
+      "name": "evidence-chain.json",
+      "raw_ref": "evidence/proof-pack/d5-refusal/evidence-chain.json",
+      "bytes": 3450,
+      "truncated": false,
+      "note": "\u00a77's chain for this scenario.",
+      "written_at": "2026-08-01T09:50:31.726931+00:00"
+    },
+    {
+      "name": "diagnosis.json",
+      "raw_ref": "evidence/proof-pack/d5-refusal/diagnosis.json",
+      "bytes": 378,
+      "truncated": false,
+      "note": "The Diagnostician's typed output.",
+      "written_at": "2026-08-01T09:50:31.727150+00:00"
+    },
+    {
+      "name": "handoff-rail.json",
+      "raw_ref": "evidence/proof-pack/d5-refusal/handoff-rail.json",
+      "bytes": 1017,
+      "truncated": false,
+      "note": "\u00a76's envelopes, in order.",
+      "written_at": "2026-08-01T09:50:31.727685+00:00"
+    }
+  ],
+  "scenario": "refusal",
+  "gms_url": "http://localhost:1",
+  "incident_id": "D5REF",
+  "chain_is_sufficient": false,
+  "diagnostician_verdict": "INSUFFICIENT_EVIDENCE",
+  "diagnostician_is_refusal": true
+}

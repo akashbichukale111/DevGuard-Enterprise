@@ -1,0 +1,53 @@
+{
+  "performed": true,
+  "reason": "DRY RUN \u2014 every payload was captured and nothing was sent. The incident is untouched.",
+  "incident_resolved": false,
+  "all_landed": true,
+  "artifacts": [
+    {
+      "number": 3,
+      "name": "column-level annotation",
+      "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)#user_id",
+      "outcome": "skipped_dry_run",
+      "idempotency_key": "D6115219|column_annotation|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)#user_id",
+      "detail": "tag + description applied to the schema field",
+      "raw_ref": "evidence/proof-pack/d6-dry-run/scribe/dry-run-artifact3-update_description.json"
+    },
+    {
+      "number": 2,
+      "name": "verified post-mortem runbook (type: Analysis)",
+      "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "outcome": "skipped_dry_run",
+      "idempotency_key": "D6115219|runbook|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "detail": "dry-run",
+      "raw_ref": "evidence/proof-pack/d6-dry-run/scribe/dry-run-artifact2-save_document.json"
+    },
+    {
+      "number": 4,
+      "name": "structured incident facts",
+      "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "outcome": "skipped_dry_run",
+      "idempotency_key": "D6115219|structured_properties|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "detail": "dry-run",
+      "raw_ref": "evidence/proof-pack/d6-dry-run/scribe/dry-run-artifact4-add_structured_properties.json"
+    },
+    {
+      "number": 5,
+      "name": "ownership signal",
+      "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "outcome": "already_present",
+      "idempotency_key": "D6115219|ownership|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "detail": "owned by DataHub; approval was routed to the existing owner",
+      "raw_ref": ""
+    },
+    {
+      "number": 1,
+      "name": "incident resolved",
+      "target_urn": "",
+      "outcome": "skipped_dry_run",
+      "idempotency_key": "*|incident_resolved|",
+      "detail": "dry run \u2014 no incident raised, so none to resolve",
+      "raw_ref": "evidence/proof-pack/d6-dry-run/scribe/dry-run-artifact1-resolve.json"
+    }
+  ]
+}

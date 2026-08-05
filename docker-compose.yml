@@ -1,0 +1,78 @@
+# DevGuard AI — one-command local spin-up (and judging fallback).
+#
+#   docker compose up                → frontend + backend + redis
+#   docker compose --profile obs up  → also brings up self-hosted SigNoz
+#
+# The `obs` profile is opt-in because full SigNoz is heavy; for most local
+# runs the OTLP exporter can point at SigNoz Cloud instead (see DEPLOYMENT.md).
+
+# NOTE: no top-level `version:` key. Compose v2 ignores it and warns
+# ("the attribute `version` is obsolete") on every invocation — AUDIT B7.
+
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build:
+      # Context is the REPO ROOT, not ./backend — requirements.txt and
+      # groq_client.py live here, and main.py imports `backend.*` as a package.
+      # AUDIT B1/B2: the previous `context: ./backend` made this image
+      # unbuildable and unbootable. See backend/Dockerfile for the full note.
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # NOT `${GROQ_API_KEY:?...}`. The `:?` form aborts `docker compose up`
+      # outright when the variable is unset, which contradicts this project's
+      # own guarantee that the backend boots without a key (AUDIT B4) and made
+      # the documented one-command start impossible on a clean clone. Unset is
+      # allowed: scans then fail at the LLM call with a clear error, which is
+      # The designed keyless behaviour.
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      REDIS_URL: redis://redis:6379/0
+      # Default to local OTLP collector; override to SigNoz Cloud if preferred.
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
+      OTEL_SERVICE_NAME: devguard-backend
+      PORT: "8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_SIGNOZ_URL: ${NEXT_PUBLIC_SIGNOZ_URL:-http://localhost:3301}
+    depends_on:
+      - backend
+
+  # --- Optional self-hosted observability (profile: obs) -------------------
+  # Minimal OTLP collector so local traces have somewhere to land without the
+  # full SigNoz stack. For the real SigNoz UI, follow DEPLOYMENT.md Option B.
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.96.0
+    profiles: ["obs"]
+    command: ["--config=/etc/otel/config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel/config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+
+volumes: {}

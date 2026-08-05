@@ -1,0 +1,32 @@
+{
+  "name": "edit lineage",
+  "expectation": "DENY",
+  "observed": "DENY",
+  "passed": true,
+  "detail": "EDIT_LINEAGE was never granted \u2014 lineage is ingested, never authored (\u00a73)",
+  "response": {
+    "errors": [
+      {
+        "message": "Unauthorized to edit urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD) lineage for dataset",
+        "locations": [
+          {
+            "line": 1,
+            "column": 42
+          }
+        ],
+        "path": [
+          "updateLineage"
+        ],
+        "extensions": {
+          "code": 403,
+          "type": "UNAUTHORIZED",
+          "classification": "DataFetchingException"
+        }
+      }
+    ],
+    "data": {
+      "updateLineage": null
+    },
+    "extensions": {}
+  }
+}

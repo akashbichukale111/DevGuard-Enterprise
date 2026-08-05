@@ -1,0 +1,24 @@
+version: 2
+sources:
+  - name: raw
+    # Overridable so the fault-injection evaluation's fault-injection eval can point the whole project at a
+    # throwaway CLONE of the raw schema. Faults there are real DDL against real
+    # tables, but they never touch `raw` itself or the production staging views
+    # — which matters because PostgreSQL refuses `ALTER COLUMN ... TYPE` while
+    # any view depends on the column, so an eval sharing `raw` cannot even
+    # inject a type change without first destroying the demo state that the recorded evidence
+    # evidence depends on.
+    # Defaults to `raw`, so every existing command is unchanged.
+    schema: "{{ env_var('SUBSTRATE_RAW_SCHEMA', 'raw') }}"
+    description: Raw application tables loaded into the substrate Postgres.
+    tables:
+      - name: users
+        description: Raw user records.
+        columns:
+          - name: user_id
+            description: >
+              Primary identifier for a user. THIS is the column the reference-incident
+              renames to customer_id; everything below it in this project depends
+              on the name.
+      - name: orders
+        description: Raw order events.

@@ -1,0 +1,212 @@
+2026-07-31 13:11:04,055 [datahub.masking.bootstrap] INFO: Initializing secret masking infrastructure
+2026-07-31 13:11:04,056 [datahub.masking.masking_filter] INFO: Installed SecretMaskingFilter on root logger
+2026-07-31 13:11:04,056 [datahub.masking.masking_filter] DEBUG: Wrapped sys.stdout with StreamMaskingWrapper
+2026-07-31 13:11:04,056 [datahub.masking.masking_filter] DEBUG: Wrapped sys.stderr with StreamMaskingWrapper
+2026-07-31 13:11:04,056 [datahub.masking.masking_filter] DEBUG: Updated 4 logging handlers to use wrapped streams
+2026-07-31 13:11:04,057 [datahub.masking.bootstrap] DEBUG: Installed custom exception hook for secret masking
+2026-07-31 13:11:04,057 [datahub.masking.bootstrap] INFO: Secret masking infrastructure initialized successfully. Secrets will be registered automatically as they are loaded.
+[2026-07-31 13:11:04,057] INFO     {datahub.cli.ingest_cli:206} - DataHub CLI version: 1.6.0.16
+2026-07-31 13:11:04,063 [datahub.masking.masking_filter] DEBUG: Rebuilt masking pattern with 2 secrets (version 1)
+2026-07-31 13:11:04,062 [datahub.masking.secret_registry] DEBUG: Batch registered 1 secrets (version 1)
+2026-07-31 13:11:04,064 [datahub.masking.masking_filter] DEBUG: Rebuilt masking pattern with 4 secrets (version 2)
+2026-07-31 13:11:04,063 [datahub.masking.secret_registry] DEBUG: Batch registered 1 secrets (version 2)
+[2026-07-31 13:11:04,073] WARNING  {datahub.ingestion.sink.datahub_rest:166} - REST sink mode is ASYNC_BATCH but DATAHUB_EMIT_MODE is SYNC_PRIMARY (sync family). Overriding GMS emit mode to ASYNC.
+[2026-07-31 13:11:04,081] INFO     {datahub.ingestion.run.pipeline:398} - Sink configured successfully. DataHubRestEmitter: configured to talk to ***REDACTED:DATAHUB_GMS_URL*** with token: {"ti**********er"}
+[2026-07-31 13:11:04,531] INFO     {datahub.ingestion.run.pipeline:440} - Source configured successfully.
+[2026-07-31 13:11:04,532] INFO     {datahub.cli.ingest_cli:187} - Starting metadata ingestion
+[2026-07-31 13:11:04,972] WARNING  {datahub.ingestion.workunit_processors.auto_lowercase_urns:48} - URN lowercasing not applied: convert_urns_to_lowercase defaults to true for this source but is not set in the recipe; leaving it disabled to preserve existing dataset URNs. Set it explicitly in the recipe to enable.
+[2026-07-31 13:11:04,972] INFO     {datahub.ingestion.api.source:719} - Workunit processor 'AutoLowercaseUrnsProcessor' disabled by should_enable()
+[2026-07-31 13:11:04,973] INFO     {datahub.ingestion.api.source:708} - Workunit processor 'AutoStatusAspectProcessor' enabled
+[2026-07-31 13:11:04,973] INFO     {datahub.ingestion.api.source:708} - Workunit processor 'AutoMaterializeReferencedTagsTermsProcessor' enabled
+[2026-07-31 13:11:04,973] INFO     {datahub.ingestion.api.source:708} - Workunit processor 'ValidateDuplicateSchemaFieldPathsProcessor' enabled
+[2026-07-31 13:11:04,974] INFO     {datahub.ingestion.api.source:708} - Workunit processor 'ValidateEmptySchemaFieldPathsProcessor' enabled
+[2026-07-31 13:11:04,974] INFO     {datahub.ingestion.api.source:708} - Workunit processor 'AutoBrowsePathV2Processor' enabled
+[2026-07-31 13:11:04,974] INFO     {datahub.ingestion.api.source:719} - Workunit processor 'AutoResolveLineageUrnsProcessor' disabled by should_enable()
+[2026-07-31 13:11:04,974] INFO     {datahub.ingestion.api.source:702} - Workunit processor 'AutoIncrementalLineageProcessor' excluded by source
+[2026-07-31 13:11:04,974] INFO     {datahub.ingestion.api.source:719} - Workunit processor 'AutoIncrementalPropertiesProcessor' disabled by should_enable()
+[2026-07-31 13:11:04,974] INFO     {datahub.ingestion.api.source:719} - Workunit processor 'AutoIncrementalOwnershipProcessor' disabled by should_enable()
+[2026-07-31 13:11:04,974] INFO     {datahub.ingestion.api.source:708} - Workunit processor 'AutoWorkunitsReporterProcessor' enabled
+[2026-07-31 13:11:04,975] INFO     {datahub.ingestion.api.source:708} - Workunit processor 'AutoPatchLastModifiedProcessor' enabled
+[2026-07-31 13:11:04,975] INFO     {datahub.ingestion.api.source:708} - Workunit processor 'ValidateInputFieldsProcessor' enabled
+[2026-07-31 13:11:04,975] INFO     {datahub.ingestion.api.source:708} - Workunit processor 'EnsureAspectSizeProcessor' enabled
+[2026-07-31 13:11:04,975] INFO     {datahub.ingestion.api.source:708} - Workunit processor 'AutoStaleEntityRemovalProcessor' enabled
+[2026-07-31 13:11:05,234] INFO     {datahub.ingestion.source.dbt.dbt_common:2015} - Creating dbt metadata for 5 nodes
+[2026-07-31 13:11:05,270] INFO     {datahub.ingestion.source.dbt.dbt_common:2022} - Updating postgres metadata
+[2026-07-31 13:11:05,308] INFO     {datahub.ingestion.run.pipeline:811} - Processing commit request for DatahubIngestionCheckpointingProvider. Commit policy = CommitPolicy.ALWAYS, has_errors=False, has_warnings=True
+[2026-07-31 13:11:05,522] INFO     {datahub.ingestion.run.pipeline:831} - Successfully committed changes for DatahubIngestionCheckpointingProvider.
+[2026-07-31 13:11:05,824] INFO     {datahub.cli.ingest_cli:200} - Finished metadata ingestion
+[2026-07-31 13:11:06,185] WARNING  {urllib3.connectionpool:869} - Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'OSError('Tunnel connection failed: 403 Forbidden')': /mp/track
+[2026-07-31 13:11:07,006] WARNING  {urllib3.connectionpool:869} - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'OSError('Tunnel connection failed: 403 Forbidden')': /mp/track
+[2026-07-31 13:11:08,367] WARNING  {urllib3.connectionpool:869} - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'OSError('Tunnel connection failed: 403 Forbidden')': /mp/track
+[2026-07-31 13:11:10,811] WARNING  {urllib3.connectionpool:869} - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'OSError('Tunnel connection failed: 403 Forbidden')': /mp/track
+
+Cli report:
+{'cli_version': '1.6.0.16',
+ 'cli_entry_location': '/opt/devguard/scratch/dhvenv/lib/python3.11/site-packages/datahub/ingestion/run/pipeline.py',
+ 'models_version': 'bundled',
+ 'py_version': '3.11.15 (main, Mar  3 2026, 09:26:23) [GCC 13.3.0]',
+ 'py_exec_path': '/opt/devguard/scratch/dhvenv/bin/python3',
+ 'os_details': 'Linux-6.18.5-x86_64-with-glibc2.39',
+ 'mem_info': '165.13 MB',
+ 'peak_memory_usage': '165.13 MB',
+ 'disk_info': {'total': '270.55 GB', 'used': '34.79 GB', 'used_initally': '34.72 GB', 'free': '4.99 GB'},
+ 'peak_disk_usage': '34.79 GB',
+ 'thread_count': 4,
+ 'peak_thread_count': 5}
+Source (dbt) report:
+{'ingestion_high_stage_seconds': {},
+ 'ingestion_stage_durations': {},
+ 'aspects': {'dataset': {'subTypes': 5,
+                         'dataPlatformInstance': 5,
+                         'datasetProperties': 5,
+                         'status': 5,
+                         'schemaMetadata': 5,
+                         'upstreamLineage': 8,
+                         'fineGrainedLineages': 5,
+                         'viewProperties': 3}},
+ 'aspects_by_subtypes_full_count': {'dataset': {'Model': {'subTypes': 3,
+                                                          'dataPlatformInstance': 3,
+                                                          'datasetProperties': 3,
+                                                          'status': 3,
+                                                          'schemaMetadata': 3,
+                                                          'upstreamLineage': 3,
+                                                          'fineGrainedLineages': 3,
+                                                          'viewProperties': 3},
+                                                'Source': {'subTypes': 2,
+                                                           'dataPlatformInstance': 2,
+                                                           'datasetProperties': 2,
+                                                           'status': 2,
+                                                           'schemaMetadata': 2,
+                                                           'upstreamLineage': 2,
+                                                           'fineGrainedLineages': 2},
+                                                'unknown': {'upstreamLineage': 3}}},
+ 'samples': {'lineage': {'Model': ['urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_orders,PROD)',
+                                   'urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)',
+                                   'urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)'],
+                         'Source': ['urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.orders,PROD)',
+                                    'urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)'],
+                         'unknown': ['urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_orders,PROD)',
+                                     'urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)',
+                                     'urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)']}},
+ 'compute_stats_time_seconds': 0.001139,
+ 'event_not_produced_warn': True,
+ 'events_produced': 18,
+ 'events_produced_per_sec': 2,
+ 'workunit_processor_reports': {'AutoStatusAspectProcessor': {'num_errors': 0, 'num_status_aspects_emitted': 0, 'status_patch_mode': False},
+                                'AutoMaterializeReferencedTagsTermsProcessor': {'num_exceptions': 0},
+                                'ValidateDuplicateSchemaFieldPathsProcessor': {'total_schema_aspects': 5,
+                                                                               'schemas_with_duplicates': 0,
+                                                                               'duplicated_field_paths': 0},
+                                'ValidateEmptySchemaFieldPathsProcessor': {'total_schema_aspects': 5,
+                                                                           'schemas_with_empty_fields': 0,
+                                                                           'empty_field_paths': 0},
+                                'AutoBrowsePathV2Processor': {'num_out_of_batch': 0,
+                                                              'num_out_of_order': 0,
+                                                              'num_browse_path_v2_emitted': 0,
+                                                              'num_container_or_legacy_emitted': 0,
+                                                              'num_fallback_emitted': 0},
+                                'AutoWorkunitsReporterProcessor': {},
+                                'AutoPatchLastModifiedProcessor': {'num_patches_emitted': 0},
+                                'ValidateInputFieldsProcessor': {'num_input_fields_filtered': 0,
+                                                                 'num_workunits_with_invalid_fields': 0,
+                                                                 'num_workunits_skipped_entirely': 0},
+                                'EnsureAspectSizeProcessor': {'num_truncations_by_aspect': {}, 'num_platform_schema_drops': 0},
+                                'AutoStaleEntityRemovalProcessor': {}},
+ 'soft_deleted_stale_entities': [],
+ 'last_state_non_deletable_entities': [],
+ 'entity_type_deletion_summary': {},
+ 'sql_parser_skipped_missing_code': [],
+ 'sql_parser_skipped_non_sql_model': [],
+ 'sql_parser_parse_failures': 0,
+ 'sql_parser_detach_ctes_failures': 0,
+ 'sql_parser_table_errors': 0,
+ 'sql_parser_column_errors': 0,
+ 'sql_parser_successes': 3,
+ 'node_extraction_failures': 0,
+ 'node_extraction_failures_list': [],
+ 'node_cll_failures': 0,
+ 'node_cll_failures_list': [],
+ 'node_emission_failures': 0,
+ 'node_emission_failures_list': [],
+ 'nodes_with_catalog_columns': 5,
+ 'nodes_with_inferred_columns': 0,
+ 'nodes_with_graph_columns': 0,
+ 'nodes_with_no_columns': 0,
+ 'total_jobs_retreived_from_api': 0,
+ 'total_jobs_processed': 0,
+ 'total_jobs_processed_skipped': 0,
+ 'processed_jobs_list': [],
+ 'sql_parser_parse_failures_list': [],
+ 'sql_parser_detach_ctes_failures_list': [],
+ 'nodes_filtered': [],
+ 'lineage_upstreams_skipped_missing': 0,
+ 'duplicate_sources_dropped': 0,
+ 'duplicate_sources_references_updated': 0,
+ 'num_queries_emitted': 0,
+ 'num_queries_failed': 0,
+ 'queries_failed_list': [],
+ 'query_timestamps_fallback_used': False,
+ 'catalog_stats_extracted': 0,
+ 'catalog_stats_skipped_no_data': 5,
+ 'catalog_generated_at': '2026-07-31 13:06:57.580832+00:00 (4 minutes and 13.58 seconds ago)',
+ 'num_exposures_emitted': 0,
+ 'num_exposures_by_type': {},
+ 'num_semantic_models_emitted': 0,
+ 'catalog_info': {'generated_at': '2026-07-31T13:06:57.580832Z', 'dbt_version': '1.12.0', 'project_name': 'unknown'},
+ 'manifest_info': {'generated_at': '2026-07-31T13:06:57.082369Z', 'dbt_version': '1.12.0', 'project_name': 'devguard_substrate'},
+ 'platform': 'dbt',
+ 'start_time': '2026-07-31 13:11:04.531450 (6.63 seconds ago)',
+ 'running_time': '6.63 seconds',
+ 'failures': [],
+ 'warnings': [{'title': 'URN lowercasing not applied',
+               'message': 'convert_urns_to_lowercase defaults to true for this source but is not set in the recipe; leaving it disabled to preserve '
+                          'existing dataset URNs. Set it explicitly in the recipe to enable.',
+               'context': []}],
+ 'infos': []}
+
+Aspects by Subtypes:
++----------------------+-------------------+--------------------+---------------------+
+| Aspect               |   dataset (Model) |   dataset (Source) |   dataset (unknown) |
++======================+===================+====================+=====================+
+| dataPlatformInstance |                 3 |                  2 |                   0 |
++----------------------+-------------------+--------------------+---------------------+
+| datasetProperties    |                 3 |                  2 |                   0 |
++----------------------+-------------------+--------------------+---------------------+
+| fineGrainedLineages  |                 3 |                  2 |                   0 |
++----------------------+-------------------+--------------------+---------------------+
+| schemaMetadata       |                 3 |                  2 |                   0 |
++----------------------+-------------------+--------------------+---------------------+
+| status               |                 3 |                  2 |                   0 |
++----------------------+-------------------+--------------------+---------------------+
+| subTypes             |                 3 |                  2 |                   0 |
++----------------------+-------------------+--------------------+---------------------+
+| upstreamLineage      |                 3 |                  2 |                   3 |
++----------------------+-------------------+--------------------+---------------------+
+| viewProperties       |                 3 |                  0 |                   0 |
++----------------------+-------------------+--------------------+---------------------+
+Sink (datahub-rest) report:
+{'total_records_written': 20,
+ 'records_written_per_second': 2,
+ 'warnings': [],
+ 'failures': [],
+ 'start_time': '2026-07-31 13:11:04.073650 (7.09 seconds ago)',
+ 'current_time': '2026-07-31 13:11:11.167385 (now)',
+ 'total_duration_in_seconds': 7.09,
+ 'mode': 'ASYNC_BATCH',
+ 'endpoint': 'RESTLI',
+ 'max_threads': 15,
+ 'gms_version': 'v1.6.0',
+ 'pending_requests': 0,
+ 'async_batches_prepared': 1,
+ 'async_batches_split': 0,
+ 'main_thread_blocking_timer': '0.291 seconds'}
+
+Pipeline finished with at least 1 warnings; produced 20 events in 6.63 seconds.
+[2026-07-31 13:11:11,627] WARNING  {urllib3.connectionpool:869} - Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'OSError('Tunnel connection failed: 403 Forbidden')': /mp/track
+[2026-07-31 13:11:13,316] WARNING  {urllib3.connectionpool:869} - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'OSError('Tunnel connection failed: 403 Forbidden')': /mp/track
+[2026-07-31 13:11:14,672] WARNING  {urllib3.connectionpool:869} - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'OSError('Tunnel connection failed: 403 Forbidden')': /mp/track
+[2026-07-31 13:11:16,983] WARNING  {urllib3.connectionpool:869} - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'OSError('Tunnel connection failed: 403 Forbidden')': /mp/track
+[2026-07-31 13:11:17,663] WARNING  {urllib3.connectionpool:869} - Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'OSError('Tunnel connection failed: 403 Forbidden')': /mp/track
+[2026-07-31 13:11:18,558] WARNING  {urllib3.connectionpool:869} - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'OSError('Tunnel connection failed: 403 Forbidden')': /mp/track
+[2026-07-31 13:11:19,866] WARNING  {urllib3.connectionpool:869} - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'OSError('Tunnel connection failed: 403 Forbidden')': /mp/track
+[2026-07-31 13:11:22,221] WARNING  {urllib3.connectionpool:869} - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'OSError('Tunnel connection failed: 403 Forbidden')': /mp/track
