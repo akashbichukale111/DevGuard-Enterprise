@@ -188,7 +188,7 @@ jobs:
           fi
           echo "No credential patterns found in history."
 
-      - name: Scan the working tree (05 the secret-hygiene rule, same scanner as `make verify`)
+      - name: Scan the working tree (same scanner as `make verify`)
         run: python scripts/scan_secrets.py
 
       - name: Ensure no .env file is tracked
