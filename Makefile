@@ -53,7 +53,7 @@ scan-secrets:  ## Secret scan over every tracked file
 	$(PYTHON) scripts/scan_secrets.py
 
 .PHONY: replay
-replay:  ## Build replay bundles from the committed proof packs (05 the zero-infrastructure replay requirement)
+replay:  ## Build replay bundles from the committed proof packs
 	$(PYTHON) scripts/build_replay.py
 	@echo ""
 	@echo "replay: bundles in frontend/public/replay/. 'make replay-serve' to view them."
