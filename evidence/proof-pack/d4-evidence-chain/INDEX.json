@@ -1,0 +1,112 @@
+{
+  "run_id": "d4-evidence-chain",
+  "written_at": "2026-08-01T07:13:51.886889+00:00",
+  "artifact_count": 12,
+  "artifacts": [
+    {
+      "name": "watcher/dbt-run.txt",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt",
+      "bytes": 1427,
+      "truncated": false,
+      "note": "Raw output of the command the Watcher observed.",
+      "written_at": "2026-08-01T07:13:48.413161+00:00"
+    },
+    {
+      "name": "archivist/capabilities.json",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/archivist/capabilities.json",
+      "bytes": 8371,
+      "truncated": false,
+      "note": "The negotiated capability set for THIS run. Not a constant.",
+      "written_at": "2026-08-01T07:13:50.703572+00:00"
+    },
+    {
+      "name": "archivist/grep_documents.json",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/archivist/grep_documents.json",
+      "bytes": 577,
+      "truncated": false,
+      "note": "Raw document-retrieval response.",
+      "written_at": "2026-08-01T07:13:50.709347+00:00"
+    },
+    {
+      "name": "archivist/search_documents.json",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/archivist/search_documents.json",
+      "bytes": 460,
+      "truncated": false,
+      "note": "Raw document-retrieval response.",
+      "written_at": "2026-08-01T07:13:50.758952+00:00"
+    },
+    {
+      "name": "cartographer/search-stg_users.json",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/cartographer/search-stg_users.json",
+      "bytes": 2622,
+      "truncated": false,
+      "note": "Name -> URN resolution. The seam where analysis can go to the wrong asset.",
+      "written_at": "2026-08-01T07:13:50.905249+00:00"
+    },
+    {
+      "name": "cartographer/schema-stg_users.json",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/cartographer/schema-stg_users.json",
+      "bytes": 771,
+      "truncated": false,
+      "note": "The CATALOG's schema. During drift this deliberately disagrees with the database, and that gap is the incident.",
+      "written_at": "2026-08-01T07:13:51.016335+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage-downstream.json",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream.json",
+      "bytes": 8332,
+      "truncated": false,
+      "note": "Dataset-level blast radius. Reaches the dataJob and the mlModel.",
+      "written_at": "2026-08-01T07:13:51.353600+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage-downstream-column.json",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream-column.json",
+      "bytes": 7157,
+      "truncated": false,
+      "note": "Column-level blast radius. Every hit carries lineageColumns. Does NOT reach the mlModel \u2014 that edge is dataset-level (integration finding 14).",
+      "written_at": "2026-08-01T07:13:51.556315+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage_paths_between.json",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage_paths_between.json",
+      "bytes": 2543,
+      "truncated": false,
+      "note": "Column-level path. The middle element is the real SQL.",
+      "written_at": "2026-08-01T07:13:51.829609+00:00"
+    },
+    {
+      "name": "pathfinder/get_dataset_queries.json",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_dataset_queries.json",
+      "bytes": 847,
+      "truncated": false,
+      "note": "Real SQL touching the column, ingested rather than authored.",
+      "written_at": "2026-08-01T07:13:51.868588+00:00"
+    },
+    {
+      "name": "evidence-chain.json",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/evidence-chain.json",
+      "bytes": 5355,
+      "truncated": false,
+      "note": "\u00a77's chain. is_sufficient is the D4 gate.",
+      "written_at": "2026-08-01T07:13:51.885716+00:00"
+    },
+    {
+      "name": "handoff-rail.json",
+      "raw_ref": "evidence/proof-pack/d4-evidence-chain/handoff-rail.json",
+      "bytes": 5377,
+      "truncated": false,
+      "note": "\u00a76's AgentHandoff envelopes, in order. The UI rail renders these.",
+      "written_at": "2026-08-01T07:13:51.886778+00:00"
+    }
+  ],
+  "incident_id": "D4",
+  "evidence_chain_digest": "a16d2927e4e56487",
+  "chain_is_sufficient": true,
+  "handoffs": [
+    "watcher->cartographer:OK",
+    "archivist->cartographer:OK",
+    "cartographer->pathfinder:OK",
+    "pathfinder->diagnostician:OK"
+  ]
+}

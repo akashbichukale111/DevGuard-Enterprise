@@ -1,0 +1,3 @@
+# Runtime directory for the hash-chained audit log (data/audit_log.jsonl).
+# Created on first write; kept in version control so container builds that
+# COPY this path succeed on a clean clone.

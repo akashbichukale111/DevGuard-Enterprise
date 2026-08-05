@@ -1,0 +1,38 @@
+# DataHub ingestion — dbt manifest (the design thesis).
+#
+# This recipe is the single most load-bearing file in the substrate, because it
+# is what makes this sentence true:
+#
+#     "All hero-path lineage was ingested from the running stack.
+#      No lineage was hand-authored."
+#
+# DataHub's dbt source reads the manifest dbt itself produced and derives
+# COLUMN-LEVEL lineage from it. Run `dbt run` (or `dbt compile`) before this, or
+# The manifest will be stale and the lineage will describe a world that no longer
+# exists — which after the reference-incident rename is exactly the wrong answer.
+#
+#   cd substrate/dbt && dbt run
+#   datahub ingest -c recipes/dbt.yml
+# Required whenever stateful_ingestion is enabled: the state is keyed by this
+# name, so it must be stable across runs.
+pipeline_name: "devguard_substrate_dbt"
+
+source:
+  type: dbt
+  config:
+    manifest_path: "substrate/dbt/target/manifest.json"
+    catalog_path: "substrate/dbt/target/catalog.json"
+    # Must match the platform + instance the postgres recipe emitted, or dbt
+    # nodes will not attach to the physical tables and the lineage will be
+    # orphaned rather than joined.
+    target_platform: postgres
+    infer_dbt_schemas: true
+    include_column_lineage: true
+    stateful_ingestion:
+      enabled: true
+
+sink:
+  type: datahub-rest
+  config:
+    server: "${DATAHUB_GMS_URL:-http://localhost:8080}"
+    token: "${DATAHUB_GMS_TOKEN}"

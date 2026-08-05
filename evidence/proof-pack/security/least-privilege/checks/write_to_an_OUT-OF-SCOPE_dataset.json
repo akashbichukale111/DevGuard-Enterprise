@@ -1,0 +1,32 @@
+{
+  "name": "write to an OUT-OF-SCOPE dataset",
+  "expectation": "DENY",
+  "observed": "DENY",
+  "passed": true,
+  "detail": "the dbt sibling is real and ingested, but outside the five-URN scope",
+  "response": {
+    "errors": [
+      {
+        "message": "Unauthorized to perform this action. Please contact your DataHub administrator.",
+        "locations": [
+          {
+            "line": 1,
+            "column": 36
+          }
+        ],
+        "path": [
+          "addTags"
+        ],
+        "extensions": {
+          "code": 403,
+          "type": "UNAUTHORIZED",
+          "classification": "DataFetchingException"
+        }
+      }
+    ],
+    "data": {
+      "addTags": null
+    },
+    "extensions": {}
+  }
+}

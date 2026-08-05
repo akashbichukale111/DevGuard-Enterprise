@@ -1,0 +1,15 @@
+{
+    "value": {
+        "trainingData": [
+            {
+                "dataset": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+                "motivation": "Per-user order aggregates are the only feature source for churn risk; the model reads order_count, lifetime_value_cents and avg_order_cents from this table.",
+                "preProcessing": [
+                    "label derived as refund_count > 0",
+                    "refund_count deliberately excluded from features (label leakage)",
+                    "train/test split 1286/429"
+                ]
+            }
+        ]
+    }
+}

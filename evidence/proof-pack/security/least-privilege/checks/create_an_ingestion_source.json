@@ -1,0 +1,32 @@
+{
+  "name": "create an ingestion source",
+  "expectation": "DENY",
+  "observed": "DENY",
+  "passed": true,
+  "detail": "MANAGE_INGESTION was never granted \u2014 it must not change what enters the catalog",
+  "response": {
+    "errors": [
+      {
+        "message": "Unauthorized to perform this action. Please contact your DataHub administrator.",
+        "locations": [
+          {
+            "line": 1,
+            "column": 50
+          }
+        ],
+        "path": [
+          "createIngestionSource"
+        ],
+        "extensions": {
+          "code": 403,
+          "type": "UNAUTHORIZED",
+          "classification": "DataFetchingException"
+        }
+      }
+    ],
+    "data": {
+      "createIngestionSource": null
+    },
+    "extensions": {}
+  }
+}

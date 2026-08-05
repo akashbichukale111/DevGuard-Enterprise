@@ -1,0 +1,24 @@
+GMS URL: http://localhost:1
+
+DataHubUnavailableError: MCP server exited rc=1; stderr tail:
+    graph.test_connection()
+  File "/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/ingestion/graph/client.py", line 238, in test_connection
+    super().test_connection()
+  File "/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/emitter/rest_emitter.py", line 708, in test_connection
+    self.fetch_server_config()
+  File "/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/emitter/rest_emitter.py", line 657, in fetch_server_config
+    response = self._session.get(url)
+               ^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py", line 671, in get
+    return self.request("GET", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/adapters.py", line 729, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=1): Max retries exceeded with url: /config (Caused by NewConnectionError("HTTPConnection(host='localhost', port=1): Failed to establish a new connection: [Errno 111] Connection refused"))
+

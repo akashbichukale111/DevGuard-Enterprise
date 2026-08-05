@@ -1,0 +1,51 @@
+{
+  "incident_id": "D5REF",
+  "digest": "e1c21616bd685a90",
+  "is_sufficient": false,
+  "missing_for_sufficiency": [
+    "DATAHUB_GRAPH"
+  ],
+  "datahub_error": "DataHubUnavailableError: MCP server exited rc=1; stderr tail:\n    graph.test_connection()\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/ingestion/graph/client.py\", line 238, in test_connection\n    super().test_connection()\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/emitter/rest_emitter.py\", line 708, in test_connection\n    self.fetch_server_config()\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/emitter/rest_emitter.py\", line 657, in fetch_server_config\n    response = self._session.get(url)\n               ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\", line 671, in get\n    return self.request(\"GET\", url, params=params, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\", line 651, in request\n    resp = self.send(prep, **send_kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\", line 784, in send\n    r = adapter.send(request, **kwargs)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/adapters.py\", line 729, in send\n    raise ConnectionError(e, request=request)\nrequests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=1): Max retries exceeded with url: /config (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=1): Failed to establish a new connection: [Errno 111] Connection refused\"))\n",
+  "items": [
+    {
+      "id": "EV-D5REF-001",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T09:49:58.677282Z",
+      "claim": "`dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)",
+      "raw_ref": "evidence/proof-pack/d5-refusal/watcher/dbt-run.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D5REF-002",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T09:49:58.677331Z",
+      "claim": "model stg_users failed to build (models/staging/stg_users.sql)",
+      "raw_ref": "evidence/proof-pack/d5-refusal/watcher/dbt-run.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D5REF-003",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T09:49:58.677341Z",
+      "claim": "database reports column \"user_id\" does not exist",
+      "raw_ref": "evidence/proof-pack/d5-refusal/watcher/dbt-run.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D5REF-004",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T09:49:58.677348Z",
+      "claim": "1 downstream model(s) SKIPped \u2014 not rebuilt, not dropped, therefore stale",
+      "raw_ref": "evidence/proof-pack/d5-refusal/watcher/dbt-run.txt",
+      "datahub_urn": null
+    }
+  ]
+}

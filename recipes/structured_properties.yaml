@@ -1,0 +1,49 @@
+# DevGuard structured-property definitions (documented server behaviour).
+#
+# The pinned environment's trap: "structured properties must exist as definitions before values can
+# be attached. Register devguard.* definitions (SDK/YAML, committed to the repo)."
+# This file is that registration. Apply it with:
+#
+#     datahub properties upsert -f recipes/structured_properties.yaml
+#
+# NOTE on `last_incident_id`, and why it is an id and not a URN:
+# DataHub v1.6.0's GraphQL crashes with a 500 NullPointerException while
+# resolving `structuredProperties.properties[].valueEntities` when a
+# string-typed property holds a value that parses as a URN. That crash takes
+# down `searchAcrossLineage`, and with it the MCP tool `get_lineage_paths_between`
+# — a tool step 6 depends on. Proof of cause and of the fix:
+# evidence/d3/06-graphql-npe-proof.txt. So DevGuard stores the bare incident id
+# and reconstructs `urn:li:incident:<id>` at read time.
+- id: devguard.last_incident_id
+  qualified_name: devguard.last_incident_id
+  type: string
+  cardinality: SINGLE
+  display_name: DevGuard last incident id
+  entity_types:
+    - dataset
+  description: >-
+    Id of the most recent DevGuard incident raised against this asset. The full
+    URN is urn:li:incident:<this value>. Stored as a bare id deliberately — see
+    the note at the top of this file.
+
+- id: devguard.verified_at
+  qualified_name: devguard.verified_at
+  type: string
+  cardinality: SINGLE
+  display_name: DevGuard verified at
+  entity_types:
+    - dataset
+  description: >-
+    UTC timestamp at which DevGuard's Referee returned RECOVERY_VERIFIED for this
+    asset. Written only after verification — never on detection.
+
+- id: devguard.time_to_root_cause_s
+  qualified_name: devguard.time_to_root_cause_s
+  type: number
+  cardinality: SINGLE
+  display_name: DevGuard time to root cause (s)
+  entity_types:
+    - dataset
+  description: >-
+    Wall-clock seconds from the first runtime failure signal to the
+    Diagnostician's accepted root cause, measured from real clocks.

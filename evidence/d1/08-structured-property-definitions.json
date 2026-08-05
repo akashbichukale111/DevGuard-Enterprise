@@ -1,0 +1,7 @@
+{
+  "defined": [
+    "urn:li:structuredProperty:devguard.last_incident_urn",
+    "urn:li:structuredProperty:devguard.verified_at",
+    "urn:li:structuredProperty:devguard.time_to_root_cause_s"
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "v2alpha1",
+  "alert": "devguard-llm-cost-budget",
+  "alertType": "METRIC_BASED_ALERT",
+  "ruleType": "threshold_rule",
+  "condition": {
+    "thresholds": {
+      "kind": "basic",
+      "spec": [
+        {
+          "name": "warning",
+          "target": 5.0,
+          "matchType": "1",
+          "op": ">",
+          "channels": [],
+          "targetUnit": "USD"
+        }
+      ]
+    },
+    "compositeQuery": {
+      "queries": [
+        {
+          "type": "builder_query",
+          "spec": {
+            "name": "A",
+            "signal": "metrics",
+            "disabled": false,
+            "aggregations": [
+              {
+                "metricName": "devguard.llm.cost_total",
+                "temporality": "",
+                "timeAggregation": "increase",
+                "spaceAggregation": "sum"
+              }
+            ],
+            "stepInterval": 60,
+            "filter": {
+              "expression": ""
+            },
+            "groupBy": [],
+            "having": {
+              "expression": ""
+            },
+            "order": [],
+            "limit": 0,
+            "functions": [],
+            "legend": ""
+          }
+        }
+      ]
+    },
+    "selectedQueryName": "A",
+    "alertOnAbsent": false
+  },
+  "evaluation": {
+    "kind": "rolling",
+    "spec": {
+      "evalWindow": "30m0s",
+      "frequency": "1m0s"
+    }
+  },
+  "labels": {
+    "severity": "warning",
+    "team": "devguard"
+  },
+  "annotations": {
+    "summary": "DevGuard LLM spend exceeded budget for the window",
+    "description": "Cumulative LLM spend rose by more than the configured budget in 30 minutes."
+  },
+  "notificationSettings": {
+    "groupBy": [],
+    "usePolicy": true,
+    "renotify": {
+      "enabled": false,
+      "interval": "30m0s",
+      "alertStates": []
+    }
+  }
+}

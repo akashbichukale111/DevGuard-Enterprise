@@ -1,0 +1,1083 @@
+[
+  {
+    "name": "search",
+    "description": "Search across DataHub entities using structured full-text search.\n    Results are ordered by relevance and importance - examine top results first.\n\n    SEARCH SYNTAX:\n    - Structured full-text search - **always start queries with /q**\n    - **Recommended: Use + operator for AND** (handles punctuation better than quotes)\n    - Supports full boolean logic: AND (default), OR, NOT, parentheses, field searches\n    - Examples:\n      * /q user+transaction -> requires both terms (better for field names with _ or punctuation)\n      * /q point+sale+app -> requires all terms (works with point_of_sale_app_usage)\n      * /q wizard OR pet -> entities containing either term\n      * /q revenue* -> wildcard matching (revenue_2023, revenue_2024, revenue_monthly, etc.)\n      * /q tag:PII -> search by tag name\n      * /q \"exact table name\" -> exact phrase matching (use sparingly)\n      * /q (sales OR revenue) AND quarterly -> complex boolean combinations\n    - Fast and precise for exact matching, technical terms, and complex queries\n    - Best for: entity names, identifiers, column names, or any search needing boolean logic\n\n    PAGINATION:\n    - num_results: Number of results to return per page (max: 50)\n    - offset: Starting position in results (default: 0)\n    - Examples:\n      * First page: offset=0, num_results=10\n      * Second page: offset=10, num_results=10\n      * Third page: offset=20, num_results=10\n\n    FACET EXPLORATION - Discover metadata without returning results:\n    - Set num_results=0 to get ONLY facets (no search results)\n    - Facets show ALL tags, glossaryTerms, platforms, domains used in the catalog\n    - Example: search(query=\"*\", filter=\"entity_type = dataset\", num_results=0)\n      -> Returns facets showing all tags/glossaryTerms applied to datasets\n    - Use this to discover what metadata exists before doing filtered searches\n\n    TYPICAL WORKFLOW:\n    1. Facet exploration: search(query=\"*\", filter=\"entity_type = dataset\", num_results=0)\n       -> Examine tags/glossaryTerms facets to see what metadata exists\n    2. Filtered search: search(query=\"*\", filter=\"tag = urn:li:tag:pii\", num_results=30)\n       -> Get entities with specific tag using URN from step 1\n    3. Get details: Use get_entities() on specific results\n\n    FILTER SYNTAX (SQL-like WHERE clause):\n    Uses simple SQL-like syntax with AND, OR, NOT, and parentheses.\n\n    Basic filters:\n      platform = snowflake\n      entity_type = dataset\n      env = PROD\n\n    Multiple values (IN):\n      platform IN (snowflake, bigquery, redshift)\n      entity_type IN (dataset, dashboard)\n\n    Combining filters:\n      platform = snowflake AND env = PROD\n      entity_type = dataset AND platform IN (snowflake, bigquery)\n\n    OR and parentheses:\n      platform = snowflake OR platform = bigquery\n      entity_type = dataset AND (platform = snowflake OR platform = bigquery)\n\n    NOT:\n      NOT env = DEV\n      entity_type = dataset AND NOT platform = looker\n\n    Comparison operators (>, >=, <, <=):\n      columnCount > 10\n      columnCount >= 5\n      columnCount <= 100\n\n    Existence checks (IS NULL / IS NOT NULL):\n      glossary_term IS NOT NULL\n      tag IS NOT NULL\n      owner IS NULL\n\n    Complex:\n      entity_type = dataset AND env = PROD AND (platform = snowflake OR platform = bigquery)\n\n    SUPPORTED FILTER FIELDS:\n    - entity_type: dataset, dashboard, chart, corp_user, corp_group, dataProduct, etc.\n    - entity_subtype (or subtype): Table, View, Model, etc.\n    - platform: snowflake, bigquery, looker, tableau, etc.\n    - domain: full URN required, e.g. urn:li:domain:marketing\n    - container: full URN required, e.g. urn:li:container:abc123\n    - tag: full URN required, e.g. urn:li:tag:PII\n    - glossary_term: full URN required, e.g. urn:li:glossaryTerm:uuid\n    - owner: full URN required, e.g. urn:li:corpuser:alice or urn:li:corpGroup:team\n    - env: PROD, DEV, STAGING (only use if explicitly requested)\n    - status: NOT_SOFT_DELETED, ALL, ONLY_SOFT_DELETED\n    - deprecated: true or false (whether the entity is marked as deprecated)\n    - hasActiveIncidents: true or false (whether the entity has active incidents)\n    - hasFailingAssertions: true or false (whether the entity has failing assertions)\n    - columnCount: number of columns (from dataset profiling)\n\n    IMPORTANT: Domain, container, tag, glossary_term, and owner filters require\n    full URN format (urn:li:...). Search with entity_type = domain first to find\n    valid domain URNs, then use the exact URN from the results.\n\n    STRUCTURED PROPERTY FILTERS:\n    Use structuredProperties.<qualifiedName> as the field name. The qualifiedName\n    is the ID portion of the structured property URN (urn:li:structuredProperty:<qualifiedName>).\n      structuredProperties.io.acryl.privacy.retentionTime = 30\n      structuredProperties.31b94813-7667-4ae8-b93a-a72cc5e0c75b IN (Published, Certified)\n      structuredProperties.my.custom.property IS NOT NULL\n    Values are CASE-SENSITIVE. Some structured properties have fixed allowed values\n    (e.g. \"Published\", \"Certified\"). Use get_entities on the structured property URN\n    to check definition.allowedValues and match the exact casing.\n\n    Values containing special characters (spaces, =, parentheses) must be quoted:\n      tag = \"urn:li:tag:my tag\"\n      customProperties = \"key=value\"\n\n    SEARCH STRATEGY EXAMPLES:\n    - /q customer+behavior -> finds tables with both terms (works with customer_behavior fields)\n    - /q customer OR user -> finds tables with either term\n    - /q (financial OR revenue) AND metrics -> complex boolean logic\n\n    SORTING - Order results by specific fields:\n    - sort_by: Field name to sort by (optional)\n    - sort_order: \"desc\" (default) or \"asc\"\n\n    Available sort fields:\n    - lastOperationTime: Last modified timestamp in source system\n\n    Sorting examples:\n    - Most recently updated:\n      search(query=\"*\", filter=\"entity_type = dataset\", sort_by=\"lastOperationTime\", sort_order=\"desc\", num_results=10)\n\n    Note: If sort_by is not provided, search results use default ranking by relevance and\n    importance. When using sort_by, results are strictly ordered by that field.\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "default": "*",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "num_results": {
+          "default": 10,
+          "type": "integer"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "desc"
+        },
+        "offset": {
+          "default": 0,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "annotations": {
+      "readOnlyHint": true
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "search"
+        ]
+      }
+    }
+  },
+  {
+    "name": "get_lineage",
+    "description": "Get upstream or downstream lineage for any entity, including datasets, schemaFields, dashboards, charts, etc.\n\n    Set upstream to True for upstream lineage, False for downstream lineage.\n    Set `column: null` to get lineage for entire dataset or for entity type other than dataset.\n    Setting max_hops to 3 is equivalent to unlimited hops.\n\n    FILTER SYNTAX (SQL-like WHERE clause):\n    Uses simple SQL-like syntax with AND, OR, NOT, and parentheses.\n\n    Basic filters:\n      platform = snowflake\n      entity_type = dataset\n      env = PROD\n\n    Multiple values (IN):\n      platform IN (snowflake, bigquery, redshift)\n      entity_type IN (dataset, dashboard)\n\n    Combining filters:\n      platform = snowflake AND env = PROD\n      entity_type = dataset AND platform IN (snowflake, bigquery)\n\n    OR and parentheses:\n      platform = snowflake OR platform = bigquery\n      entity_type = dataset AND (platform = snowflake OR platform = bigquery)\n\n    NOT:\n      NOT env = DEV\n      entity_type = dataset AND NOT platform = looker\n\n    Comparison operators (>, >=, <, <=):\n      columnCount > 10\n      columnCount >= 5\n      columnCount <= 100\n\n    Existence checks (IS NULL / IS NOT NULL):\n      glossary_term IS NOT NULL\n      tag IS NOT NULL\n      owner IS NULL\n\n    Complex:\n      entity_type = dataset AND env = PROD AND (platform = snowflake OR platform = bigquery)\n\n    SUPPORTED FILTER FIELDS:\n    - entity_type: dataset, dashboard, chart, corp_user, corp_group, dataProduct, etc.\n    - entity_subtype (or subtype): Table, View, Model, etc.\n    - platform: snowflake, bigquery, looker, tableau, etc.\n    - domain: full URN required, e.g. urn:li:domain:marketing\n    - container: full URN required, e.g. urn:li:container:abc123\n    - tag: full URN required, e.g. urn:li:tag:PII\n    - glossary_term: full URN required, e.g. urn:li:glossaryTerm:uuid\n    - owner: full URN required, e.g. urn:li:corpuser:alice or urn:li:corpGroup:team\n    - env: PROD, DEV, STAGING (only use if explicitly requested)\n    - status: NOT_SOFT_DELETED, ALL, ONLY_SOFT_DELETED\n    - deprecated: true or false (whether the entity is marked as deprecated)\n    - hasActiveIncidents: true or false (whether the entity has active incidents)\n    - hasFailingAssertions: true or false (whether the entity has failing assertions)\n    - columnCount: number of columns (from dataset profiling)\n\n    IMPORTANT: Domain, container, tag, glossary_term, and owner filters require\n    full URN format (urn:li:...). Search with entity_type = domain first to find\n    valid domain URNs, then use the exact URN from the results.\n\n    STRUCTURED PROPERTY FILTERS:\n    Use structuredProperties.<qualifiedName> as the field name. The qualifiedName\n    is the ID portion of the structured property URN (urn:li:structuredProperty:<qualifiedName>).\n      structuredProperties.io.acryl.privacy.retentionTime = 30\n      structuredProperties.31b94813-7667-4ae8-b93a-a72cc5e0c75b IN (Published, Certified)\n      structuredProperties.my.custom.property IS NOT NULL\n    Values are CASE-SENSITIVE. Some structured properties have fixed allowed values\n    (e.g. \"Published\", \"Certified\"). Use get_entities on the structured property URN\n    to check definition.allowedValues and match the exact casing.\n\n    Values containing special characters (spaces, =, parentheses) must be quoted:\n      tag = \"urn:li:tag:my tag\"\n      customProperties = \"key=value\"\n\n    PAGINATION:\n    Use offset to paginate through large lineage graphs:\n    - offset=0, max_results=30 -> first 30 entities\n    - offset=30, max_results=30 -> next 30 entities\n\n    Note: Token budget constraints may return fewer entities than max_results.\n    Check the returned metadata (hasMore, returned, etc.) to understand truncation.\n\n    QUERY PARAMETER - Search within lineage results:\n    You can filter lineage results using the `query` parameter with same /q syntax as search tool:\n    - /q workspace.growthgestaofin -> find tables in specific schema\n    - /q customer+transactions -> find entities with both terms\n    - /q looker OR tableau -> find dashboards on either platform\n    - /q * -> get all lineage results (default)\n\n    Examples:\n    - Find specific table in 643 downstreams: query=\"workspace.growthgestaofin.qs_retention\"\n    - Find Looker dashboards in lineage: query=\"/q tag:looker\"\n    - Get all results: query=\"*\" or omit parameter\n\n    COUNT PARAMETER - Control result size:\n    - Default: 30 results\n    - For aggregation: count=30 is sufficient (facets computed on ALL items server-side)\n    - For finding specific item: Increase count or use query to filter\n    - Example: count=100 for larger result sets\n\n    WHEN TO USE QUERY vs COUNT:\n    - User asks \"is X affected?\" -> Use query to filter for X specifically\n    - Large lineage (>30 items) -> Keep count=30, use facets for aggregation\n    - Need complete list -> Increase count only if total <=100\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "urn": {
+          "type": "string"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "upstream": {
+          "default": true,
+          "type": "boolean"
+        },
+        "max_hops": {
+          "default": 1,
+          "type": "integer"
+        },
+        "max_results": {
+          "default": 30,
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "urn"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "annotations": {
+      "readOnlyHint": true
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "search"
+        ]
+      }
+    }
+  },
+  {
+    "name": "get_dataset_queries",
+    "description": "Get SQL queries associated with a dataset or column to understand usage patterns.\n\n    This tool retrieves actual SQL queries that reference a specific dataset or column.\n    Useful for understanding how data is used, common JOIN patterns, typical filters,\n    and aggregation logic.\n\n    PARAMETERS:\n\n    source - Filter by query origin:\n    - \"MANUAL\": Queries written by users in query editors (real SQL patterns)\n    - \"SYSTEM\": Queries extracted from BI tools/dashboards (production usage)\n    - null: Return both types (default)\n\n    COMMON USE CASES:\n\n    1. SQL Generation - Learn real query patterns:\n       get_dataset_queries(urn, source=\"MANUAL\", count=5-10)\n       \u2192 See how users actually write SQL against this table\n       \u2192 Discover common JOINs, aggregations, filters\n       \u2192 Match organizational SQL conventions and patterns\n\n    2. Production usage analysis:\n       get_dataset_queries(urn, source=\"SYSTEM\", count=20)\n       \u2192 See how dashboards and reports query this data\n       \u2192 Understand which queries run in production\n       \u2192 Identify critical query patterns\n\n    3. Column usage patterns:\n       get_dataset_queries(urn, column=\"customer_id\", source=\"MANUAL\", count=5)\n       \u2192 See how a specific column is used in queries\n       \u2192 Learn filtering and grouping patterns for that column\n       \u2192 Discover relationships via JOIN patterns\n\n    4. General usage exploration:\n       get_dataset_queries(urn, count=10)\n       \u2192 Get mix of manual and system queries\n       \u2192 Understand overall table usage\n\n    EXAMPLES:\n\n    - Get manual queries for SQL generation:\n      get_dataset_queries(\n          urn=\"urn:li:dataset:(urn:li:dataPlatform:snowflake,prod.sales.orders,PROD)\",\n          source=\"MANUAL\",\n          count=10\n      )\n\n    - Get dashboard queries (production usage):\n      get_dataset_queries(\n          urn=\"urn:li:dataset:(...)\",\n          source=\"SYSTEM\",\n          count=20\n      )\n\n    - Column-specific query patterns:\n      get_dataset_queries(\n          urn=\"urn:li:dataset:(...)\",\n          column=\"created_at\",\n          source=\"MANUAL\",\n          count=5\n      )\n\n    RESPONSE STRUCTURE:\n    - total: Total number of queries matching criteria\n    - start: Starting offset\n    - count: Number of results returned\n    - queries: Array of query objects with:\n      - urn: Query identifier\n      - properties.statement.value: The actual SQL text\n      - properties.statement.language: Query language (SQL, etc.)\n      - properties.source: MANUAL or SYSTEM\n      - properties.name: Optional query name\n      - platform: Source platform\n      - subjects: Referenced datasets/columns (deduplicated to dataset URNs)\n\n    ANALYZING RETRIEVED QUERIES:\n    Once you retrieve queries, examine the SQL statements to identify:\n    - JOIN patterns: Which tables are joined? On what keys?\n    - Aggregations: Common SUM, COUNT, AVG, GROUP BY patterns\n    - Filters: Typical WHERE clauses, date range logic\n    - Column usage: Which columns appear frequently vs rarely\n    - CTEs and subqueries: Complex query structures\n\n    BEST PRACTICES:\n    - For SQL generation: Use source=\"MANUAL\" (count=5-10) to see real user patterns\n    - For production analysis: Use source=\"SYSTEM\" to see dashboard/report queries\n    - Start with moderate count (5-10) to avoid overwhelming context\n    - If no queries found (total=0), proceed without query examples - not all tables have queries\n    - Parse the SQL statements yourself to find patterns - they are not full-text searchable\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "urn": {
+          "type": "string"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "MANUAL",
+                "SYSTEM"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "start": {
+          "default": 0,
+          "type": "integer"
+        },
+        "count": {
+          "default": 10,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "urn"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "annotations": {
+      "readOnlyHint": true
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "search"
+        ]
+      }
+    }
+  },
+  {
+    "name": "get_entities",
+    "description": "Get detailed information about one or more entities by their DataHub URNs.\n\n    IMPORTANT: Pass an array of URNs to retrieve multiple entities in a single call - this is much\n    more efficient than calling this tool multiple times. When examining search results, always pass\n    an array with the top 3-10 result URNs to compare and find the best match.\n\n    Accepts an array of URNs or a single URN. Supports all entity types including datasets,\n    assertions, incidents, dashboards, charts, users, groups, and more. The response fields vary\n    based on the entity type.\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "urns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "urns"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "x-fastmcp-wrap-result": true
+    },
+    "annotations": {
+      "readOnlyHint": true
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "search"
+        ]
+      }
+    }
+  },
+  {
+    "name": "list_schema_fields",
+    "description": "List schema fields for a dataset, with optional keyword filtering and pagination.\n\n    Useful when schema fields were truncated in search results (schemaFieldsTruncated present)\n    and you need to explore specific columns. Supports pagination for large schemas.\n\n    Args:\n        urn: Dataset URN\n        keywords: Optional list of keywords to filter schema fields (OR matching).\n                 - Single keyword: Treated as one keyword (NOT split on whitespace). Use for field names or exact phrases.\n                 - Multiple keywords: Multiple keywords, matches any (OR logic).\n                 - None or empty list: Returns all fields in priority order (same as get_entities).\n                 Matches against fieldPath, description, label, tags, and glossary terms.\n                 Matching fields are returned first, sorted by match count.\n        limit: Maximum number of fields to return (default: 100)\n        offset: Number of fields to skip for pagination (default: 0)\n\n    Returns:\n        Dictionary with:\n        - urn: The dataset URN\n        - fields: List of schema fields (paginated)\n        - totalFields: Total number of fields in the schema\n        - returned: Number of fields actually returned\n        - remainingCount: Number of fields not included after offset (accounts for limit and token budget)\n        - matchingCount: Number of fields that matched keywords (if keywords provided, None otherwise)\n        - offset: The offset used\n\n    Examples:\n        # Single keyword (list) - search for exact field name or phrase\n        list_schema_fields(urn=\"urn:li:dataset:(...)\", keywords=[\"user_email\"])\n        # Returns fields matching \"user_email\" (like user_email_address, primary_user_email)\n\n        # Multiple keywords (list) - OR matching\n        list_schema_fields(urn=\"urn:li:dataset:(...)\", keywords=[\"email\", \"user\"])\n        # Returns fields containing \"email\" OR \"user\" (user_email, contact_email, user_id, etc.)\n\n        # Pagination through all fields\n        list_schema_fields(urn=\"urn:li:dataset:(...)\", limit=100, offset=0)   # First 100\n        list_schema_fields(urn=\"urn:li:dataset:(...)\", limit=100, offset=100) # Next 100\n\n        # Combine filtering + pagination\n        list_schema_fields(urn=\"urn:li:dataset:(...)\", keywords=[\"user\"], limit=50, offset=0)\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "urn": {
+          "type": "string",
+          "description": "Dataset URN"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional list of keywords to filter schema fields (OR matching).\n     - Single keyword: Treated as one keyword (NOT split on whitespace). Use for field names or exact phrases.\n     - Multiple keywords: Multiple keywords, matches any (OR logic).\n     - None or empty list: Returns all fields in priority order (same as get_entities).\n     Matches against fieldPath, description, label, tags, and glossary terms.\n     Matching fields are returned first, sorted by match count."
+        },
+        "limit": {
+          "default": 100,
+          "type": "integer",
+          "description": "Maximum number of fields to return (default: 100)"
+        },
+        "offset": {
+          "default": 0,
+          "type": "integer",
+          "description": "Number of fields to skip for pagination (default: 0)"
+        }
+      },
+      "required": [
+        "urn"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "annotations": {
+      "readOnlyHint": true
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "search"
+        ]
+      }
+    }
+  },
+  {
+    "name": "get_lineage_paths_between",
+    "description": "Get detailed lineage path(s) between two specific entities or columns.\n\n    Returns the paths array from searchAcrossLineage, showing the exact transformation\n    chain(s) including intermediate entities, columns, and transformation query URNs.\n\n    Unlike get_lineage() which returns all lineage targets with compact lineageColumns,\n    this tool focuses on ONE specific target and returns detailed path information.\n\n    Args:\n        source_urn: URN of the source dataset\n        target_urn: URN of the target dataset\n        source_column: Optional column name in source dataset\n        target_column: Optional column name in target dataset (required if source_column provided)\n        direction: Optional direction to search. If None (default), automatically discovers\n                  the path by trying downstream first, then upstream. Specify \"downstream\" or\n                  \"upstream\" explicitly for better performance if you know the direction.\n\n    Returns:\n        Dictionary with:\n        - source: Source entity/column info\n        - target: Target entity/column info\n        - paths: Array of path objects from GraphQL (with QUERY URNs)\n        - pathCount: Number of paths found\n\n    Examples:\n        # Column-level paths\n        paths_result = get_lineage_paths_between(\n            source_urn=\"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.base_table,PROD)\",\n            target_urn=\"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.final_table,PROD)\",\n            source_column=\"user_id\",\n            target_column=\"customer_id\"\n        )\n        # Returns paths with QUERY URNs showing transformation chain\n\n        # Fetch SQL for specific query of interest\n        query_details = get_entities(paths_result[\"paths\"][0][\"path\"][1][\"urn\"])\n\n        # Dataset-level paths (auto-discover direction)\n        get_lineage_paths_between(\n            source_urn=\"urn:li:dataset:(...):base_table\",\n            target_urn=\"urn:li:dataset:(...):final_table\"\n        )\n\n        # Explicit direction for better performance\n        get_lineage_paths_between(\n            source_urn=\"urn:li:dataset:(...):base_table\",\n            target_urn=\"urn:li:dataset:(...):final_table\",\n            direction=\"downstream\"\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "source_urn": {
+          "type": "string",
+          "description": "URN of the source dataset"
+        },
+        "target_urn": {
+          "type": "string",
+          "description": "URN of the target dataset"
+        },
+        "source_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional column name in source dataset"
+        },
+        "target_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional column name in target dataset (required if source_column provided)"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "upstream",
+                "downstream"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional direction to search. If None (default), automatically discovers\n      the path by trying downstream first, then upstream. Specify \"downstream\" or\n      \"upstream\" explicitly for better performance if you know the direction."
+        }
+      },
+      "required": [
+        "source_urn",
+        "target_urn"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "annotations": {
+      "readOnlyHint": true
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "search"
+        ]
+      }
+    }
+  },
+  {
+    "name": "add_tags",
+    "description": "Add one or more tags to multiple DataHub entities or their columns (e.g., schema fields).\n\n    This tool allows you to tag multiple entities or their columns with multiple tags in a single operation.\n    Useful for bulk tagging operations like marking multiple datasets as PII, deprecated, or applying\n    governance classifications.\n\n\n    Args:\n        tag_urns: List of tag URNs to add (e.g., [\"urn:li:tag:PII\", \"urn:li:tag:Sensitive\"])\n        entity_urns: List of entity URNs to tag (e.g., dataset URNs, dashboard URNs)\n        column_paths: Optional list of column_path identifiers (e.g., column names for schema fields).\n                     Must be same length as entity_urns if provided.\n                     Use None or empty string for entity-level tags.\n                     For column-level tags, provide the column name (e.g., \"email_address\").\n                     Verify that the column_paths are correct and valid via the schemaMetadata.\n                     Use get_entity tool to verify.\n\n    Returns:\n        Dictionary with:\n        - success: Boolean indicating if the operation succeeded\n        - message: Success or error message\n\n    Examples:\n        # Add tags to multiple datasets\n        add_tags(\n            tag_urns=[\"urn:li:tag:PII\", \"urn:li:tag:Sensitive\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.customers,PROD)\"\n            ]\n        )\n\n        # Add tags to specific columns\n        add_tags(\n            tag_urns=[\"urn:li:tag:PII\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\"\n            ],\n            column_paths=[\"email\", \"phone_number\"]\n        )\n\n        # Mix entity-level and column-level tags\n        add_tags(\n            tag_urns=[\"urn:li:tag:Deprecated\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.old_table,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\"\n            ],\n            column_paths=[None, \"deprecated_column\"]  # Tag whole table and a specific column\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "tag_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of tag URNs to add (e.g., [\"urn:li:tag:PII\", \"urn:li:tag:Sensitive\"])"
+        },
+        "entity_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of entity URNs to tag (e.g., dataset URNs, dashboard URNs)"
+        },
+        "column_paths": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional list of column_path identifiers (e.g., column names for schema fields).\n         Must be same length as entity_urns if provided.\n         Use None or empty string for entity-level tags.\n         For column-level tags, provide the column name (e.g., \"email_address\").\n         Verify that the column_paths are correct and valid via the schemaMetadata.\n         Use get_entity tool to verify."
+        }
+      },
+      "required": [
+        "tag_urns",
+        "entity_urns"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "mutation"
+        ]
+      }
+    }
+  },
+  {
+    "name": "remove_tags",
+    "description": "Remove one or more tags from multiple DataHub entities or their column_paths (e.g., schema fields).\n\n    This tool allows you to untag multiple entities or their columns with multiple tags in a single operation.\n    Useful for bulk tag removal operations like removing deprecated tags, correcting misapplied classifications,\n    or cleaning up governance metadata.\n\n    Args:\n        tag_urns: List of tag URNs to remove (e.g., [\"urn:li:tag:PII\", \"urn:li:tag:Sensitive\"])\n        entity_urns: List of entity URNs to untag (e.g., dataset URNs, dashboard URNs)\n        column_paths: Optional list of column_path identifiers (e.g., column names for schema fields).\n                     Must be same length as entity_urns if provided.\n                     Use None or empty string for entity-level tag removal.\n                     For column-level tag removal, provide the column name (e.g., \"email_address\").\n                     Verify that the column_paths are correct and valid via the schemaMetadata.\n                     Use get_entity tool to verify.\n\n    Returns:\n        Dictionary with:\n        - success: Boolean indicating if the operation succeeded\n        - message: Success or error message\n\n    Examples:\n        # Remove tags from multiple datasets\n        remove_tags(\n            tag_urns=[\"urn:li:tag:Deprecated\", \"urn:li:tag:Legacy\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.old_users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.old_customers,PROD)\"\n            ]\n        )\n\n        # Remove tags from specific columns\n        remove_tags(\n            tag_urns=[\"urn:li:tag:PII\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\"\n            ],\n            column_paths=[\"old_email_field\", \"deprecated_phone\"]\n        )\n\n        # Mix entity-level and column-level tag removal\n        remove_tags(\n            tag_urns=[\"urn:li:tag:Experimental\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.stable_table,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\"\n            ],\n            column_paths=[None, \"test_column\"]  # Remove from whole table and a specific column\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "tag_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of tag URNs to remove (e.g., [\"urn:li:tag:PII\", \"urn:li:tag:Sensitive\"])"
+        },
+        "entity_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of entity URNs to untag (e.g., dataset URNs, dashboard URNs)"
+        },
+        "column_paths": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional list of column_path identifiers (e.g., column names for schema fields).\n         Must be same length as entity_urns if provided.\n         Use None or empty string for entity-level tag removal.\n         For column-level tag removal, provide the column name (e.g., \"email_address\").\n         Verify that the column_paths are correct and valid via the schemaMetadata.\n         Use get_entity tool to verify."
+        }
+      },
+      "required": [
+        "tag_urns",
+        "entity_urns"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "mutation"
+        ]
+      }
+    }
+  },
+  {
+    "name": "add_terms",
+    "description": "Add one or more glossary terms (terms) to multiple DataHub entities or their columns (e.g., schema fields).\n\n    This tool allows you to associate multiple entities or their columns with multiple glossary terms in a single operation.\n    Useful for bulk term assignment operations like applying business definitions, standardizing terminology,\n    or enriching metadata with domain knowledge.\n\n    Args:\n        term_urns: List of glossary term URNs to add (e.g., [\"urn:li:glossaryTerm:CustomerData\", \"urn:li:glossaryTerm:SensitiveInfo\"])\n        entity_urns: List of entity URNs to annotate (e.g., dataset URNs, dashboard URNs)\n        column_paths: Optional list of column_path identifiers (e.g., column names for schema fields).\n                     Must be same length as entity_urns if provided.\n                     Use None or empty string for entity-level glossary terms.\n                     For column-level glossary terms, provide the column name (e.g., \"customer_email\").\n                     Verify that the column_paths are correct and valid via the schemaMetadata.\n                     Use get_entity tool to verify.\n\n    Returns:\n        Dictionary with:\n        - success: Boolean indicating if the operation succeeded\n        - message: Success or error message\n\n    Examples:\n        # Add glossary terms to multiple datasets\n        add_glossary_terms(\n            term_urns=[\"urn:li:glossaryTerm:CustomerData\", \"urn:li:glossaryTerm:PersonalInformation\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.customers,PROD)\"\n            ]\n        )\n\n        # Add glossary terms to specific columns\n        add_glossary_terms(\n            term_urns=[\"urn:li:glossaryTerm:EmailAddress\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\"\n            ],\n            column_paths=[\"email\", \"contact_email\"]\n        )\n\n        # Mix entity-level and column-level glossary terms\n        add_glossary_terms(\n            term_urns=[\"urn:li:glossaryTerm:Revenue\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.sales,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.transactions,PROD)\"\n            ],\n            column_paths=[None, \"total_amount\"]  # Term for whole table and a specific column\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "term_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of glossary term URNs to add (e.g., [\"urn:li:glossaryTerm:CustomerData\", \"urn:li:glossaryTerm:SensitiveInfo\"])"
+        },
+        "entity_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of entity URNs to annotate (e.g., dataset URNs, dashboard URNs)"
+        },
+        "column_paths": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional list of column_path identifiers (e.g., column names for schema fields).\n         Must be same length as entity_urns if provided.\n         Use None or empty string for entity-level glossary terms.\n         For column-level glossary terms, provide the column name (e.g., \"customer_email\").\n         Verify that the column_paths are correct and valid via the schemaMetadata.\n         Use get_entity tool to verify."
+        }
+      },
+      "required": [
+        "term_urns",
+        "entity_urns"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "mutation"
+        ]
+      }
+    }
+  },
+  {
+    "name": "remove_terms",
+    "description": "Remove one or more glossary terms (terms) from multiple DataHub entities or their column_paths (e.g., schema fields).\n\n    This tool allows you to disassociate multiple entities or their columns from multiple glossary terms in a single operation.\n    Useful for bulk term removal operations like correcting misapplied business definitions, updating terminology,\n    or cleaning up metadata.\n\n    Args:\n        term_urns: List of glossary term URNs to remove (e.g., [\"urn:li:glossaryTerm:Deprecated\", \"urn:li:glossaryTerm:Legacy\"])\n        entity_urns: List of entity URNs to remove terms from (e.g., dataset URNs, dashboard URNs)\n        column_paths: Optional list of column_path identifiers (e.g., column names for schema fields).\n                     Must be same length as entity_urns if provided.\n                     Use None or empty string for entity-level glossary term removal.\n                     For column-level glossary term removal, provide the column name (e.g., \"old_field\").\n                     Verify that the column_paths are correct and valid via the schemaMetadata.\n                     Use get_entity tool to verify.\n\n    Returns:\n        Dictionary with:\n        - success: Boolean indicating if the operation succeeded\n        - message: Success or error message\n\n    Examples:\n        # Remove glossary terms from multiple datasets\n        remove_glossary_terms(\n            term_urns=[\"urn:li:glossaryTerm:Deprecated\", \"urn:li:glossaryTerm:LegacySystem\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.old_users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.old_customers,PROD)\"\n            ]\n        )\n\n        # Remove glossary terms from specific columns\n        remove_glossary_terms(\n            term_urns=[\"urn:li:glossaryTerm:Confidential\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\"\n            ],\n            column_paths=[\"old_ssn_field\", \"legacy_tax_id\"]\n        )\n\n        # Mix entity-level and column-level glossary term removal\n        remove_glossary_terms(\n            term_urns=[\"urn:li:glossaryTerm:Experimental\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.production_table,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\"\n            ],\n            column_paths=[None, \"beta_feature\"]  # Remove from whole table and a specific column\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "term_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of glossary term URNs to remove (e.g., [\"urn:li:glossaryTerm:Deprecated\", \"urn:li:glossaryTerm:Legacy\"])"
+        },
+        "entity_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of entity URNs to remove terms from (e.g., dataset URNs, dashboard URNs)"
+        },
+        "column_paths": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional list of column_path identifiers (e.g., column names for schema fields).\n         Must be same length as entity_urns if provided.\n         Use None or empty string for entity-level glossary term removal.\n         For column-level glossary term removal, provide the column name (e.g., \"old_field\").\n         Verify that the column_paths are correct and valid via the schemaMetadata.\n         Use get_entity tool to verify."
+        }
+      },
+      "required": [
+        "term_urns",
+        "entity_urns"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "mutation"
+        ]
+      }
+    }
+  },
+  {
+    "name": "add_owners",
+    "description": "Add one or more owners to multiple DataHub entities.\n\n    This tool allows you to assign multiple entities with multiple owners in a single operation.\n    Useful for bulk ownership assignment operations like assigning data stewards, technical owners,\n    or business owners to datasets, dashboards, and other DataHub entities.\n\n    Note: Ownership in DataHub is entity-level only. For field-level metadata, use tags or glossary terms instead.\n\n    Args:\n        owner_urns: List of owner URNs to add (must be CorpUser or CorpGroup URNs).\n                   Examples: [\"urn:li:corpuser:john.doe\", \"urn:li:corpGroup:data-engineering\"]\n        entity_urns: List of entity URNs to assign ownership to (e.g., dataset URNs, dashboard URNs)\n        ownership_type: The type of ownership to assign. Accepts either:\n                       - A built-in OwnershipType enum value:\n                         - TECHNICAL_OWNER: Involved in production, maintenance, or distribution\n                         - BUSINESS_OWNER: Principle stakeholders or domain experts\n                         - DATA_STEWARD: Involved in governance\n                       - A custom ownership type, passed by its user-facing name\n                         (e.g. \"Producer\"). Custom types are looked up by name\n                         (case-insensitive) via GraphQL and must already exist.\n\n    Returns:\n        Dictionary with:\n        - success: Boolean indicating if the operation succeeded\n        - message: Success or error message\n\n    Examples:\n        # Add technical owners to multiple datasets\n        add_owners(\n            owner_urns=[\"urn:li:corpuser:john.doe\", \"urn:li:corpGroup:data-engineering\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.customers,PROD)\"\n            ],\n            ownership_type=TECHNICAL_OWNER\n        )\n\n        # Add business owner\n        add_owners(\n            owner_urns=[\"urn:li:corpuser:jane.smith\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.customers,PROD)\"\n            ],\n            ownership_type=BUSINESS_OWNER\n        )\n\n        # Add data steward to multiple entities\n        add_owners(\n            owner_urns=[\"urn:li:corpuser:data.steward\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.sales,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.transactions,PROD)\",\n                \"urn:li:dashboard:(urn:li:dataPlatform:looker,sales_dashboard,PROD)\"\n            ],\n            ownership_type=DATA_STEWARD\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of owner URNs to add (must be CorpUser or CorpGroup URNs).\n       Examples: [\"urn:li:corpuser:john.doe\", \"urn:li:corpGroup:data-engineering\"]"
+        },
+        "entity_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of entity URNs to assign ownership to (e.g., dataset URNs, dashboard URNs)"
+        },
+        "ownership_type": {
+          "anyOf": [
+            {
+              "description": "Built-in ownership types in DataHub.",
+              "enum": [
+                "__system__technical_owner",
+                "__system__business_owner",
+                "__system__data_steward"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "The type of ownership to assign. Accepts either:\n           - A built-in OwnershipType enum value:\n             - TECHNICAL_OWNER: Involved in production, maintenance, or distribution\n             - BUSINESS_OWNER: Principle stakeholders or domain experts\n             - DATA_STEWARD: Involved in governance\n           - A custom ownership type, passed by its user-facing name\n             (e.g. \"Producer\"). Custom types are looked up by name\n             (case-insensitive) via GraphQL and must already exist."
+        }
+      },
+      "required": [
+        "owner_urns",
+        "entity_urns",
+        "ownership_type"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "mutation"
+        ]
+      }
+    }
+  },
+  {
+    "name": "remove_owners",
+    "description": "Remove one or more owners from multiple DataHub entities.\n\n    This tool allows you to unassign multiple entities from multiple owners in a single operation.\n    Useful for bulk ownership removal operations like removing owners when they change roles,\n    cleaning up stale ownership, or correcting misassigned ownership.\n\n    Note: Ownership in DataHub is entity-level only. For field-level metadata, use tags or glossary terms instead.\n\n    Args:\n        owner_urns: List of owner URNs to remove (must be CorpUser or CorpGroup URNs).\n                   Examples: [\"urn:li:corpuser:john.doe\", \"urn:li:corpGroup:data-engineering\"]\n        entity_urns: List of entity URNs to remove ownership from (e.g., dataset URNs, dashboard URNs)\n        ownership_type: Optional ownership type to specify which type of ownership to remove.\n                       If not provided, will remove ownership regardless of type.\n                       Accepts either a built-in OwnershipType enum value\n                       (TECHNICAL_OWNER, BUSINESS_OWNER, DATA_STEWARD) or a custom ownership\n                       type by its user-facing name (e.g. \"Producer\"). Custom types are looked\n                       up by name (case-insensitive) and must already exist in DataHub.\n\n    Returns:\n        Dictionary with:\n        - success: Boolean indicating if the operation succeeded\n        - message: Success or error message\n\n    Examples:\n        # Remove owners from multiple datasets (any ownership type)\n        remove_owners(\n            owner_urns=[\"urn:li:corpuser:former.employee\", \"urn:li:corpGroup:old-team\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.customers,PROD)\"\n            ]\n        )\n\n        # Remove technical owner with specific ownership type\n        remove_owners(\n            owner_urns=[\"urn:li:corpuser:john.doe\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.customers,PROD)\"\n            ],\n            ownership_type=TECHNICAL_OWNER\n        )\n\n        # Remove temporary owner from multiple entities\n        remove_owners(\n            owner_urns=[\"urn:li:corpuser:temp.owner\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.stable_table,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n                \"urn:li:dashboard:(urn:li:dataPlatform:looker,temp_dashboard,PROD)\"\n            ]\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "owner_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of owner URNs to remove (must be CorpUser or CorpGroup URNs).\n       Examples: [\"urn:li:corpuser:john.doe\", \"urn:li:corpGroup:data-engineering\"]"
+        },
+        "entity_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of entity URNs to remove ownership from (e.g., dataset URNs, dashboard URNs)"
+        },
+        "ownership_type": {
+          "anyOf": [
+            {
+              "description": "Built-in ownership types in DataHub.",
+              "enum": [
+                "__system__technical_owner",
+                "__system__business_owner",
+                "__system__data_steward"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ownership type to specify which type of ownership to remove.\n           If not provided, will remove ownership regardless of type.\n           Accepts either a built-in OwnershipType enum value\n           (TECHNICAL_OWNER, BUSINESS_OWNER, DATA_STEWARD) or a custom ownership\n           type by its user-facing name (e.g. \"Producer\"). Custom types are looked\n           up by name (case-insensitive) and must already exist in DataHub."
+        }
+      },
+      "required": [
+        "owner_urns",
+        "entity_urns"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "mutation"
+        ]
+      }
+    }
+  },
+  {
+    "name": "set_domains",
+    "description": "Set domain for multiple DataHub entities.\n\n    This tool allows you to assign a domain to multiple entities in a single operation.\n    Useful for organizing datasets, dashboards, and other entities into logical business domains.\n\n    Note: Domain assignment in DataHub is entity-level only. Each entity can belong to exactly one domain.\n    Setting a new domain will replace any existing domain assignment.\n\n    Args:\n        domain_urn: Domain URN to assign (e.g., \"urn:li:domain:marketing\")\n        entity_urns: List of entity URNs to assign to the domain (e.g., dataset URNs, dashboard URNs)\n\n    Returns:\n        Dictionary with:\n        - success: Boolean indicating if the operation succeeded\n        - message: Success or error message\n\n    Examples:\n        # Set domain for multiple datasets\n        set_domains(\n            domain_urn=\"urn:li:domain:marketing\",\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.campaigns,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.customers,PROD)\"\n            ]\n        )\n\n        # Set domain for dashboards\n        set_domains(\n            domain_urn=\"urn:li:domain:finance\",\n            entity_urns=[\n                \"urn:li:dashboard:(urn:li:dataPlatform:looker,revenue_dashboard,PROD)\",\n                \"urn:li:dashboard:(urn:li:dataPlatform:looker,expense_dashboard,PROD)\"\n            ]\n        )\n\n        # Set domain for mixed entity types\n        set_domains(\n            domain_urn=\"urn:li:domain:engineering\",\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.logs,PROD)\",\n                \"urn:li:dataFlow:(urn:li:dataPlatform:airflow,etl_pipeline,PROD)\",\n                \"urn:li:dashboard:(urn:li:dataPlatform:superset,metrics,PROD)\"\n            ]\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_urn": {
+          "type": "string",
+          "description": "Domain URN to assign (e.g., \"urn:li:domain:marketing\")"
+        },
+        "entity_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of entity URNs to assign to the domain (e.g., dataset URNs, dashboard URNs)"
+        }
+      },
+      "required": [
+        "domain_urn",
+        "entity_urns"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "mutation"
+        ]
+      }
+    }
+  },
+  {
+    "name": "remove_domains",
+    "description": "Remove domain assignment from multiple DataHub entities.\n\n    This tool allows you to unset the domain for multiple entities in a single operation.\n    Useful for removing domain assignments when reorganizing entities or correcting misassignments.\n\n    Args:\n        entity_urns: List of entity URNs to remove domain from (e.g., dataset URNs, dashboard URNs)\n\n    Returns:\n        Dictionary with:\n        - success: Boolean indicating if the operation succeeded\n        - message: Success or error message\n\n    Examples:\n        # Remove domain from multiple datasets\n        remove_domains(\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.old_table,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.deprecated,PROD)\"\n            ]\n        )\n\n        # Remove domain from dashboards\n        remove_domains(\n            entity_urns=[\n                \"urn:li:dashboard:(urn:li:dataPlatform:looker,old_dashboard,PROD)\",\n                \"urn:li:dashboard:(urn:li:dataPlatform:looker,temp_dashboard,PROD)\"\n            ]\n        )\n\n        # Remove domain from mixed entity types\n        remove_domains(\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.temp,PROD)\",\n                \"urn:li:dataFlow:(urn:li:dataPlatform:airflow,old_pipeline,PROD)\",\n                \"urn:li:dashboard:(urn:li:dataPlatform:superset,test,PROD)\"\n            ]\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of entity URNs to remove domain from (e.g., dataset URNs, dashboard URNs)"
+        }
+      },
+      "required": [
+        "entity_urns"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "mutation"
+        ]
+      }
+    }
+  },
+  {
+    "name": "update_description",
+    "description": "Update description for a DataHub entity or its column (e.g., schema field).\n\n    This tool allows you to set, append to, or remove a description for an entity or its column.\n    Useful for documenting datasets, containers, charts, dashboards, data flows, data jobs,\n    ML models, ML model groups, ML feature tables, ML primary keys, tags, glossary terms,\n    glossary nodes, domains, and schema fields.\n\n    Args:\n        entity_urn: Entity URN to update description for (e.g., dataset URN, container URN)\n        operation: The operation to perform:\n                  - \"replace\": Replace the existing description with the new one (default)\n                  - \"append\": Append the new description to the existing one\n                  - \"remove\": Remove the description (description parameter not needed)\n        description: The description text to set or append (supports markdown formatting).\n                    Required for \"replace\" and \"append\" operations, ignored for \"remove\".\n        column_path: Column_path identifier (e.g., column name for schema field).\n                    Optional for all entity types (use None for entity-level descriptions).\n                    For column-level descriptions, provide the column name (e.g., \"customer_email\").\n                    Verify that the column_path is correct and valid via the schemaMetadata.\n                    Use get_entity tool to verify.\n\n    Returns:\n        Dictionary with:\n        - success: Boolean indicating if the operation succeeded\n        - urn: The entity URN\n        - column_path: The column path (if applicable)\n        - message: Success or error message\n\n    Examples:\n        # Update description for a container (entity-level)\n        update_description(\n            entity_urn=\"urn:li:container:12345\",\n            operation=\"replace\",\n            description=\"Production data warehouse\"\n        )\n\n        # Update description for a dataset\n        update_description(\n            entity_urn=\"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n            operation=\"replace\",\n            description=\"User's table\",\n        )\n\n        # Update description for a dataset field (column-level)\n        update_description(\n            entity_urn=\"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n            operation=\"replace\",\n            description=\"User's primary email address\",\n            column_path=\"email\"\n        )\n\n        # Append to existing field description\n        update_description(\n            entity_urn=\"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n            operation=\"append\",\n            description=\" (PII)\",\n            column_path=\"email\"\n        )\n\n        # Remove field description\n        update_description(\n            entity_urn=\"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n            operation=\"remove\",\n            column_path=\"old_field\"\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_urn": {
+          "type": "string",
+          "description": "Entity URN to update description for (e.g., dataset URN, container URN)"
+        },
+        "operation": {
+          "default": "replace",
+          "enum": [
+            "replace",
+            "append",
+            "remove"
+          ],
+          "type": "string",
+          "description": "The operation to perform:\n      - \"replace\": Replace the existing description with the new one (default)\n      - \"append\": Append the new description to the existing one\n      - \"remove\": Remove the description (description parameter not needed)"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The description text to set or append (supports markdown formatting).\n        Required for \"replace\" and \"append\" operations, ignored for \"remove\"."
+        },
+        "column_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Column_path identifier (e.g., column name for schema field).\n        Optional for all entity types (use None for entity-level descriptions).\n        For column-level descriptions, provide the column name (e.g., \"customer_email\").\n        Verify that the column_path is correct and valid via the schemaMetadata.\n        Use get_entity tool to verify."
+        }
+      },
+      "required": [
+        "entity_urn"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "add_structured_properties",
+    "description": "Add structured properties with values to multiple DataHub entities.\n\n    This tool allows you to assign structured properties to multiple entities in a single operation.\n    Structured properties are schema-defined metadata fields that can store typed values (strings, numbers, etc.).\n\n    Args:\n        property_values: Dictionary mapping structured property URNs to lists of values.\n                        Example: {\n                            \"urn:li:structuredProperty:io.acryl.privacy.retentionTime\": [\"90\"],\n                            \"urn:li:structuredProperty:io.acryl.common.businessCriticality\": [\"HIGH\"]\n                        }\n        entity_urns: List of entity URNs to assign properties to (e.g., dataset URNs, dashboard URNs)\n    Examples:\n        # Add retention time and criticality to datasets\n        add_structured_properties(\n            property_values={\n                \"urn:li:structuredProperty:io.acryl.privacy.retentionTime\": [\"90\"],\n                \"urn:li:structuredProperty:io.acryl.common.businessCriticality\": [\"HIGH\"]\n            },\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.customers,PROD)\"\n            ]\n        )\n\n        # Add numeric property\n        add_structured_properties(\n            property_values={\n                \"urn:li:structuredProperty:io.acryl.dataQuality.scoreThreshold\": [0.95]\n            },\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.verified_data,PROD)\"\n            ]\n        )\n\n        # Add multiple values for a multi-valued property\n        add_structured_properties(\n            property_values={\n                \"urn:li:structuredProperty:io.acryl.common.dataClassification\": [\"PII\", \"SENSITIVE\"]\n            },\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.users,PROD)\"\n            ]\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "property_values": {
+          "additionalProperties": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "type": "object",
+          "description": "Dictionary mapping structured property URNs to lists of values.\n            Example: {\n                \"urn:li:structuredProperty:io.acryl.privacy.retentionTime\": [\"90\"],\n                \"urn:li:structuredProperty:io.acryl.common.businessCriticality\": [\"HIGH\"]\n            }"
+        },
+        "entity_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of entity URNs to assign properties to (e.g., dataset URNs, dashboard URNs)"
+        }
+      },
+      "required": [
+        "property_values",
+        "entity_urns"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "remove_structured_properties",
+    "description": "Remove structured properties from multiple DataHub entities.\n\n    This tool allows you to remove structured property assignments from multiple entities in a single operation.\n\n    Args:\n        property_urns: List of structured property URNs to remove\n                      Example: [\"urn:li:structuredProperty:io.acryl.privacy.retentionTime\"]\n        entity_urns: List of entity URNs to remove properties from (e.g., dataset URNs, dashboard URNs)\n\n    Examples:\n        # Remove retention time property from datasets\n        remove_structured_properties(\n            property_urns=[\"urn:li:structuredProperty:io.acryl.privacy.retentionTime\"],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.old_data,PROD)\",\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.archived,PROD)\"\n            ]\n        )\n\n        # Remove multiple properties at once\n        remove_structured_properties(\n            property_urns=[\n                \"urn:li:structuredProperty:io.acryl.privacy.retentionTime\",\n                \"urn:li:structuredProperty:io.acryl.common.businessCriticality\"\n            ],\n            entity_urns=[\n                \"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.schema.temp_table,PROD)\"\n            ]\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "property_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of structured property URNs to remove\n          Example: [\"urn:li:structuredProperty:io.acryl.privacy.retentionTime\"]"
+        },
+        "entity_urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of entity URNs to remove properties from (e.g., dataset URNs, dashboard URNs)"
+        }
+      },
+      "required": [
+        "property_urns",
+        "entity_urns"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "save_document",
+    "description": "Save or update a STANDALONE document in DataHub's knowledge base. Once saved,\n    a document will be visible to all users of DataHub and to Ask DataHub AI assistant.\n\n    NOTE: This tool is for creating standalone documents (insights, FAQs, notes, etc.),\n    NOT for updating descriptions on data assets like datasets or dashboards.\n    Use update_description for asset descriptions.\n\n    WHEN TO USE THIS TOOL:\n\n    Use this tool when the user explicitly requests to save information:\n    - \"Save this for later...\"\n    - \"Bookmark this..\"\n    - \"Document this insight..\"\n    - \"Remember this..\"\n    - \"Add this to our knowledge base..\"\n    - \"Create a document about this..\"\n\n    Also SUGGEST using this tool when the user provides valuable information such as:\n    - Useful SQL queries they want to reuse\n    - Decisions about data modeling or architecture\n    - FAQs or common questions about data\n    - Analysis results worth sharing with the team\n    - Corrections or clarifications about data, service, business definitions, etc.\n\n    \u26a0\ufe0f  IMPORTANT: Before calling this tool, you SHOULD confirm with the user that\n    they want to save this document. Present the title, content summary,\n    and any related assets, and ask for their approval before proceeding. Do not attempt to save\n    information that would be private or user-specific.\n\n    This tool persists insights, decisions, FAQs, and other contextual information\n    as documents in DataHub. Documents are organized hierarchically:\n    - Under a configurable parent folder (default: \"Shared\" for global context)\n    - Optionally grouped by the user who authored them\n\n    UPSERT BEHAVIOR:\n    - If `urn` is NOT provided: Creates a NEW document with a unique URN\n    - If `urn` IS provided: Updates the EXISTING document with that URN\n\n    IMPORTANT USAGE GUIDELINES:\n    - Always confirm with the user before saving\n    - Provide a clear summary of what will be saved\n    - Ask if the user wants to proceed with creating/updating the document\n\n    REQUIRED PARAMETERS:\n\n    document_type: The type of document being saved. For example:\n        - \"Insight\": Data insights or discoveries\n        - \"Decision\": Documented decisions with rationale\n        - \"FAQ\": Frequently asked questions and answers\n        - \"Analysis\": Data analysis findings\n        - \"Summary\": Summaries of complex information\n        - \"Recommendation\": Suggested actions or improvements\n        - \"Note\": General notes or observations\n\n    title: A descriptive title for the document.\n        - Example: \"Sales Data Quality Issues - Q4 2024\"\n        - Example: \"Decision: Deprecating Legacy Customer Table\"\n\n    content: The full content of the document (supports markdown formatting).\n        - Can include headers, lists, code blocks, tables, etc.\n        - Example: \"## Summary\\n\\nThe orders table shows 15% null values...\"\n\n    OPTIONAL PARAMETERS:\n\n    urn: The URN of an existing document to update.\n        - ONLY use after a search_documents or get_entity call returns a document URN\n        - Example: \"urn:li:document:agent-insight-abc123\"\n        - If not provided, a new document is created with a unique URN\n        - If provided, the existing document is updated (upsert operation)\n\n    topics: List of topic tags for categorization and discovery (like a word cloud).\n        - These become searchable tags in DataHub that users can click to find related documents\n        - Example: [\"data-quality\", \"customer-data\", \"Q4-2024\"]\n        - Example: [\"high-priority\", \"sales\", \"email\", \"null-values\"]\n\n    related_documents: URNs of related documents.\n        - Example: [\"urn:li:document:agent-insight-sales-abc123\"]\n        - Creates links between related knowledge\n\n    related_assets: URNs of related data assets (tables, dashboards, etc).\n        - Example: [\"urn:li:dataset:(urn:li:dataPlatform:snowflake,db.orders,PROD)\"]\n        - Links the document to specific data assets in the catalog\n        - Users can then see this document when viewing those assets\n\n    Returns:\n        Dictionary with:\n        - success: Boolean indicating if the operation succeeded\n        - urn: The URN of the created/updated document\n        - message: Success or error message\n        - author: The user who authored the document (if available)\n\n    RECOMMENDED WORKFLOW:\n\n    1. Gather information you want to save publicly\n    2. Present a summary to the user:\n       \"I'd like to save the following insight to DataHub:\n        - Title: High Null Rate in Customer Emails\n        - Type: Insight\n        - Related to: customers table\n        Would you like me to save this?\"\n    3. Only call save_document after user confirms\n\n    EXAMPLE USAGE:\n\n    1. Create a new insight (after user confirmation):\n        save_document(\n            document_type=\"Insight\",\n            title=\"High Null Rate in Customer Emails\",\n            content=\"## Finding\\n\\n23% of customer records have null email...\",\n            topics=[\"data-quality\", \"customer-data\", \"email\", \"high-severity\"],\n            related_assets=[\"urn:li:dataset:(urn:li:dataPlatform:snowflake,customers,PROD)\"]\n        )\n\n    2. Update an existing document (after finding it via search_documents):\n        save_document(\n            urn=\"urn:li:document:agent-insight-abc123\",  # From search_documents result\n            document_type=\"Insight\",\n            title=\"High Null Rate in Customer Emails (Updated)\",\n            content=\"## Finding\\n\\nUpdated: Now 18% of customer records have null email...\",\n            topics=[\"data-quality\", \"customer-data\", \"email\", \"resolved\"]\n        )\n\n    3. Document a decision:\n        save_document(\n            document_type=\"Decision\",\n            title=\"Migrating to New Production Database\",\n            content=\"## Decision\\n\\nWe will migrate to v2 schema...\\n\\n## Rationale\\n...\",\n            topics=[\"architecture\", \"data-model\", \"migration\", \"approved\"]\n        )\n    ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "document_type": {
+          "enum": [
+            "Insight",
+            "Decision",
+            "FAQ",
+            "Analysis",
+            "Summary",
+            "Recommendation",
+            "Note",
+            "Context"
+          ],
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "urn": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "topics": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "related_documents": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "related_assets": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "document_type",
+        "title",
+        "content"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": [
+          "mutation"
+        ]
+      }
+    }
+  }
+]

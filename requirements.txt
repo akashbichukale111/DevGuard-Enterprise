@@ -1,0 +1,72 @@
+# fastapi is held at 0.136.0 DELIBERATELY, not out of neglect. Read this before
+# bumping it.
+#
+# 0.141.1 (the latest at time of writing) introduces `_IncludedRouter` in
+# fastapi/routing.py, a route type that lands in `app.routes` when you call
+# `app.include_router()` — which backend/main.py does twice. The pinned
+# `opentelemetry-instrumentation-fastapi==0.41b0` iterates `app.routes` and reads
+# `.path` off every entry, and `_IncludedRouter` has no `.path`:
+#
+#     AttributeError: '_IncludedRouter' object has no attribute 'path'
+#     opentelemetry/instrumentation/fastapi/__init__.py:337
+#
+# That is not a test-only problem. Measured against a real uvicorn: every request
+# returns HTTP 500. 0.136.0 is the newest release that does NOT define
+# `_IncludedRouter` while still allowing `starlette>=0.46.0` unbounded — so it
+# reaches a fully patched starlette without needing the whole OTel stack (5 pins)
+# upgraded alongside. Bumping fastapi past 0.136.0 therefore requires upgrading
+# opentelemetry-instrumentation-fastapi in the same commit, and re-running
+# scripts/verify_otel.py to prove the instrumentation still works.
+fastapi==0.136.0
+
+# starlette is pinned EXPLICITLY even though fastapi pulls it in. fastapi 0.104.1
+# constrained it to `<0.28.0,>=0.27.0`, so it was effectively pinned by proxy;
+# 0.136.0 asks only for `>=0.46.0`, unbounded, which would leave the package that
+# carries the advisories free to drift on any future install. 1.3.1 is the lowest
+# version that clears all seven starlette advisories — PYSEC-2026-249 is fixed
+# only in 1.3.1.
+starlette==1.3.1
+
+uvicorn[standard]==0.24.0
+# pydantic 2.5.0 cannot satisfy fastapi 0.136.0, which requires >=2.9.0. This is
+# the only other pin the fastapi bump forces. `anyio==3.7.1` below was checked and
+# does NOT need to move: it was capped at <4 by fastapi 0.104.1, and 0.136.0
+# accepts it unchanged.
+pydantic==2.13.4
+groq==0.4.2
+chromadb==0.4.24
+sentence-transformers==2.2.2
+redis==5.0.1
+python-dotenv==1.0.0
+opentelemetry-api==1.20.0
+opentelemetry-sdk==1.20.0
+opentelemetry-exporter-otlp==1.20.0
+# Imported directly by backend/main.py. Previously absent: -fastapi was only
+# reaching the environment as a transitive dependency of chromadb, and
+# -logging was missing entirely, so `import backend.main` failed on a clean
+# install. Pinned to the 0.41b0 line that matches opentelemetry-* 1.20.0.
+opentelemetry-instrumentation-fastapi==0.41b0
+opentelemetry-instrumentation-logging==0.41b0
+# aiohttp is NOT pinned here on purpose, and NOT because it is absent.
+#
+# It used to read `aiohttp==3.9.1`, and that one line carried 30 of the 56
+# advisories `pip-audit` reports against this file. Nothing in DevGuard imports
+# aiohttp — `grep -rn aiohttp --include=*.py` finds no import, and it is absent
+# from `sys.modules` after `import backend.main`. But it is not removable either,
+# because it arrives transitively:
+#
+#     chromadb -> kubernetes -> aiohttp<4.0.0,>=3.9.0
+#
+# So a direct pin could not remove the package; all it did was hold a dependency
+# we never call at the *oldest* version that satisfied that range. Dropping the
+# pin lets the resolver satisfy kubernetes's own constraint, which it does with
+# 3.14.3 — above every fix version in the advisory list.
+#
+# If chromadb is ever cut (see SECURITY.md), kubernetes and aiohttp
+# leave with it and this comment can go too.
+websockets==12.0
+httpx==0.25.2
+
+# --- test-only (not needed to run DevGuard) ----------------------------------
+pytest==8.4.2
+anyio==3.7.1

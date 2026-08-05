@@ -1,0 +1,51 @@
+{
+  "arm": "off",
+  "run_index": 1,
+  "incident_id": "ABOFF01",
+  "time_to_root_cause_s": 6.3861,
+  "post_detection_s": 2.9863,
+  "detection_s": 3.3998,
+  "mcp_tool_calls": 6,
+  "evidence_items": 14,
+  "documents_retrieved": 0,
+  "tokens_prompt": 0,
+  "tokens_completion": 0,
+  "model_calls": 0,
+  "usd_cost": 0.0,
+  "root_cause_source": "DERIVED",
+  "diagnostician_verdict": "REASONER_UNAVAILABLE",
+  "chain_is_sufficient": true,
+  "phases": [
+    {
+      "name": "detection",
+      "seconds": 3.3998,
+      "tool_calls": 0
+    },
+    {
+      "name": "column_probe",
+      "seconds": 0.0346,
+      "tool_calls": 0
+    },
+    {
+      "name": "archivist",
+      "seconds": 2.0574,
+      "tool_calls": 0
+    },
+    {
+      "name": "cartographer",
+      "seconds": 0.194,
+      "tool_calls": 2
+    },
+    {
+      "name": "pathfinder",
+      "seconds": 0.6676,
+      "tool_calls": 4
+    },
+    {
+      "name": "diagnostician",
+      "seconds": 0.0006,
+      "tool_calls": 0
+    }
+  ],
+  "proof_pack": "evidence/proof-pack/ablation/ablation-off-01"
+}

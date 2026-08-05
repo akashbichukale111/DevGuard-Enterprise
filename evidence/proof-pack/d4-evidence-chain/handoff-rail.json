@@ -1,0 +1,167 @@
+[
+  {
+    "from_agent": "watcher",
+    "to_agent": "cartographer",
+    "incident_id": "D4",
+    "evidence_ids": [
+      "EV-D4-001",
+      "EV-D4-002",
+      "EV-D4-003",
+      "EV-D4-004"
+    ],
+    "decision": "OK",
+    "rationale": "Observed a real failure in dbt run.",
+    "started_at": "2026-08-01T07:13:48.412509Z",
+    "ended_at": "2026-08-01T07:13:48.413295Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [],
+    "duration_ms": 0.8
+  },
+  {
+    "from_agent": "archivist",
+    "to_agent": "cartographer",
+    "incident_id": "D4",
+    "evidence_ids": [
+      "EV-D4-005"
+    ],
+    "decision": "OK",
+    "rationale": "NO PRIOR KNOWLEDGE \u2014 document retrieval ran and matched nothing.",
+    "started_at": "2026-08-01T07:13:50.702070Z",
+    "ended_at": "2026-08-01T07:13:50.759070Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [
+      {
+        "tool": "grep_documents",
+        "arguments": {
+          "pattern": "user_id"
+        },
+        "ok": false,
+        "duration_ms": 5.372761999979048,
+        "raw_ref": "evidence/proof-pack/d4-evidence-chain/archivist/grep_documents.json",
+        "error": "1 validation error for call[grep_documents]\nurns\n  Missing required argument [type=missing_argument, input_value={'pattern': 'user_id'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing_argument"
+      },
+      {
+        "tool": "search_documents",
+        "arguments": {
+          "query": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 49.0956040000583,
+        "raw_ref": "evidence/proof-pack/d4-evidence-chain/archivist/search_documents.json",
+        "error": null
+      }
+    ],
+    "duration_ms": 57.0
+  },
+  {
+    "from_agent": "cartographer",
+    "to_agent": "pathfinder",
+    "incident_id": "D4",
+    "evidence_ids": [
+      "EV-D4-006",
+      "EV-D4-007"
+    ],
+    "decision": "OK",
+    "rationale": "Resolved 'stg_users' to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD) and read 5 columns from the catalog.",
+    "started_at": "2026-08-01T07:13:50.759121Z",
+    "ended_at": "2026-08-01T07:13:51.016465Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [
+      {
+        "tool": "search",
+        "arguments": {
+          "query": "stg_users"
+        },
+        "ok": true,
+        "duration_ms": 144.1484730000866,
+        "raw_ref": "evidence/proof-pack/d4-evidence-chain/cartographer/search-stg_users.json",
+        "error": null
+      },
+      {
+        "tool": "list_schema_fields",
+        "arguments": {
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+        },
+        "ok": true,
+        "duration_ms": 110.52987099992606,
+        "raw_ref": "evidence/proof-pack/d4-evidence-chain/cartographer/schema-stg_users.json",
+        "error": null
+      }
+    ],
+    "duration_ms": 257.3
+  },
+  {
+    "from_agent": "pathfinder",
+    "to_agent": "diagnostician",
+    "incident_id": "D4",
+    "evidence_ids": [
+      "EV-D4-008",
+      "EV-D4-009",
+      "EV-D4-010",
+      "EV-D4-011",
+      "EV-D4-012"
+    ],
+    "decision": "OK",
+    "rationale": "7 impacted entities dataset-level, 5 carrying column user_id (terminates at urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)).",
+    "started_at": "2026-08-01T07:13:51.016524Z",
+    "ended_at": "2026-08-01T07:13:51.868759Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [
+      {
+        "tool": "get_lineage",
+        "arguments": {
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "upstream": false,
+          "max_hops": 5
+        },
+        "ok": true,
+        "duration_ms": 335.7097729999623,
+        "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream.json",
+        "error": null
+      },
+      {
+        "tool": "get_lineage",
+        "arguments": {
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "upstream": false,
+          "max_hops": 5,
+          "column": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 201.28455799999756,
+        "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream-column.json",
+        "error": null
+      },
+      {
+        "tool": "get_lineage_paths_between",
+        "arguments": {
+          "source_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+          "direction": "downstream",
+          "source_column": "user_id",
+          "target_column": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 272.43940399989697,
+        "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage_paths_between.json",
+        "error": null
+      },
+      {
+        "tool": "get_dataset_queries",
+        "arguments": {
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "column": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 38.526405000084196,
+        "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_dataset_queries.json",
+        "error": null
+      }
+    ],
+    "duration_ms": 852.2
+  }
+]

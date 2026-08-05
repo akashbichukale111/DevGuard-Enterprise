@@ -1,0 +1,15 @@
+{
+  "name": "read in-scope dataset",
+  "expectation": "ALLOW",
+  "observed": "ALLOW",
+  "passed": true,
+  "detail": "VIEW_ENTITY_PAGE on a scoped dataset",
+  "response": {
+    "data": {
+      "dataset": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+      }
+    },
+    "extensions": {}
+  }
+}

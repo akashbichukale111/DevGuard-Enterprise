@@ -1,0 +1,25 @@
+D5 — is api.groq.com reachable from this environment?
+Captured: 2026-08-01T10:00:30Z
+
+$ env | grep -c GROQ_API_KEY
+0
+0   (no key is present in this environment)
+
+--- CONTROL: a host that IS allowed, from the same context ---
+$ curl -s -o /dev/null -w '%{http_code}' https://api.github.com
+200
+
+--- TARGET ---
+$ curl -s -o /dev/null -w '%{http_code} %{errormsg}' https://api.groq.com/openai/v1/models
+000 CONNECT tunnel failed, response 403
+
+--- the proxy exchange, verbatim ---
+* CONNECT tunnel: HTTP/1.1 negotiated
+* Establish HTTP proxy tunnel to api.groq.com:443
+> CONNECT api.groq.com:443 HTTP/1.1
+< HTTP/1.1 403 Forbidden
+* CONNECT tunnel failed, response 403
+
+VERDICT: denied at CONNECT, before TLS, before any request is sent.
+The control host returns 200 from the identical context, so this is the
+environment's egress policy and not a DevGuard defect. Unchanged since T2 6.3.

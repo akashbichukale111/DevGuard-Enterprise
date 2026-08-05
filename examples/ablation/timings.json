@@ -1,0 +1,563 @@
+{
+  "schema": "devguard.timings/1",
+  "generated_by": "backend/v2/ablation.py",
+  "arms": {
+    "on": {
+      "arm": "on",
+      "n": 5,
+      "ttrc_median_s": 5.1428,
+      "ttrc_min_s": 4.8899,
+      "ttrc_max_s": 6.5565,
+      "post_detection_median_s": 1.9815,
+      "post_detection_min_s": 1.8443,
+      "post_detection_max_s": 2.0876,
+      "mcp_tool_calls_median": 8,
+      "evidence_items_median": 18,
+      "documents_retrieved_median": 5,
+      "tokens_total": 0,
+      "model_calls_total": 0,
+      "usd_cost_total": 0.0
+    },
+    "off": {
+      "arm": "off",
+      "n": 5,
+      "ttrc_median_s": 4.8738,
+      "ttrc_min_s": 4.7171,
+      "ttrc_max_s": 6.3861,
+      "post_detection_median_s": 1.8536,
+      "post_detection_min_s": 1.7587,
+      "post_detection_max_s": 2.9863,
+      "mcp_tool_calls_median": 6,
+      "evidence_items_median": 14,
+      "documents_retrieved_median": 0,
+      "tokens_total": 0,
+      "model_calls_total": 0,
+      "usd_cost_total": 0.0
+    }
+  },
+  "comparison": {
+    "delta_ttrc_median_s": 0.269,
+    "delta_post_detection_median_s": 0.1279,
+    "delta_mcp_tool_calls_median": 2,
+    "delta_evidence_items_median": 4,
+    "retrieval_could_affect_root_cause": false,
+    "interpretation": "Both arms produced the root cause the same way, so this delta is the COST of retrieval and says nothing about its benefit."
+  },
+  "cost_model": {
+    "usd_per_1k_prompt_tokens": 0.0,
+    "usd_per_1k_completion_tokens": 0.0,
+    "note": "Zero because zero model calls were made in this environment, not because inference is free. Populate from the provider's price list when a key is available."
+  },
+  "runs": [
+    {
+      "arm": "off",
+      "run_index": 1,
+      "incident_id": "ABOFF01",
+      "time_to_root_cause_s": 6.3861,
+      "post_detection_s": 2.9863,
+      "detection_s": 3.3998,
+      "mcp_tool_calls": 6,
+      "evidence_items": 14,
+      "documents_retrieved": 0,
+      "tokens_prompt": 0,
+      "tokens_completion": 0,
+      "model_calls": 0,
+      "usd_cost": 0.0,
+      "root_cause_source": "DERIVED",
+      "diagnostician_verdict": "REASONER_UNAVAILABLE",
+      "chain_is_sufficient": true,
+      "phases": [
+        {
+          "name": "detection",
+          "seconds": 3.3998,
+          "tool_calls": 0
+        },
+        {
+          "name": "column_probe",
+          "seconds": 0.0346,
+          "tool_calls": 0
+        },
+        {
+          "name": "archivist",
+          "seconds": 2.0574,
+          "tool_calls": 0
+        },
+        {
+          "name": "cartographer",
+          "seconds": 0.194,
+          "tool_calls": 2
+        },
+        {
+          "name": "pathfinder",
+          "seconds": 0.6676,
+          "tool_calls": 4
+        },
+        {
+          "name": "diagnostician",
+          "seconds": 0.0006,
+          "tool_calls": 0
+        }
+      ],
+      "proof_pack": "evidence/proof-pack/ablation/ablation-off-01"
+    },
+    {
+      "arm": "on",
+      "run_index": 1,
+      "incident_id": "ABON01",
+      "time_to_root_cause_s": 4.9924,
+      "post_detection_s": 2.0388,
+      "detection_s": 2.9537,
+      "mcp_tool_calls": 8,
+      "evidence_items": 18,
+      "documents_retrieved": 5,
+      "tokens_prompt": 0,
+      "tokens_completion": 0,
+      "model_calls": 0,
+      "usd_cost": 0.0,
+      "root_cause_source": "DERIVED",
+      "diagnostician_verdict": "REASONER_UNAVAILABLE",
+      "chain_is_sufficient": true,
+      "phases": [
+        {
+          "name": "detection",
+          "seconds": 2.9537,
+          "tool_calls": 0
+        },
+        {
+          "name": "column_probe",
+          "seconds": 0.0265,
+          "tool_calls": 0
+        },
+        {
+          "name": "archivist",
+          "seconds": 1.4605,
+          "tool_calls": 2
+        },
+        {
+          "name": "cartographer",
+          "seconds": 0.1316,
+          "tool_calls": 2
+        },
+        {
+          "name": "pathfinder",
+          "seconds": 0.403,
+          "tool_calls": 4
+        },
+        {
+          "name": "diagnostician",
+          "seconds": 0.0007,
+          "tool_calls": 0
+        }
+      ],
+      "proof_pack": "evidence/proof-pack/ablation/ablation-on-01"
+    },
+    {
+      "arm": "off",
+      "run_index": 2,
+      "incident_id": "ABOFF02",
+      "time_to_root_cause_s": 4.7806,
+      "post_detection_s": 1.8557,
+      "detection_s": 2.9249,
+      "mcp_tool_calls": 6,
+      "evidence_items": 14,
+      "documents_retrieved": 0,
+      "tokens_prompt": 0,
+      "tokens_completion": 0,
+      "model_calls": 0,
+      "usd_cost": 0.0,
+      "root_cause_source": "DERIVED",
+      "diagnostician_verdict": "REASONER_UNAVAILABLE",
+      "chain_is_sufficient": true,
+      "phases": [
+        {
+          "name": "detection",
+          "seconds": 2.9249,
+          "tool_calls": 0
+        },
+        {
+          "name": "column_probe",
+          "seconds": 0.0137,
+          "tool_calls": 0
+        },
+        {
+          "name": "archivist",
+          "seconds": 1.2431,
+          "tool_calls": 0
+        },
+        {
+          "name": "cartographer",
+          "seconds": 0.1619,
+          "tool_calls": 2
+        },
+        {
+          "name": "pathfinder",
+          "seconds": 0.4046,
+          "tool_calls": 4
+        },
+        {
+          "name": "diagnostician",
+          "seconds": 0.0005,
+          "tool_calls": 0
+        }
+      ],
+      "proof_pack": "evidence/proof-pack/ablation/ablation-off-02"
+    },
+    {
+      "arm": "on",
+      "run_index": 2,
+      "incident_id": "ABON02",
+      "time_to_root_cause_s": 6.5565,
+      "post_detection_s": 1.9815,
+      "detection_s": 4.5751,
+      "mcp_tool_calls": 8,
+      "evidence_items": 18,
+      "documents_retrieved": 5,
+      "tokens_prompt": 0,
+      "tokens_completion": 0,
+      "model_calls": 0,
+      "usd_cost": 0.0,
+      "root_cause_source": "DERIVED",
+      "diagnostician_verdict": "REASONER_UNAVAILABLE",
+      "chain_is_sufficient": true,
+      "phases": [
+        {
+          "name": "detection",
+          "seconds": 4.5751,
+          "tool_calls": 0
+        },
+        {
+          "name": "column_probe",
+          "seconds": 0.0136,
+          "tool_calls": 0
+        },
+        {
+          "name": "archivist",
+          "seconds": 1.4671,
+          "tool_calls": 2
+        },
+        {
+          "name": "cartographer",
+          "seconds": 0.1867,
+          "tool_calls": 2
+        },
+        {
+          "name": "pathfinder",
+          "seconds": 0.2978,
+          "tool_calls": 4
+        },
+        {
+          "name": "diagnostician",
+          "seconds": 0.0006,
+          "tool_calls": 0
+        }
+      ],
+      "proof_pack": "evidence/proof-pack/ablation/ablation-on-02"
+    },
+    {
+      "arm": "off",
+      "run_index": 3,
+      "incident_id": "ABOFF03",
+      "time_to_root_cause_s": 4.8738,
+      "post_detection_s": 1.8536,
+      "detection_s": 3.0202,
+      "mcp_tool_calls": 6,
+      "evidence_items": 14,
+      "documents_retrieved": 0,
+      "tokens_prompt": 0,
+      "tokens_completion": 0,
+      "model_calls": 0,
+      "usd_cost": 0.0,
+      "root_cause_source": "DERIVED",
+      "diagnostician_verdict": "REASONER_UNAVAILABLE",
+      "chain_is_sufficient": true,
+      "phases": [
+        {
+          "name": "detection",
+          "seconds": 3.0202,
+          "tool_calls": 0
+        },
+        {
+          "name": "column_probe",
+          "seconds": 0.0136,
+          "tool_calls": 0
+        },
+        {
+          "name": "archivist",
+          "seconds": 1.3629,
+          "tool_calls": 0
+        },
+        {
+          "name": "cartographer",
+          "seconds": 0.158,
+          "tool_calls": 2
+        },
+        {
+          "name": "pathfinder",
+          "seconds": 0.3027,
+          "tool_calls": 4
+        },
+        {
+          "name": "diagnostician",
+          "seconds": 0.0005,
+          "tool_calls": 0
+        }
+      ],
+      "proof_pack": "evidence/proof-pack/ablation/ablation-off-03"
+    },
+    {
+      "arm": "on",
+      "run_index": 3,
+      "incident_id": "ABON03",
+      "time_to_root_cause_s": 4.8899,
+      "post_detection_s": 1.8443,
+      "detection_s": 3.0456,
+      "mcp_tool_calls": 8,
+      "evidence_items": 18,
+      "documents_retrieved": 5,
+      "tokens_prompt": 0,
+      "tokens_completion": 0,
+      "model_calls": 0,
+      "usd_cost": 0.0,
+      "root_cause_source": "DERIVED",
+      "diagnostician_verdict": "REASONER_UNAVAILABLE",
+      "chain_is_sufficient": true,
+      "phases": [
+        {
+          "name": "detection",
+          "seconds": 3.0456,
+          "tool_calls": 0
+        },
+        {
+          "name": "column_probe",
+          "seconds": 0.0131,
+          "tool_calls": 0
+        },
+        {
+          "name": "archivist",
+          "seconds": 1.3649,
+          "tool_calls": 2
+        },
+        {
+          "name": "cartographer",
+          "seconds": 0.1505,
+          "tool_calls": 2
+        },
+        {
+          "name": "pathfinder",
+          "seconds": 0.2994,
+          "tool_calls": 4
+        },
+        {
+          "name": "diagnostician",
+          "seconds": 0.0005,
+          "tool_calls": 0
+        }
+      ],
+      "proof_pack": "evidence/proof-pack/ablation/ablation-on-03"
+    },
+    {
+      "arm": "off",
+      "run_index": 4,
+      "incident_id": "ABOFF04",
+      "time_to_root_cause_s": 4.7171,
+      "post_detection_s": 1.7587,
+      "detection_s": 2.9583,
+      "mcp_tool_calls": 6,
+      "evidence_items": 14,
+      "documents_retrieved": 0,
+      "tokens_prompt": 0,
+      "tokens_completion": 0,
+      "model_calls": 0,
+      "usd_cost": 0.0,
+      "root_cause_source": "DERIVED",
+      "diagnostician_verdict": "REASONER_UNAVAILABLE",
+      "chain_is_sufficient": true,
+      "phases": [
+        {
+          "name": "detection",
+          "seconds": 2.9583,
+          "tool_calls": 0
+        },
+        {
+          "name": "column_probe",
+          "seconds": 0.013,
+          "tool_calls": 0
+        },
+        {
+          "name": "archivist",
+          "seconds": 1.2817,
+          "tool_calls": 0
+        },
+        {
+          "name": "cartographer",
+          "seconds": 0.14,
+          "tool_calls": 2
+        },
+        {
+          "name": "pathfinder",
+          "seconds": 0.3079,
+          "tool_calls": 4
+        },
+        {
+          "name": "diagnostician",
+          "seconds": 0.0005,
+          "tool_calls": 0
+        }
+      ],
+      "proof_pack": "evidence/proof-pack/ablation/ablation-off-04"
+    },
+    {
+      "arm": "on",
+      "run_index": 4,
+      "incident_id": "ABON04",
+      "time_to_root_cause_s": 5.4047,
+      "post_detection_s": 2.0876,
+      "detection_s": 3.3171,
+      "mcp_tool_calls": 8,
+      "evidence_items": 18,
+      "documents_retrieved": 5,
+      "tokens_prompt": 0,
+      "tokens_completion": 0,
+      "model_calls": 0,
+      "usd_cost": 0.0,
+      "root_cause_source": "DERIVED",
+      "diagnostician_verdict": "REASONER_UNAVAILABLE",
+      "chain_is_sufficient": true,
+      "phases": [
+        {
+          "name": "detection",
+          "seconds": 3.3171,
+          "tool_calls": 0
+        },
+        {
+          "name": "column_probe",
+          "seconds": 0.0181,
+          "tool_calls": 0
+        },
+        {
+          "name": "archivist",
+          "seconds": 1.4737,
+          "tool_calls": 2
+        },
+        {
+          "name": "cartographer",
+          "seconds": 0.1661,
+          "tool_calls": 2
+        },
+        {
+          "name": "pathfinder",
+          "seconds": 0.3975,
+          "tool_calls": 4
+        },
+        {
+          "name": "diagnostician",
+          "seconds": 0.0004,
+          "tool_calls": 0
+        }
+      ],
+      "proof_pack": "evidence/proof-pack/ablation/ablation-on-04"
+    },
+    {
+      "arm": "off",
+      "run_index": 5,
+      "incident_id": "ABOFF05",
+      "time_to_root_cause_s": 4.9465,
+      "post_detection_s": 1.8139,
+      "detection_s": 3.1326,
+      "mcp_tool_calls": 6,
+      "evidence_items": 14,
+      "documents_retrieved": 0,
+      "tokens_prompt": 0,
+      "tokens_completion": 0,
+      "model_calls": 0,
+      "usd_cost": 0.0,
+      "root_cause_source": "DERIVED",
+      "diagnostician_verdict": "REASONER_UNAVAILABLE",
+      "chain_is_sufficient": true,
+      "phases": [
+        {
+          "name": "detection",
+          "seconds": 3.1326,
+          "tool_calls": 0
+        },
+        {
+          "name": "column_probe",
+          "seconds": 0.0141,
+          "tool_calls": 0
+        },
+        {
+          "name": "archivist",
+          "seconds": 1.3128,
+          "tool_calls": 0
+        },
+        {
+          "name": "cartographer",
+          "seconds": 0.1697,
+          "tool_calls": 2
+        },
+        {
+          "name": "pathfinder",
+          "seconds": 0.3006,
+          "tool_calls": 4
+        },
+        {
+          "name": "diagnostician",
+          "seconds": 0.0004,
+          "tool_calls": 0
+        }
+      ],
+      "proof_pack": "evidence/proof-pack/ablation/ablation-off-05"
+    },
+    {
+      "arm": "on",
+      "run_index": 5,
+      "incident_id": "ABON05",
+      "time_to_root_cause_s": 5.1428,
+      "post_detection_s": 1.9572,
+      "detection_s": 3.1856,
+      "mcp_tool_calls": 8,
+      "evidence_items": 18,
+      "documents_retrieved": 5,
+      "tokens_prompt": 0,
+      "tokens_completion": 0,
+      "model_calls": 0,
+      "usd_cost": 0.0,
+      "root_cause_source": "DERIVED",
+      "diagnostician_verdict": "REASONER_UNAVAILABLE",
+      "chain_is_sufficient": true,
+      "phases": [
+        {
+          "name": "detection",
+          "seconds": 3.1856,
+          "tool_calls": 0
+        },
+        {
+          "name": "column_probe",
+          "seconds": 0.0145,
+          "tool_calls": 0
+        },
+        {
+          "name": "archivist",
+          "seconds": 1.4584,
+          "tool_calls": 2
+        },
+        {
+          "name": "cartographer",
+          "seconds": 0.1294,
+          "tool_calls": 2
+        },
+        {
+          "name": "pathfinder",
+          "seconds": 0.3387,
+          "tool_calls": 4
+        },
+        {
+          "name": "diagnostician",
+          "seconds": 0.0004,
+          "tool_calls": 0
+        }
+      ],
+      "proof_pack": "evidence/proof-pack/ablation/ablation-on-05"
+    }
+  ]
+}

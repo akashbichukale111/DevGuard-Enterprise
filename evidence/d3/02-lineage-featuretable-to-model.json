@@ -1,0 +1,58 @@
+{
+    "data": {
+        "dataset": {
+            "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+            "upstream": {
+                "total": 3,
+                "relationships": [
+                    {
+                        "type": "DownstreamOf",
+                        "entity": {
+                            "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_orders,PROD)",
+                            "type": "DATASET"
+                        }
+                    },
+                    {
+                        "type": "DownstreamOf",
+                        "entity": {
+                            "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+                            "type": "DATASET"
+                        }
+                    }
+                ]
+            },
+            "downstream": {
+                "total": 2,
+                "relationships": [
+                    {
+                        "type": "Consumes",
+                        "entity": {
+                            "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard_ml,substrate_ml,PROD),train_churn_model)",
+                            "type": "DATA_JOB"
+                        }
+                    }
+                ]
+            }
+        },
+        "dataJob": {
+            "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard_ml,substrate_ml,PROD),train_churn_model)",
+            "properties": {
+                "name": "train_churn_model",
+                "description": "Reads analytics_marts.user_order_features and fits a scikit-learn LogisticRegression churn-risk classifier."
+            },
+            "downstream": {
+                "total": 1,
+                "relationships": [
+                    {
+                        "type": "TrainedBy",
+                        "entity": {
+                            "urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+                            "type": "MLMODEL"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "extensions": {}
+}

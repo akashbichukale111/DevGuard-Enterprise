@@ -1,0 +1,12 @@
+remove_structured_properties schema: {"additionalProperties": false, "properties": {"property_urns": {"items": {"type": "string"}, "type": "array", "description": "List of structured property URNs to remove\n          Example: [\"urn:li:structuredProperty:io.acryl.privacy.retentionTime\"]"}, "entity_urns": {"items": {"type": "string"}, "type": "array", "description": "List of entity URNs to remove properties from (e.g., dataset URNs, dashboard URNs)"}}, "required": ["property_urns", "entity_urns"], "type": "object"}
+
+[1] BEFORE removal:
+  get_lineage_paths_between: isError=True :: Error calling tool 'get_lineage_paths_between': Error executing graphql query: [{'message': 'Cannot invoke "com.linkedin.datahub.graphql.generated.Entity.getUrn()" because "entity" is null', 'locations': [{'line': 1549, 'column': 5}], 'path': ['searchAcrossLineage', 'searchResults', 3, 'entity', 'structuredProperties', 'properties', 2, 'valueEntities'], 'extensions': {'code': 500, 'type': 'SERVER_ERROR', 'classification': 'DataFetchingException'}}]
+
+[2] remove devguard.last_incident_urn:
+  remove_structured_properties: isError=False :: {"success":true,"message":"Successfully removed 1 structured propert(ies) from 1 entit(ies)"}
+
+[3] AFTER removal:
+  get_lineage_paths_between: isError=False :: {"metadata":{"queryType":"lineage-path-trace","direction":"downstream","pathType":"dataset-level","fields":{"paths":{"description":"Array of lineage paths showing transformation chains from source to target","structure":"Each path contains alternating entities (SCHEMA_FIELD or DATASET) and optional transformation QUERY entities","queryEntities":"QUERY entities are returned as URNs only. Use get_entities(query_urn) to fetch SQL statement and other query details."}}},"source":{"urn":"urn:li:datase
+
+DONE

@@ -1,0 +1,8 @@
+{
+  "arguments": {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+  },
+  "ok": true,
+  "text": "{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\",\"fields\":[{\"fieldPath\":\"country\",\"nativeDataType\":\"TEXT\",\"nullable\":true},{\"fieldPath\":\"email\",\"nativeDataType\":\"TEXT\",\"nullable\":true},{\"fieldPath\":\"is_active\",\"nativeDataType\":\"BOOLEAN\",\"nullable\":true},{\"fieldPath\":\"signup_ts\",\"nativeDataType\":\"TIMESTAMP WITH TIME ZONE\",\"nullable\":true},{\"fieldPath\":\"user_id\",\"nativeDataType\":\"BIGINT\",\"nullable\":true}],\"totalFields\":5,\"returned\":5,\"remainingCount\":0,\"matchingCount\":null,\"offset\":0}",
+  "error": null
+}

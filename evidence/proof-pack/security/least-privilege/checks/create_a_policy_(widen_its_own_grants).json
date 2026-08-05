@@ -1,0 +1,32 @@
+{
+  "name": "create a policy (widen its own grants)",
+  "expectation": "DENY",
+  "observed": "DENY",
+  "passed": true,
+  "detail": "MANAGE_POLICIES was never granted \u2014 it must not escalate itself",
+  "response": {
+    "errors": [
+      {
+        "message": "Unauthorized to perform this action. Please contact your DataHub administrator.",
+        "locations": [
+          {
+            "line": 1,
+            "column": 41
+          }
+        ],
+        "path": [
+          "createPolicy"
+        ],
+        "extensions": {
+          "code": 403,
+          "type": "UNAUTHORIZED",
+          "classification": "DataFetchingException"
+        }
+      }
+    ],
+    "data": {
+      "createPolicy": null
+    },
+    "extensions": {}
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "jsonrpc": "2.0",
+  "id": 27372,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Successfully removed 2 structured propert(ies) from 1 entit(ies)\"}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "message": "Successfully removed 2 structured propert(ies) from 1 entit(ies)"
+    },
+    "isError": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "arm": "on",
+  "run_index": 3,
+  "incident_id": "ABON03",
+  "time_to_root_cause_s": 4.8899,
+  "post_detection_s": 1.8443,
+  "detection_s": 3.0456,
+  "mcp_tool_calls": 8,
+  "evidence_items": 18,
+  "documents_retrieved": 5,
+  "tokens_prompt": 0,
+  "tokens_completion": 0,
+  "model_calls": 0,
+  "usd_cost": 0.0,
+  "root_cause_source": "DERIVED",
+  "diagnostician_verdict": "REASONER_UNAVAILABLE",
+  "chain_is_sufficient": true,
+  "phases": [
+    {
+      "name": "detection",
+      "seconds": 3.0456,
+      "tool_calls": 0
+    },
+    {
+      "name": "column_probe",
+      "seconds": 0.0131,
+      "tool_calls": 0
+    },
+    {
+      "name": "archivist",
+      "seconds": 1.3649,
+      "tool_calls": 2
+    },
+    {
+      "name": "cartographer",
+      "seconds": 0.1505,
+      "tool_calls": 2
+    },
+    {
+      "name": "pathfinder",
+      "seconds": 0.2994,
+      "tool_calls": 4
+    },
+    {
+      "name": "diagnostician",
+      "seconds": 0.0005,
+      "tool_calls": 0
+    }
+  ],
+  "proof_pack": "evidence/proof-pack/ablation/ablation-on-03"
+}

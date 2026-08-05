@@ -1,0 +1,247 @@
+{
+  "incident_id": "D6111931",
+  "digest": "83279a02dc4cd437",
+  "is_sufficient": true,
+  "items": [
+    {
+      "id": "EV-D6111931-001",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:35.659846Z",
+      "claim": "`dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/watcher/dbt-run.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-002",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:35.659911Z",
+      "claim": "model stg_users failed to build (models/staging/stg_users.sql)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/watcher/dbt-run.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-003",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:35.659919Z",
+      "claim": "database reports column \"user_id\" does not exist",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/watcher/dbt-run.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-004",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:35.659926Z",
+      "claim": "1 downstream model(s) SKIPped \u2014 not rebuilt, not dropped, therefore stale",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/watcher/dbt-run.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-005",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:35.685751Z",
+      "claim": "raw.users now has columns: customer_id, email, country, signup_ts, is_active",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/watcher/column-probe.json",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-006",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:38.181439Z",
+      "claim": "MCP server offered 8 tools; document tools present",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/archivist/capabilities.json",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-007",
+      "source": "DATAHUB_DOCUMENT",
+      "trust": "UNTRUSTED_TEXT",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:38.299056Z",
+      "claim": "retrieved prior document urn_li_document_shared-5547ea0e-ade2-4ac2-bfa9-36f629ba1b0c (injection screen: NONE)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/archivist/document-urn_li_document_shared-5547ea0e-ade2-4ac2-bfa9-36f629ba1b0c.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-008",
+      "source": "DATAHUB_DOCUMENT",
+      "trust": "UNTRUSTED_TEXT",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:38.299897Z",
+      "claim": "retrieved prior document urn_li_document_shared-7cb47d8f-d08c-4297-81cc-3b823f5d018c (injection screen: NONE)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/archivist/document-urn_li_document_shared-7cb47d8f-d08c-4297-81cc-3b823f5d018c.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-009",
+      "source": "DATAHUB_DOCUMENT",
+      "trust": "UNTRUSTED_TEXT",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:38.300447Z",
+      "claim": "retrieved prior document urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f (injection screen: NONE)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/archivist/document-urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-010",
+      "source": "DATAHUB_DOCUMENT",
+      "trust": "UNTRUSTED_TEXT",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:38.300811Z",
+      "claim": "retrieved prior document urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af (injection screen: NONE)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/archivist/document-urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-011",
+      "source": "DATAHUB_DOCUMENT",
+      "trust": "UNTRUSTED_TEXT",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:38.301230Z",
+      "claim": "retrieved prior document urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d (injection screen: NONE)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/archivist/document-urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-012",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:38.483664Z",
+      "claim": "'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/cartographer/search-stg_users.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+    },
+    {
+      "id": "EV-D6111931-013",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:38.549605Z",
+      "claim": "catalog schema for stg_users has 5 columns: country, email, is_active, signup_ts, user_id",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/cartographer/schema-stg_users.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+    },
+    {
+      "id": "EV-D6111931-014",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:38.750041Z",
+      "claim": "7 downstream entities impacted within 5 hops of devguard.raw.users (dataset-level)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/pathfinder/get_lineage-downstream.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    },
+    {
+      "id": "EV-D6111931-015",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:38.912448Z",
+      "claim": "5 entities carry column user_id downstream of devguard.raw.users (column-level)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/pathfinder/get_lineage-downstream-column.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    },
+    {
+      "id": "EV-D6111931-016",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:38.912482Z",
+      "claim": "blast radius terminates at registered ML model urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/pathfinder/get_lineage-downstream.json",
+      "datahub_urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)"
+    },
+    {
+      "id": "EV-D6111931-017",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:39.096114Z",
+      "claim": "column-level path is 5 hops via column user_id",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/pathfinder/get_lineage_paths_between.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    },
+    {
+      "id": "EV-D6111931-018",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:39.133644Z",
+      "claim": "1 catalog query references user_id (source: SYSTEM)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/pathfinder/get_dataset_queries.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    },
+    {
+      "id": "EV-D6111931-019",
+      "source": "DEVGUARD_INFERENCE",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "DERIVED",
+      "collected_at": "2026-08-01T11:19:39.134995Z",
+      "claim": "root cause (derived, not model-produced): user_id renamed upstream",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/diagnostician/derived-root-cause.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-020",
+      "source": "DEVGUARD_INFERENCE",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "DERIVED",
+      "collected_at": "2026-08-01T11:19:39.156644Z",
+      "claim": "proposed user_id -> definitely_not_a_real_column in substrate/dbt/models/staging/stg_users.sql (2 lines) on devguard/fix-d6111931",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/surgeon/proposed.patch",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-021",
+      "source": "DEVGUARD_INFERENCE",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "DERIVED",
+      "collected_at": "2026-08-01T11:19:39.157031Z",
+      "claim": "patch risk LOW across 1 file(s)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/sentinel/patch-scan.json",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-022",
+      "source": "RUNTIME",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:43.523472Z",
+      "claim": "proposed fix FAILS TO BUILD in isolated schema analytics_devguard_check (exit 1)",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/referee/validation.txt",
+      "datahub_urn": null
+    },
+    {
+      "id": "EV-D6111931-023",
+      "source": "DATAHUB_GRAPH",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "OBSERVED",
+      "collected_at": "2026-08-01T11:19:43.626166Z",
+      "claim": "1 owner(s) on devguard.raw.users: DataHub",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/magistrate/get_entities.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    },
+    {
+      "id": "EV-D6111931-024",
+      "source": "DEVGUARD_INFERENCE",
+      "trust": "TRUSTED_SYSTEM",
+      "confidence": "DERIVED",
+      "collected_at": "2026-08-01T11:19:43.626416Z",
+      "claim": "risk LOW -> NAMED_OWNER: propose + validate; apply only after owner approval",
+      "raw_ref": "evidence/proof-pack/d6-fail-the-fix/magistrate/autonomy-decision.json",
+      "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    }
+  ]
+}

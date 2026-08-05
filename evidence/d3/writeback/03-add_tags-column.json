@@ -1,0 +1,17 @@
+{
+  "jsonrpc": "2.0",
+  "id": 27205,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Successfully added 1 tag(s) to 1 entit(ies)\"}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "message": "Successfully added 1 tag(s) to 1 entit(ies)"
+    },
+    "isError": false
+  }
+}

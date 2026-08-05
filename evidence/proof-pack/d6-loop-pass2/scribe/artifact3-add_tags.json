@@ -1,0 +1,17 @@
+{
+  "tool": "add_tags",
+  "arguments": {
+    "tag_urns": [
+      "urn:li:tag:devguard_incident_impacted"
+    ],
+    "entity_urns": [
+      "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+    ],
+    "column_paths": [
+      "user_id"
+    ]
+  },
+  "ok": true,
+  "text": "{\"success\":true,\"message\":\"Successfully added 1 tag(s) to 1 entit(ies)\"}",
+  "error": null
+}

@@ -1,0 +1,9 @@
+{
+  "verdict": "REASONER_UNAVAILABLE",
+  "is_refusal": false,
+  "statement": "No reasoner configured. The evidence chain is sufficient, so this is NOT a refusal \u2014 the question was never asked.",
+  "cited_evidence_ids": [],
+  "refusal_reasons": [],
+  "model": null,
+  "tokens": 0
+}

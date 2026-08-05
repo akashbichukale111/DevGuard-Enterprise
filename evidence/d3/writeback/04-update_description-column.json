@@ -1,0 +1,19 @@
+{
+  "jsonrpc": "2.0",
+  "id": 27290,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\"column_path\":\"user_id\",\"message\":\"Description updated successfully\"}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "column_path": "user_id",
+      "message": "Description updated successfully"
+    },
+    "isError": false
+  }
+}

@@ -1,0 +1,59 @@
+{
+    "data": {
+        "searchAcrossLineage": {
+            "total": 7,
+            "searchResults": [
+                {
+                    "degree": 4,
+                    "entity": {
+                        "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard_ml,substrate_ml,PROD),train_churn_model)",
+                        "type": "DATA_JOB"
+                    }
+                },
+                {
+                    "degree": 1,
+                    "entity": {
+                        "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)",
+                        "type": "DATASET"
+                    }
+                },
+                {
+                    "degree": 5,
+                    "entity": {
+                        "urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+                        "type": "MLMODEL"
+                    }
+                },
+                {
+                    "degree": 2,
+                    "entity": {
+                        "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+                        "type": "DATASET"
+                    }
+                },
+                {
+                    "degree": 2,
+                    "entity": {
+                        "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)",
+                        "type": "DATASET"
+                    }
+                },
+                {
+                    "degree": 3,
+                    "entity": {
+                        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+                        "type": "DATASET"
+                    }
+                },
+                {
+                    "degree": 1,
+                    "entity": {
+                        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+                        "type": "DATASET"
+                    }
+                }
+            ]
+        }
+    },
+    "extensions": {}
+}

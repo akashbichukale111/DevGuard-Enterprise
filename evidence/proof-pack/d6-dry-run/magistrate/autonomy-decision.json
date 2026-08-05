@@ -1,0 +1,15 @@
+{
+  "risk": "LOW",
+  "mode": "NAMED_OWNER",
+  "allowed_action": "propose + validate; apply only after owner approval",
+  "approver": "asset owner from the DataHub graph",
+  "rationale": "Even a one-line fix changes a production model. DevGuard proposes and proves; a human decides.",
+  "owners": [
+    {
+      "urn": "urn:li:corpuser:datahub",
+      "display_name": "DataHub",
+      "ownership_type": "NONE"
+    }
+  ],
+  "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+}

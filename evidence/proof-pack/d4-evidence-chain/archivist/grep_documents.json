@@ -1,0 +1,8 @@
+{
+  "arguments": {
+    "pattern": "user_id"
+  },
+  "ok": false,
+  "text": "1 validation error for call[grep_documents]\nurns\n  Missing required argument [type=missing_argument, input_value={'pattern': 'user_id'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing_argument",
+  "error": "1 validation error for call[grep_documents]\nurns\n  Missing required argument [type=missing_argument, input_value={'pattern': 'user_id'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing_argument"
+}

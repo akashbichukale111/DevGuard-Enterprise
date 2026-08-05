@@ -1,0 +1,23 @@
+# DevGuard V2 substrate — dbt Core project (the design thesis).
+#
+# dbt is here for one specific reason the contract names: "DataHub's dbt source
+# produces REAL column-level lineage from the manifest — ingested, not
+# hand-authored." That sentence is the difference between a credible reference-incident
+# and theatre, and it is why the design thesis makes SUBSTRATE.md assert:
+#   "All hero-path lineage was ingested from the running stack.
+#    No lineage was hand-authored."
+name: devguard_substrate
+version: "1.0.0"
+config-version: 2
+profile: devguard_substrate
+model-paths: ["models"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+models:
+  devguard_substrate:
+    staging:
+      +materialized: view
+      +schema: staging
+    marts:
+      +materialized: table
+      +schema: marts

@@ -1,0 +1,41 @@
+version: 2
+
+# Added for the fault-injection evaluation suite, and worth being explicit about
+# why: without any tests, `dbt build` is identical to `dbt run`, and a whole
+# class of faults — the ones that break DATA rather than SCHEMA — produces no
+# failure signal at all. DevGuard would then have nothing to detect and would
+# correctly refuse on every one of them, which would make the eval measure
+# nothing.
+#
+# These are the tests a competent analytics engineer writes on this shape of
+# model anyway: keys are unique and present, amounts and statuses are present.
+# They are NOT tuned to the injected faults — `null_rate_spike` is caught by
+# `not_null` because that is what `not_null` is for, and `silent_value_drift`
+# is NOT caught by anything here, which is reported as a genuine miss rather
+# than papered over with a bespoke range check written after seeing the fault.
+#
+# `dbt run` behaviour is unchanged by this file, so every earlier phase's
+# recorded evidence remains reproducible.
+
+models:
+  - name: stg_users
+    description: Typed, filtered users from raw.users.
+    columns:
+      - name: user_id
+        description: Primary key, carried through to the ML feature table.
+        tests: [unique, not_null]
+      - name: email
+        tests: [not_null]
+
+  - name: stg_orders
+    description: Typed orders from raw.orders.
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+      - name: user_id
+        tests: [not_null]
+      - name: amount_cents
+        description: Order value in minor units. Never null for a real order.
+        tests: [not_null]
+      - name: status
+        tests: [not_null]

@@ -1,0 +1,35 @@
+[
+  {
+    "from_agent": "watcher",
+    "to_agent": "cartographer",
+    "incident_id": "D5REF",
+    "evidence_ids": [
+      "EV-D5REF-001",
+      "EV-D5REF-002",
+      "EV-D5REF-003",
+      "EV-D5REF-004"
+    ],
+    "decision": "OK",
+    "rationale": "Observed a real failure in dbt run.",
+    "started_at": "2026-08-01T09:49:58.676752Z",
+    "ended_at": "2026-08-01T09:49:58.677363Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [],
+    "duration_ms": 0.6
+  },
+  {
+    "from_agent": "diagnostician",
+    "to_agent": "scribe",
+    "incident_id": "D5REF",
+    "evidence_ids": [],
+    "decision": "INSUFFICIENT_EVIDENCE",
+    "rationale": "INSUFFICIENT_EVIDENCE (NO_GRAPH_EVIDENCE). \u00a77 requires at least one RUNTIME and one DATAHUB_GRAPH item; this chain is missing DATAHUB_GRAPH. Stopping the loop rather than guessing.",
+    "started_at": "2026-08-01T09:50:31.725402Z",
+    "ended_at": "2026-08-01T09:50:31.725454Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [],
+    "duration_ms": 0.1
+  }
+]

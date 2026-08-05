@@ -1,0 +1,287 @@
+[
+  {
+    "from_agent": "watcher",
+    "to_agent": "cartographer",
+    "incident_id": "D6105859",
+    "evidence_ids": [
+      "EV-D6105859-001",
+      "EV-D6105859-002",
+      "EV-D6105859-003",
+      "EV-D6105859-004"
+    ],
+    "decision": "OK",
+    "rationale": "Observed a real failure in dbt run.",
+    "started_at": "2026-08-01T10:59:03.148008Z",
+    "ended_at": "2026-08-01T10:59:03.148594Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [],
+    "duration_ms": 0.6
+  },
+  {
+    "from_agent": "archivist",
+    "to_agent": "cartographer",
+    "incident_id": "D6105859",
+    "evidence_ids": [
+      "EV-D6105859-006",
+      "EV-D6105859-007",
+      "EV-D6105859-008",
+      "EV-D6105859-009"
+    ],
+    "decision": "OK",
+    "rationale": "PREVIOUS VERIFIED INCIDENT \u2014 3 document(s) retrieved.",
+    "started_at": "2026-08-01T10:59:05.292169Z",
+    "ended_at": "2026-08-01T10:59:05.390172Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [
+      {
+        "tool": "search_documents",
+        "arguments": {
+          "query": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 67.87546999976257,
+        "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/search_documents.json",
+        "error": null
+      },
+      {
+        "tool": "grep_documents",
+        "arguments": {
+          "urns": [
+            "urn:li:document:shared-99088993-9f90-4fa9-b59c-4054251b710f",
+            "urn:li:document:shared-afdb89cb-2e93-4bec-b662-b248764248af",
+            "urn:li:document:shared-b988bac2-7491-496e-9314-5491e0a74f8d"
+          ],
+          "pattern": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 23.64283599990813,
+        "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/grep_documents.json",
+        "error": null
+      }
+    ],
+    "duration_ms": 98.0
+  },
+  {
+    "from_agent": "cartographer",
+    "to_agent": "pathfinder",
+    "incident_id": "D6105859",
+    "evidence_ids": [
+      "EV-D6105859-010",
+      "EV-D6105859-011"
+    ],
+    "decision": "OK",
+    "rationale": "Resolved 'stg_users' to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD) and read 5 columns from the catalog.",
+    "started_at": "2026-08-01T10:59:05.390242Z",
+    "ended_at": "2026-08-01T10:59:05.643522Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [
+      {
+        "tool": "search",
+        "arguments": {
+          "query": "stg_users"
+        },
+        "ok": true,
+        "duration_ms": 173.36231499984933,
+        "raw_ref": "evidence/proof-pack/d6-loop-pass1/cartographer/search-stg_users.json",
+        "error": null
+      },
+      {
+        "tool": "list_schema_fields",
+        "arguments": {
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+        },
+        "ok": true,
+        "duration_ms": 78.40934500018193,
+        "raw_ref": "evidence/proof-pack/d6-loop-pass1/cartographer/schema-stg_users.json",
+        "error": null
+      }
+    ],
+    "duration_ms": 253.3
+  },
+  {
+    "from_agent": "pathfinder",
+    "to_agent": "diagnostician",
+    "incident_id": "D6105859",
+    "evidence_ids": [
+      "EV-D6105859-012",
+      "EV-D6105859-013",
+      "EV-D6105859-014",
+      "EV-D6105859-015",
+      "EV-D6105859-016"
+    ],
+    "decision": "OK",
+    "rationale": "7 impacted entities dataset-level, 5 carrying column user_id (terminates at urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)).",
+    "started_at": "2026-08-01T10:59:05.643575Z",
+    "ended_at": "2026-08-01T10:59:06.582066Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [
+      {
+        "tool": "get_lineage",
+        "arguments": {
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "upstream": false,
+          "max_hops": 5
+        },
+        "ok": true,
+        "duration_ms": 419.55519999964963,
+        "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream.json",
+        "error": null
+      },
+      {
+        "tool": "get_lineage",
+        "arguments": {
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "upstream": false,
+          "max_hops": 5,
+          "column": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 205.34534699982032,
+        "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream-column.json",
+        "error": null
+      },
+      {
+        "tool": "get_lineage_paths_between",
+        "arguments": {
+          "source_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+          "direction": "downstream",
+          "source_column": "user_id",
+          "target_column": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 253.51743100009116,
+        "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage_paths_between.json",
+        "error": null
+      },
+      {
+        "tool": "get_dataset_queries",
+        "arguments": {
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "column": "user_id"
+        },
+        "ok": true,
+        "duration_ms": 55.40636800014909,
+        "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_dataset_queries.json",
+        "error": null
+      }
+    ],
+    "duration_ms": 938.5
+  },
+  {
+    "from_agent": "diagnostician",
+    "to_agent": "scribe",
+    "incident_id": "D6105859",
+    "evidence_ids": [],
+    "decision": "BLOCKED",
+    "rationale": "No reasoner configured. The evidence chain is sufficient, so this is NOT a refusal \u2014 the question was never asked.",
+    "started_at": "2026-08-01T10:59:06.582551Z",
+    "ended_at": "2026-08-01T10:59:06.582578Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [],
+    "duration_ms": 0.0
+  },
+  {
+    "from_agent": "surgeon",
+    "to_agent": "sentinel",
+    "incident_id": "D6105859",
+    "evidence_ids": [
+      "EV-D6105859-018"
+    ],
+    "decision": "OK",
+    "rationale": "Minimal fix on devguard/fix-d6105859, working tree untouched.",
+    "started_at": "2026-08-01T10:59:06.583133Z",
+    "ended_at": "2026-08-01T10:59:06.603416Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [],
+    "duration_ms": 20.3
+  },
+  {
+    "from_agent": "referee",
+    "to_agent": "magistrate",
+    "incident_id": "D6105859",
+    "evidence_ids": [
+      "EV-D6105859-020"
+    ],
+    "decision": "OK",
+    "rationale": "Validated against the real database in analytics_devguard_check.",
+    "started_at": "2026-08-01T10:59:06.603971Z",
+    "ended_at": "2026-08-01T10:59:11.738879Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [],
+    "duration_ms": 5134.9
+  },
+  {
+    "from_agent": "magistrate",
+    "to_agent": "human",
+    "incident_id": "D6105859",
+    "evidence_ids": [
+      "EV-D6105859-021",
+      "EV-D6105859-022"
+    ],
+    "decision": "OK",
+    "rationale": "LOW routed to DataHub.",
+    "started_at": "2026-08-01T10:59:11.738966Z",
+    "ended_at": "2026-08-01T10:59:11.857220Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [
+      {
+        "tool": "get_entities",
+        "arguments": {
+          "urns": [
+            "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+          ]
+        },
+        "ok": true,
+        "duration_ms": 116.94873400028882,
+        "raw_ref": "evidence/proof-pack/d6-loop-pass1/magistrate/get_entities.json",
+        "error": null
+      }
+    ],
+    "duration_ms": 118.3
+  },
+  {
+    "from_agent": "referee",
+    "to_agent": "scribe",
+    "incident_id": "D6105859",
+    "evidence_ids": [
+      "EV-D6105859-024"
+    ],
+    "decision": "OK",
+    "rationale": "The exact signal that failed now passes.",
+    "started_at": "2026-08-01T10:59:11.857637Z",
+    "ended_at": "2026-08-01T10:59:15.328798Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [],
+    "duration_ms": 3471.2
+  },
+  {
+    "from_agent": "scribe",
+    "to_agent": "auditor",
+    "incident_id": "D6105859",
+    "evidence_ids": [
+      "EV-D6105859-025",
+      "EV-D6105859-026",
+      "EV-D6105859-027",
+      "EV-D6105859-028",
+      "EV-D6105859-029"
+    ],
+    "decision": "OK",
+    "rationale": "Write-back: 1 already_present, 4 written.",
+    "started_at": "2026-08-01T10:59:16.799259Z",
+    "ended_at": "2026-08-01T10:59:17.217251Z",
+    "tokens": 0,
+    "model": null,
+    "tool_calls": [],
+    "duration_ms": 418.0
+  }
+]

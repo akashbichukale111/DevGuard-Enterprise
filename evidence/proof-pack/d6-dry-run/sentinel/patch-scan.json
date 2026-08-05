@@ -1,0 +1,10 @@
+{
+  "files_touched": [
+    "substrate/dbt/models/staging/stg_users.sql"
+  ],
+  "added": 1,
+  "removed": 1,
+  "risk": "LOW",
+  "blocked": false,
+  "findings": []
+}

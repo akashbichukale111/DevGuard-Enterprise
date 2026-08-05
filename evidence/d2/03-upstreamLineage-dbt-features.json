@@ -1,0 +1,104 @@
+{
+  "version": 0,
+  "aspect": {
+    "com.linkedin.dataset.UpstreamLineage": {
+      "upstreams": [
+        {
+          "auditStamp": {
+            "actor": "urn:li:corpuser:unknown",
+            "time": 1785503465248
+          },
+          "type": "TRANSFORMED",
+          "dataset": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_orders,PROD)"
+        },
+        {
+          "auditStamp": {
+            "actor": "urn:li:corpuser:unknown",
+            "time": 1785503465248
+          },
+          "type": "TRANSFORMED",
+          "dataset": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+        }
+      ],
+      "fineGrainedLineages": [
+        {
+          "downstreamType": "FIELD",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),user_id)"
+          ],
+          "confidenceScore": 0.9,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD),user_id)"
+          ]
+        },
+        {
+          "downstreamType": "FIELD",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),country)"
+          ],
+          "confidenceScore": 0.9,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD),country)"
+          ]
+        },
+        {
+          "downstreamType": "FIELD",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),order_count)"
+          ],
+          "confidenceScore": 0.9,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_orders,PROD),order_id)"
+          ]
+        },
+        {
+          "downstreamType": "FIELD",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),lifetime_value_cents)"
+          ],
+          "confidenceScore": 0.9,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_orders,PROD),amount_cents)"
+          ]
+        },
+        {
+          "downstreamType": "FIELD",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),avg_order_cents)"
+          ],
+          "confidenceScore": 0.9,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_orders,PROD),amount_cents)"
+          ]
+        },
+        {
+          "downstreamType": "FIELD",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),refund_count)"
+          ],
+          "confidenceScore": 0.9,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_orders,PROD),status)"
+          ]
+        },
+        {
+          "downstreamType": "FIELD",
+          "downstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),last_order_at)"
+          ],
+          "confidenceScore": 0.9,
+          "upstreamType": "FIELD_SET",
+          "upstreams": [
+            "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_orders,PROD),ordered_at)"
+          ]
+        }
+      ]
+    }
+  }
+}

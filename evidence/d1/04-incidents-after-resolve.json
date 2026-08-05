@@ -1,0 +1,23 @@
+{
+  "data": {
+    "dataset": {
+      "active": {
+        "total": 0
+      },
+      "resolved": {
+        "total": 1,
+        "incidents": [
+          {
+            "urn": "urn:li:incident:b2f18c7e-bee3-40bf-82c6-2bad17163a28",
+            "title": "Column user_id renamed upstream; downstream dbt model and ML feature build failing",
+            "status": {
+              "state": "RESOLVED",
+              "message": "DevGuard D1 smoke test complete \u2014 resolved by the same proof that raised it."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "extensions": {}
+}

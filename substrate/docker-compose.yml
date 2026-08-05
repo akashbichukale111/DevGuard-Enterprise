@@ -1,0 +1,39 @@
+# DevGuard V2 substrate — the REAL data layer (the design thesis).
+#
+# The design thesis is blunt about why this exists: "DataHub is a metadata platform. It does not
+# hold your tables. Sample datapacks describe Snowflake/dbt systems you do not
+# own — you cannot rename a column in them and nothing will break. A reference-incident
+# built on datapack metadata alone is theatre."
+#
+# So this is a real Postgres with real tables that real consumers really break
+# against when the reference-incident rename happens.
+#
+#   docker compose -f substrate/docker-compose.yml up -d
+#   psql: localhost:5433  db=devguard  user=devguard
+
+name: devguard-substrate
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: devguard
+      POSTGRES_USER: devguard
+      POSTGRES_PASSWORD: devguard
+    ports:
+      # 5433, not 5432 — DataHub's quickstart runs its own MySQL and the SigNoz
+      # stack runs its own Postgres on 5432. Port collisions here would be a
+      # confusing failure at demo time.
+      - "5433:5432"
+    volumes:
+      - ./seed:/docker-entrypoint-initdb.d:ro
+      - substrate-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devguard -d devguard"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  substrate-pgdata:

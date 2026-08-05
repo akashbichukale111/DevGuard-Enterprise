@@ -1,0 +1,115 @@
+[
+  {
+    "tool": "add_tags",
+    "arguments": {
+      "tag_urns": [
+        "urn:li:tag:devguard_incident_impacted"
+      ],
+      "entity_urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+      ],
+      "column_paths": [
+        "user_id"
+      ]
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 27205,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"success\":true,\"message\":\"Successfully added 1 tag(s) to 1 entit(ies)\"}"
+          }
+        ],
+        "structuredContent": {
+          "success": true,
+          "message": "Successfully added 1 tag(s) to 1 entit(ies)"
+        },
+        "isError": false
+      }
+    }
+  },
+  {
+    "tool": "update_description",
+    "arguments": {
+      "entity_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "column_path": "user_id",
+      "description": "DRIFTED 2026-08-01T02:16:51Z: this column no longer exists in PostgreSQL \u2014 it was renamed to customer_id. The dbt model stg_users still references user_id and fails to build (exit 1). The already-deployed view kept working because PostgreSQL rewrote it to 'SELECT customer_id AS user_id', so nothing downstream reported an error. Open DevGuard incident: urn:li:incident:f01f744b-50fb-446d-96a1-4ecf43bc3001"
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 27290,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"success\":true,\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\"column_path\":\"user_id\",\"message\":\"Description updated successfully\"}"
+          }
+        ],
+        "structuredContent": {
+          "success": true,
+          "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+          "column_path": "user_id",
+          "message": "Description updated successfully"
+        },
+        "isError": false
+      }
+    }
+  },
+  {
+    "tool": "add_structured_properties",
+    "arguments": {
+      "entity_urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+      ],
+      "structured_properties": {
+        "urn:li:structuredProperty:devguard.last_incident_id": [
+          "f01f744b-50fb-446d-96a1-4ecf43bc3001"
+        ]
+      }
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 27365,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "2 validation errors for call[add_structured_properties]\nproperty_values\n  Missing required argument [type=missing_argument, input_value={'entity_urns': ['urn:li:...6d-96a1-4ecf43bc3001']}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing_argument\nstructured_properties\n  Unexpected keyword argument [type=unexpected_keyword_argument, input_value={'urn:li:structuredProper...46d-96a1-4ecf43bc3001']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/unexpected_keyword_argument"
+          }
+        ],
+        "isError": true
+      }
+    }
+  },
+  {
+    "tool": "remove_structured_properties",
+    "arguments": {
+      "entity_urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+      ],
+      "property_urns": [
+        "urn:li:structuredProperty:devguard.verified_at",
+        "urn:li:structuredProperty:devguard.time_to_root_cause_s"
+      ]
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 27372,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"success\":true,\"message\":\"Successfully removed 2 structured propert(ies) from 1 entit(ies)\"}"
+          }
+        ],
+        "structuredContent": {
+          "success": true,
+          "message": "Successfully removed 2 structured propert(ies) from 1 entit(ies)"
+        },
+        "isError": false
+      }
+    }
+  }
+]

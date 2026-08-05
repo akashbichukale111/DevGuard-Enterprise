@@ -1,0 +1,72 @@
+$ dbt build   (fault: permission_revoked, schema analytics_eval, role devguard_eval)
+injected: REVOKE SELECT ON raw_eval.orders FROM devguard_eval;
+exit code: 1  errored_models=5  failed_tests=0
+
+13:16:25  Running with dbt=1.12.0
+13:16:25  Registered adapter: postgres=1.11.0
+13:16:26  Found 3 models, 8 data tests, 2 sources, 477 macros
+13:16:26
+13:16:26  Concurrency: 4 threads (target='dev')
+13:16:26
+13:16:26  1 of 11 START sql view model analytics_eval_staging.stg_orders ................. [RUN]
+13:16:26  2 of 11 START sql view model analytics_eval_staging.stg_users .................. [RUN]
+13:16:26  1 of 11 OK created sql view model analytics_eval_staging.stg_orders ............ [CREATE VIEW in 0.14s]
+13:16:26  2 of 11 OK created sql view model analytics_eval_staging.stg_users ............. [CREATE VIEW in 0.14s]
+13:16:26  3 of 11 START test not_null_stg_orders_amount_cents ............................ [RUN]
+13:16:26  4 of 11 START test not_null_stg_orders_order_id ................................ [RUN]
+13:16:26  5 of 11 START test not_null_stg_orders_status .................................. [RUN]
+13:16:26  6 of 11 START test not_null_stg_orders_user_id ................................. [RUN]
+13:16:26  3 of 11 ERROR not_null_stg_orders_amount_cents ................................. [ERROR in 0.12s]
+13:16:26  4 of 11 ERROR not_null_stg_orders_order_id ..................................... [ERROR in 0.12s]
+13:16:26  6 of 11 ERROR not_null_stg_orders_user_id ...................................... [ERROR in 0.12s]
+13:16:26  5 of 11 ERROR not_null_stg_orders_status ....................................... [ERROR in 0.12s]
+13:16:26  7 of 11 START test unique_stg_orders_order_id .................................. [RUN]
+13:16:26  8 of 11 START test not_null_stg_users_email .................................... [RUN]
+13:16:26  9 of 11 START test not_null_stg_users_user_id .................................. [RUN]
+13:16:26  10 of 11 START test unique_stg_users_user_id ................................... [RUN]
+13:16:26  10 of 11 PASS unique_stg_users_user_id ......................................... [PASS in 0.08s]
+13:16:26  7 of 11 ERROR unique_stg_orders_order_id ....................................... [ERROR in 0.09s]
+13:16:26  8 of 11 PASS not_null_stg_users_email .......................................... [PASS in 0.09s]
+13:16:26  9 of 11 PASS not_null_stg_users_user_id ........................................ [PASS in 0.09s]
+13:16:26  11 of 11 SKIP relation analytics_eval_marts.user_order_features ................ [SKIP]
+13:16:26
+13:16:26  Finished running 1 table model, 8 data tests, 2 view models in 0 hours 0 minutes and 0.56 seconds (0.56s).
+13:16:27
+13:16:27  Completed with 5 errors, 0 partial successes, and 0 warnings:
+13:16:27
+13:16:27  [ERROR]: in test not_null_stg_orders_amount_cents (models/staging/schema.yml)
+13:16:27    Database Error in test not_null_stg_orders_amount_cents (models/staging/schema.yml)
+  permission denied for table orders
+  compiled code at target/run/devguard_substrate/models/staging/schema.yml/not_null_stg_orders_amount_cents.sql
+13:16:27
+13:16:27    compiled code at target/compiled/devguard_substrate/models/staging/schema.yml/not_null_stg_orders_amount_cents.sql
+13:16:27
+13:16:27  [ERROR]: in test not_null_stg_orders_order_id (models/staging/schema.yml)
+13:16:27    Database Error in test not_null_stg_orders_order_id (models/staging/schema.yml)
+  permission denied for table orders
+  compiled code at target/run/devguard_substrate/models/staging/schema.yml/not_null_stg_orders_order_id.sql
+13:16:27
+13:16:27    compiled code at target/compiled/devguard_substrate/models/staging/schema.yml/not_null_stg_orders_order_id.sql
+13:16:27
+13:16:27  [ERROR]: in test not_null_stg_orders_user_id (models/staging/schema.yml)
+13:16:27    Database Error in test not_null_stg_orders_user_id (models/staging/schema.yml)
+  permission denied for table orders
+  compiled code at target/run/devguard_substrate/models/staging/schema.yml/not_null_stg_orders_user_id.sql
+13:16:27
+13:16:27    compiled code at target/compiled/devguard_substrate/models/staging/schema.yml/not_null_stg_orders_user_id.sql
+13:16:27
+13:16:27  [ERROR]: in test not_null_stg_orders_status (models/staging/schema.yml)
+13:16:27    Database Error in test not_null_stg_orders_status (models/staging/schema.yml)
+  permission denied for table orders
+  compiled code at target/run/devguard_substrate/models/staging/schema.yml/not_null_stg_orders_status.sql
+13:16:27
+13:16:27    compiled code at target/compiled/devguard_substrate/models/staging/schema.yml/not_null_stg_orders_status.sql
+13:16:27
+13:16:27  [ERROR]: in test unique_stg_orders_order_id (models/staging/schema.yml)
+13:16:27    Database Error in test unique_stg_orders_order_id (models/staging/schema.yml)
+  permission denied for table orders
+  compiled code at target/run/devguard_substrate/models/staging/schema.yml/unique_stg_orders_order_id.sql
+13:16:27
+13:16:27    compiled code at target/compiled/devguard_substrate/models/staging/schema.yml/unique_stg_orders_order_id.sql
+13:16:27
+13:16:27  Done. PASS=5 WARN=0 ERROR=5 SKIP=1 NO-OP=0 REUSED=0 TOTAL=11

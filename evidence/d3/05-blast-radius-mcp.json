@@ -1,0 +1,1269 @@
+{
+  "schemas": {
+    "get_lineage": {
+      "additionalProperties": false,
+      "properties": {
+        "urn": {
+          "type": "string"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "upstream": {
+          "default": true,
+          "type": "boolean"
+        },
+        "max_hops": {
+          "default": 1,
+          "type": "integer"
+        },
+        "max_results": {
+          "default": 30,
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "urn"
+      ],
+      "type": "object"
+    },
+    "get_lineage_paths_between": {
+      "additionalProperties": false,
+      "properties": {
+        "source_urn": {
+          "type": "string",
+          "description": "URN of the source dataset"
+        },
+        "target_urn": {
+          "type": "string",
+          "description": "URN of the target dataset"
+        },
+        "source_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional column name in source dataset"
+        },
+        "target_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional column name in target dataset (required if source_column provided)"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "upstream",
+                "downstream"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional direction to search. If None (default), automatically discovers\n      the path by trying downstream first, then upstream. Specify \"downstream\" or\n      \"upstream\" explicitly for better performance if you know the direction."
+        }
+      },
+      "required": [
+        "source_urn",
+        "target_urn"
+      ],
+      "type": "object"
+    }
+  },
+  "calls": [
+    {
+      "tool": "get_lineage",
+      "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "upstream": false,
+        "max_hops": 1
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"downstreams\":{\"total\":2,\"facets\":[{\"field\":\"degree\",\"displayName\":\"Degree of Dependencies\",\"aggregations\":[{\"value\":\"1\",\"count\":0},{\"value\":\"2\",\"count\":0},{\"value\":\"3+\",\"count\":0}]},{\"field\":\"_entityType\",\"displayName\":\"Type\",\"aggregations\":[{\"value\":\"DATASET\",\"count\":2}]},{\"field\":\"typeNames\",\"displayName\":\"Sub Type\",\"aggregations\":[{\"value\":\"View\",\"count\":1},{\"value\":\"Source\",\"count\":1}]},{\"field\":\"platform\",\"displayName\":\"Platform\",\"aggregations\":[{\"value\":\"urn:li:dataPlatform:postgres\",\"count\":1,\"entity\":{\"urn\":\"urn:li:dataPlatform:postgres\"}},{\"value\":\"urn:li:dataPlatform:dbt\",\"count\":1,\"entity\":{\"urn\":\"urn:li:dataPlatform:dbt\"}}]},{\"field\":\"container\",\"displayName\":\"Container\",\"aggregations\":[{\"value\":\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\",\"count\":1,\"entity\":{\"urn\":\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\"}}]},{\"field\":\"origin\",\"displayName\":\"Environment\",\"aggregations\":[{\"value\":\"PROD\",\"count\":2}]},{\"field\":\"_entityType\u241etypeNames\",\"displayName\":\"Type\u241eSub Type\",\"aggregations\":[{\"value\":\"DATASET\",\"count\":2},{\"value\":\"DATASET\u241eSource\",\"count\":1},{\"value\":\"DATASET\u241eView\",\"count\":1}]},{\"field\":\"hasSiblings\",\"displayName\":\"hasSiblings\",\"aggregations\":[{\"value\":\"true\",\"count\":2}]},{\"field\":\"removed\",\"displayName\":\"removed\",\"aggregations\":[{\"value\":\"true\",\"count\":0}]},{\"field\":\"entity\",\"displayName\":\"Type\",\"aggregations\":[{\"value\":\"DATASET\",\"count\":2}]}],\"searchResults\":[{\"entity\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)\",\"type\":\"DATASET\",\"name\":\"users\",\"platform\":{\"urn\":\"urn:li:dataPlatform:dbt\",\"name\":\"dbt\"},\"properties\":{\"name\":\"users\",\"description\":\"Raw user records.\",\"customProperties\":[{\"key\":\"catalog_version\",\"value\":\"1.12.0\"},{\"key\":\"node_type\",\"value\":\"source\"},{\"key\":\"dbt_file_path\",\"value\":\"models/staging/sources.yml\"},{\"key\":\"catalog_schema\",\"value\":\"https://schemas.getdbt.com/dbt/catalog/v1.json\"},{\"key\":\"catalog_type\",\"value\":\"BASE TABLE\"},{\"key\":\"manifest_adapter\",\"value\":\"postgres\"},{\"key\":\"manifest_version\",\"value\":\"1.12.0\"},{\"key\":\"dbt_package_name\",\"value\":\"devguard_substrate\"},{\"key\":\"language\",\"value\":\"sql\"},{\"key\":\"dbt_unique_id\",\"value\":\"source.devguard_substrate.raw.users\"},{\"key\":\"manifest_schema\",\"value\":\"https://schemas.getdbt.com/dbt/manifest/v12.json\"}]},\"subTypes\":{\"typeNames\":[\"Source\"]},\"health\":[{\"type\":\"INCIDENTS\",\"status\":\"PASS\"}]},\"degree\":1},{\"entity\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\",\"type\":\"DATASET\",\"name\":\"stg_users\",\"platform\":{\"urn\":\"urn:li:dataPlatform:postgres\",\"name\":\"postgres\"},\"properties\":{\"name\":\"stg_users\",\"customProperties\":[{\"key\":\"view_definition\",\"value\":\" SELECT user_id,\\n    email,\\n    country,\\n    signup_ts,\\n    is_active\\n   FROM raw.users\\n  WHERE is_active;\"},{\"key\":\"is_view\",\"value\":\"True\"}]},\"subTypes\":{\"typeNames\":[\"View\"]},\"health\":[{\"type\":\"INCIDENTS\",\"status\":\"PASS\"}]},\"degree\":1}],\"offset\":0,\"returned\":2,\"hasMore\":false}}"
+            }
+          ],
+          "structuredContent": {
+            "downstreams": {
+              "total": 2,
+              "facets": [
+                {
+                  "field": "degree",
+                  "displayName": "Degree of Dependencies",
+                  "aggregations": [
+                    {
+                      "value": "1",
+                      "count": 0
+                    },
+                    {
+                      "value": "2",
+                      "count": 0
+                    },
+                    {
+                      "value": "3+",
+                      "count": 0
+                    }
+                  ]
+                },
+                {
+                  "field": "_entityType",
+                  "displayName": "Type",
+                  "aggregations": [
+                    {
+                      "value": "DATASET",
+                      "count": 2
+                    }
+                  ]
+                },
+                {
+                  "field": "typeNames",
+                  "displayName": "Sub Type",
+                  "aggregations": [
+                    {
+                      "value": "View",
+                      "count": 1
+                    },
+                    {
+                      "value": "Source",
+                      "count": 1
+                    }
+                  ]
+                },
+                {
+                  "field": "platform",
+                  "displayName": "Platform",
+                  "aggregations": [
+                    {
+                      "value": "urn:li:dataPlatform:postgres",
+                      "count": 1,
+                      "entity": {
+                        "urn": "urn:li:dataPlatform:postgres"
+                      }
+                    },
+                    {
+                      "value": "urn:li:dataPlatform:dbt",
+                      "count": 1,
+                      "entity": {
+                        "urn": "urn:li:dataPlatform:dbt"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "field": "container",
+                  "displayName": "Container",
+                  "aggregations": [
+                    {
+                      "value": "urn:li:container:49c362e5df64433c720f8cb5b50cbd29",
+                      "count": 1,
+                      "entity": {
+                        "urn": "urn:li:container:49c362e5df64433c720f8cb5b50cbd29"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "field": "origin",
+                  "displayName": "Environment",
+                  "aggregations": [
+                    {
+                      "value": "PROD",
+                      "count": 2
+                    }
+                  ]
+                },
+                {
+                  "field": "_entityType\u241etypeNames",
+                  "displayName": "Type\u241eSub Type",
+                  "aggregations": [
+                    {
+                      "value": "DATASET",
+                      "count": 2
+                    },
+                    {
+                      "value": "DATASET\u241eSource",
+                      "count": 1
+                    },
+                    {
+                      "value": "DATASET\u241eView",
+                      "count": 1
+                    }
+                  ]
+                },
+                {
+                  "field": "hasSiblings",
+                  "displayName": "hasSiblings",
+                  "aggregations": [
+                    {
+                      "value": "true",
+                      "count": 2
+                    }
+                  ]
+                },
+                {
+                  "field": "removed",
+                  "displayName": "removed",
+                  "aggregations": [
+                    {
+                      "value": "true",
+                      "count": 0
+                    }
+                  ]
+                },
+                {
+                  "field": "entity",
+                  "displayName": "Type",
+                  "aggregations": [
+                    {
+                      "value": "DATASET",
+                      "count": 2
+                    }
+                  ]
+                }
+              ],
+              "searchResults": [
+                {
+                  "entity": {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)",
+                    "type": "DATASET",
+                    "name": "users",
+                    "platform": {
+                      "urn": "urn:li:dataPlatform:dbt",
+                      "name": "dbt"
+                    },
+                    "properties": {
+                      "name": "users",
+                      "description": "Raw user records.",
+                      "customProperties": [
+                        {
+                          "key": "catalog_version",
+                          "value": "1.12.0"
+                        },
+                        {
+                          "key": "node_type",
+                          "value": "source"
+                        },
+                        {
+                          "key": "dbt_file_path",
+                          "value": "models/staging/sources.yml"
+                        },
+                        {
+                          "key": "catalog_schema",
+                          "value": "https://schemas.getdbt.com/dbt/catalog/v1.json"
+                        },
+                        {
+                          "key": "catalog_type",
+                          "value": "BASE TABLE"
+                        },
+                        {
+                          "key": "manifest_adapter",
+                          "value": "postgres"
+                        },
+                        {
+                          "key": "manifest_version",
+                          "value": "1.12.0"
+                        },
+                        {
+                          "key": "dbt_package_name",
+                          "value": "devguard_substrate"
+                        },
+                        {
+                          "key": "language",
+                          "value": "sql"
+                        },
+                        {
+                          "key": "dbt_unique_id",
+                          "value": "source.devguard_substrate.raw.users"
+                        },
+                        {
+                          "key": "manifest_schema",
+                          "value": "https://schemas.getdbt.com/dbt/manifest/v12.json"
+                        }
+                      ]
+                    },
+                    "subTypes": {
+                      "typeNames": [
+                        "Source"
+                      ]
+                    },
+                    "health": [
+                      {
+                        "type": "INCIDENTS",
+                        "status": "PASS"
+                      }
+                    ]
+                  },
+                  "degree": 1
+                },
+                {
+                  "entity": {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+                    "type": "DATASET",
+                    "name": "stg_users",
+                    "platform": {
+                      "urn": "urn:li:dataPlatform:postgres",
+                      "name": "postgres"
+                    },
+                    "properties": {
+                      "name": "stg_users",
+                      "customProperties": [
+                        {
+                          "key": "view_definition",
+                          "value": " SELECT user_id,\n    email,\n    country,\n    signup_ts,\n    is_active\n   FROM raw.users\n  WHERE is_active;"
+                        },
+                        {
+                          "key": "is_view",
+                          "value": "True"
+                        }
+                      ]
+                    },
+                    "subTypes": {
+                      "typeNames": [
+                        "View"
+                      ]
+                    },
+                    "health": [
+                      {
+                        "type": "INCIDENTS",
+                        "status": "PASS"
+                      }
+                    ]
+                  },
+                  "degree": 1
+                }
+              ],
+              "offset": 0,
+              "returned": 2,
+              "hasMore": false
+            }
+          },
+          "isError": false
+        }
+      }
+    },
+    {
+      "tool": "get_lineage",
+      "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "upstream": false,
+        "column": "user_id",
+        "max_hops": 1
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 21,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"downstreams\":{\"total\":2,\"facets\":[{\"field\":\"degree\",\"displayName\":\"Degree of Dependencies\",\"aggregations\":[{\"value\":\"1\",\"count\":0},{\"value\":\"2\",\"count\":0},{\"value\":\"3+\",\"count\":0}]},{\"field\":\"_entityType\",\"displayName\":\"Type\",\"aggregations\":[{\"value\":\"DATASET\",\"count\":2}]},{\"field\":\"typeNames\",\"displayName\":\"Sub Type\",\"aggregations\":[{\"value\":\"View\",\"count\":1},{\"value\":\"Source\",\"count\":1}]},{\"field\":\"platform\",\"displayName\":\"Platform\",\"aggregations\":[{\"value\":\"urn:li:dataPlatform:postgres\",\"count\":1,\"entity\":{\"urn\":\"urn:li:dataPlatform:postgres\"}},{\"value\":\"urn:li:dataPlatform:dbt\",\"count\":1,\"entity\":{\"urn\":\"urn:li:dataPlatform:dbt\"}}]},{\"field\":\"container\",\"displayName\":\"Container\",\"aggregations\":[{\"value\":\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\",\"count\":1,\"entity\":{\"urn\":\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\"}}]},{\"field\":\"origin\",\"displayName\":\"Environment\",\"aggregations\":[{\"value\":\"PROD\",\"count\":2}]},{\"field\":\"_entityType\u241etypeNames\",\"displayName\":\"Type\u241eSub Type\",\"aggregations\":[{\"value\":\"DATASET\",\"count\":2},{\"value\":\"DATASET\u241eSource\",\"count\":1},{\"value\":\"DATASET\u241eView\",\"count\":1}]},{\"field\":\"hasSiblings\",\"displayName\":\"hasSiblings\",\"aggregations\":[{\"value\":\"true\",\"count\":2}]},{\"field\":\"removed\",\"displayName\":\"removed\",\"aggregations\":[{\"value\":\"true\",\"count\":0}]},{\"field\":\"entity\",\"displayName\":\"Type\",\"aggregations\":[{\"value\":\"DATASET\",\"count\":2}]}],\"searchResults\":[{\"entity\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)\",\"type\":\"DATASET\",\"name\":\"users\",\"platform\":{\"urn\":\"urn:li:dataPlatform:dbt\",\"name\":\"dbt\"},\"properties\":{\"name\":\"users\",\"description\":\"Raw user records.\",\"customProperties\":[{\"key\":\"catalog_version\",\"value\":\"1.12.0\"},{\"key\":\"node_type\",\"value\":\"source\"},{\"key\":\"dbt_file_path\",\"value\":\"models/staging/sources.yml\"},{\"key\":\"catalog_schema\",\"value\":\"https://schemas.getdbt.com/dbt/catalog/v1.json\"},{\"key\":\"catalog_type\",\"value\":\"BASE TABLE\"},{\"key\":\"manifest_adapter\",\"value\":\"postgres\"},{\"key\":\"manifest_version\",\"value\":\"1.12.0\"},{\"key\":\"dbt_package_name\",\"value\":\"devguard_substrate\"},{\"key\":\"language\",\"value\":\"sql\"},{\"key\":\"dbt_unique_id\",\"value\":\"source.devguard_substrate.raw.users\"},{\"key\":\"manifest_schema\",\"value\":\"https://schemas.getdbt.com/dbt/manifest/v12.json\"}]},\"subTypes\":{\"typeNames\":[\"Source\"]},\"health\":[{\"type\":\"INCIDENTS\",\"status\":\"PASS\"}]},\"degree\":1,\"lineageColumns\":[\"user_id\"]},{\"entity\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\",\"type\":\"DATASET\",\"name\":\"stg_users\",\"platform\":{\"urn\":\"urn:li:dataPlatform:postgres\",\"name\":\"postgres\"},\"properties\":{\"name\":\"stg_users\",\"customProperties\":[{\"key\":\"view_definition\",\"value\":\" SELECT user_id,\\n    email,\\n    country,\\n    signup_ts,\\n    is_active\\n   FROM raw.users\\n  WHERE is_active;\"},{\"key\":\"is_view\",\"value\":\"True\"}]},\"subTypes\":{\"typeNames\":[\"View\"]},\"health\":[{\"type\":\"INCIDENTS\",\"status\":\"PASS\"}]},\"degree\":1,\"lineageColumns\":[\"user_id\"]}],\"offset\":0,\"returned\":2,\"hasMore\":false},\"metadata\":{\"queryType\":\"column-level-lineage\",\"groupedBy\":\"dataset\",\"fields\":{\"lineageColumns\":{\"description\":\"Columns in each dataset that have a lineage relationship with the source column\",\"semantics\":{\"downstream\":\"Columns derived from the source column\",\"upstream\":\"Columns that the source column depends on\"}}}}}"
+            }
+          ],
+          "structuredContent": {
+            "downstreams": {
+              "total": 2,
+              "facets": [
+                {
+                  "field": "degree",
+                  "displayName": "Degree of Dependencies",
+                  "aggregations": [
+                    {
+                      "value": "1",
+                      "count": 0
+                    },
+                    {
+                      "value": "2",
+                      "count": 0
+                    },
+                    {
+                      "value": "3+",
+                      "count": 0
+                    }
+                  ]
+                },
+                {
+                  "field": "_entityType",
+                  "displayName": "Type",
+                  "aggregations": [
+                    {
+                      "value": "DATASET",
+                      "count": 2
+                    }
+                  ]
+                },
+                {
+                  "field": "typeNames",
+                  "displayName": "Sub Type",
+                  "aggregations": [
+                    {
+                      "value": "View",
+                      "count": 1
+                    },
+                    {
+                      "value": "Source",
+                      "count": 1
+                    }
+                  ]
+                },
+                {
+                  "field": "platform",
+                  "displayName": "Platform",
+                  "aggregations": [
+                    {
+                      "value": "urn:li:dataPlatform:postgres",
+                      "count": 1,
+                      "entity": {
+                        "urn": "urn:li:dataPlatform:postgres"
+                      }
+                    },
+                    {
+                      "value": "urn:li:dataPlatform:dbt",
+                      "count": 1,
+                      "entity": {
+                        "urn": "urn:li:dataPlatform:dbt"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "field": "container",
+                  "displayName": "Container",
+                  "aggregations": [
+                    {
+                      "value": "urn:li:container:49c362e5df64433c720f8cb5b50cbd29",
+                      "count": 1,
+                      "entity": {
+                        "urn": "urn:li:container:49c362e5df64433c720f8cb5b50cbd29"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "field": "origin",
+                  "displayName": "Environment",
+                  "aggregations": [
+                    {
+                      "value": "PROD",
+                      "count": 2
+                    }
+                  ]
+                },
+                {
+                  "field": "_entityType\u241etypeNames",
+                  "displayName": "Type\u241eSub Type",
+                  "aggregations": [
+                    {
+                      "value": "DATASET",
+                      "count": 2
+                    },
+                    {
+                      "value": "DATASET\u241eSource",
+                      "count": 1
+                    },
+                    {
+                      "value": "DATASET\u241eView",
+                      "count": 1
+                    }
+                  ]
+                },
+                {
+                  "field": "hasSiblings",
+                  "displayName": "hasSiblings",
+                  "aggregations": [
+                    {
+                      "value": "true",
+                      "count": 2
+                    }
+                  ]
+                },
+                {
+                  "field": "removed",
+                  "displayName": "removed",
+                  "aggregations": [
+                    {
+                      "value": "true",
+                      "count": 0
+                    }
+                  ]
+                },
+                {
+                  "field": "entity",
+                  "displayName": "Type",
+                  "aggregations": [
+                    {
+                      "value": "DATASET",
+                      "count": 2
+                    }
+                  ]
+                }
+              ],
+              "searchResults": [
+                {
+                  "entity": {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)",
+                    "type": "DATASET",
+                    "name": "users",
+                    "platform": {
+                      "urn": "urn:li:dataPlatform:dbt",
+                      "name": "dbt"
+                    },
+                    "properties": {
+                      "name": "users",
+                      "description": "Raw user records.",
+                      "customProperties": [
+                        {
+                          "key": "catalog_version",
+                          "value": "1.12.0"
+                        },
+                        {
+                          "key": "node_type",
+                          "value": "source"
+                        },
+                        {
+                          "key": "dbt_file_path",
+                          "value": "models/staging/sources.yml"
+                        },
+                        {
+                          "key": "catalog_schema",
+                          "value": "https://schemas.getdbt.com/dbt/catalog/v1.json"
+                        },
+                        {
+                          "key": "catalog_type",
+                          "value": "BASE TABLE"
+                        },
+                        {
+                          "key": "manifest_adapter",
+                          "value": "postgres"
+                        },
+                        {
+                          "key": "manifest_version",
+                          "value": "1.12.0"
+                        },
+                        {
+                          "key": "dbt_package_name",
+                          "value": "devguard_substrate"
+                        },
+                        {
+                          "key": "language",
+                          "value": "sql"
+                        },
+                        {
+                          "key": "dbt_unique_id",
+                          "value": "source.devguard_substrate.raw.users"
+                        },
+                        {
+                          "key": "manifest_schema",
+                          "value": "https://schemas.getdbt.com/dbt/manifest/v12.json"
+                        }
+                      ]
+                    },
+                    "subTypes": {
+                      "typeNames": [
+                        "Source"
+                      ]
+                    },
+                    "health": [
+                      {
+                        "type": "INCIDENTS",
+                        "status": "PASS"
+                      }
+                    ]
+                  },
+                  "degree": 1,
+                  "lineageColumns": [
+                    "user_id"
+                  ]
+                },
+                {
+                  "entity": {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+                    "type": "DATASET",
+                    "name": "stg_users",
+                    "platform": {
+                      "urn": "urn:li:dataPlatform:postgres",
+                      "name": "postgres"
+                    },
+                    "properties": {
+                      "name": "stg_users",
+                      "customProperties": [
+                        {
+                          "key": "view_definition",
+                          "value": " SELECT user_id,\n    email,\n    country,\n    signup_ts,\n    is_active\n   FROM raw.users\n  WHERE is_active;"
+                        },
+                        {
+                          "key": "is_view",
+                          "value": "True"
+                        }
+                      ]
+                    },
+                    "subTypes": {
+                      "typeNames": [
+                        "View"
+                      ]
+                    },
+                    "health": [
+                      {
+                        "type": "INCIDENTS",
+                        "status": "PASS"
+                      }
+                    ]
+                  },
+                  "degree": 1,
+                  "lineageColumns": [
+                    "user_id"
+                  ]
+                }
+              ],
+              "offset": 0,
+              "returned": 2,
+              "hasMore": false
+            },
+            "metadata": {
+              "queryType": "column-level-lineage",
+              "groupedBy": "dataset",
+              "fields": {
+                "lineageColumns": {
+                  "description": "Columns in each dataset that have a lineage relationship with the source column",
+                  "semantics": {
+                    "downstream": "Columns derived from the source column",
+                    "upstream": "Columns that the source column depends on"
+                  }
+                }
+              }
+            }
+          },
+          "isError": false
+        }
+      }
+    },
+    {
+      "tool": "get_lineage",
+      "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+        "upstream": false,
+        "max_hops": 2
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 22,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"downstreams\":{\"total\":2,\"facets\":[{\"field\":\"degree\",\"displayName\":\"Degree of Dependencies\",\"aggregations\":[{\"value\":\"1\",\"count\":0},{\"value\":\"2\",\"count\":0},{\"value\":\"3+\",\"count\":0}]},{\"field\":\"_entityType\",\"displayName\":\"Type\",\"aggregations\":[{\"value\":\"DATA_JOB\",\"count\":1},{\"value\":\"MLMODEL\",\"count\":1}]},{\"field\":\"platform\",\"displayName\":\"Platform\",\"aggregations\":[{\"value\":\"urn:li:dataPlatform:devguard_ml\",\"count\":2,\"entity\":{\"urn\":\"urn:li:dataPlatform:devguard_ml\"}}]},{\"field\":\"origin\",\"displayName\":\"Environment\",\"aggregations\":[{\"value\":\"PROD\",\"count\":1}]},{\"field\":\"_entityType\u241etypeNames\",\"displayName\":\"Type\u241eSub Type\",\"aggregations\":[{\"value\":\"DATA_JOB\",\"count\":1},{\"value\":\"MLMODEL\",\"count\":1}]},{\"field\":\"removed\",\"displayName\":\"removed\",\"aggregations\":[{\"value\":\"true\",\"count\":0}]},{\"field\":\"entity\",\"displayName\":\"Type\",\"aggregations\":[{\"value\":\"MLMODEL\",\"count\":1},{\"value\":\"DATA_JOB\",\"count\":1}]}],\"searchResults\":[{\"entity\":{\"urn\":\"urn:li:dataJob:(urn:li:dataFlow:(devguard_ml,substrate_ml,PROD),train_churn_model)\",\"type\":\"DATA_JOB\",\"dataFlow\":{\"urn\":\"urn:li:dataFlow:(devguard_ml,substrate_ml,PROD)\",\"orchestrator\":\"devguard_ml\",\"flowId\":\"substrate_ml\",\"cluster\":\"PROD\",\"properties\":{\"name\":\"substrate_ml\",\"description\":\"DevGuard substrate ML pipeline. Invoked directly (no orchestrator); source of truth is substrate/ml/train_churn_model.py.\",\"project\":\"devguard-ai\"},\"platform\":{\"urn\":\"urn:li:dataPlatform:devguard_ml\",\"name\":\"devguard_ml\"}},\"jobId\":\"train_churn_model\",\"properties\":{\"name\":\"train_churn_model\",\"description\":\"Reads analytics_marts.user_order_features and fits a scikit-learn LogisticRegression churn-risk classifier.\",\"customProperties\":[{\"key\":\"script\",\"value\":\"substrate/ml/train_churn_model.py\"}]},\"health\":[{\"type\":\"INCIDENTS\",\"status\":\"PASS\"}]},\"degree\":1},{\"entity\":{\"urn\":\"urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)\",\"type\":\"MLMODEL\",\"name\":\"devguard_churn_risk\",\"description\":\"DevGuard churn-risk model. Real scikit-learn LogisticRegression trained on 1715 rows from analytics_marts.user_order_features.\",\"origin\":\"PROD\",\"platform\":{\"urn\":\"urn:li:dataPlatform:devguard_ml\",\"name\":\"devguard_ml\"}},\"degree\":2}],\"offset\":0,\"returned\":2,\"hasMore\":false}}"
+            }
+          ],
+          "structuredContent": {
+            "downstreams": {
+              "total": 2,
+              "facets": [
+                {
+                  "field": "degree",
+                  "displayName": "Degree of Dependencies",
+                  "aggregations": [
+                    {
+                      "value": "1",
+                      "count": 0
+                    },
+                    {
+                      "value": "2",
+                      "count": 0
+                    },
+                    {
+                      "value": "3+",
+                      "count": 0
+                    }
+                  ]
+                },
+                {
+                  "field": "_entityType",
+                  "displayName": "Type",
+                  "aggregations": [
+                    {
+                      "value": "DATA_JOB",
+                      "count": 1
+                    },
+                    {
+                      "value": "MLMODEL",
+                      "count": 1
+                    }
+                  ]
+                },
+                {
+                  "field": "platform",
+                  "displayName": "Platform",
+                  "aggregations": [
+                    {
+                      "value": "urn:li:dataPlatform:devguard_ml",
+                      "count": 2,
+                      "entity": {
+                        "urn": "urn:li:dataPlatform:devguard_ml"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "field": "origin",
+                  "displayName": "Environment",
+                  "aggregations": [
+                    {
+                      "value": "PROD",
+                      "count": 1
+                    }
+                  ]
+                },
+                {
+                  "field": "_entityType\u241etypeNames",
+                  "displayName": "Type\u241eSub Type",
+                  "aggregations": [
+                    {
+                      "value": "DATA_JOB",
+                      "count": 1
+                    },
+                    {
+                      "value": "MLMODEL",
+                      "count": 1
+                    }
+                  ]
+                },
+                {
+                  "field": "removed",
+                  "displayName": "removed",
+                  "aggregations": [
+                    {
+                      "value": "true",
+                      "count": 0
+                    }
+                  ]
+                },
+                {
+                  "field": "entity",
+                  "displayName": "Type",
+                  "aggregations": [
+                    {
+                      "value": "MLMODEL",
+                      "count": 1
+                    },
+                    {
+                      "value": "DATA_JOB",
+                      "count": 1
+                    }
+                  ]
+                }
+              ],
+              "searchResults": [
+                {
+                  "entity": {
+                    "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard_ml,substrate_ml,PROD),train_churn_model)",
+                    "type": "DATA_JOB",
+                    "dataFlow": {
+                      "urn": "urn:li:dataFlow:(devguard_ml,substrate_ml,PROD)",
+                      "orchestrator": "devguard_ml",
+                      "flowId": "substrate_ml",
+                      "cluster": "PROD",
+                      "properties": {
+                        "name": "substrate_ml",
+                        "description": "DevGuard substrate ML pipeline. Invoked directly (no orchestrator); source of truth is substrate/ml/train_churn_model.py.",
+                        "project": "devguard-ai"
+                      },
+                      "platform": {
+                        "urn": "urn:li:dataPlatform:devguard_ml",
+                        "name": "devguard_ml"
+                      }
+                    },
+                    "jobId": "train_churn_model",
+                    "properties": {
+                      "name": "train_churn_model",
+                      "description": "Reads analytics_marts.user_order_features and fits a scikit-learn LogisticRegression churn-risk classifier.",
+                      "customProperties": [
+                        {
+                          "key": "script",
+                          "value": "substrate/ml/train_churn_model.py"
+                        }
+                      ]
+                    },
+                    "health": [
+                      {
+                        "type": "INCIDENTS",
+                        "status": "PASS"
+                      }
+                    ]
+                  },
+                  "degree": 1
+                },
+                {
+                  "entity": {
+                    "urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+                    "type": "MLMODEL",
+                    "name": "devguard_churn_risk",
+                    "description": "DevGuard churn-risk model. Real scikit-learn LogisticRegression trained on 1715 rows from analytics_marts.user_order_features.",
+                    "origin": "PROD",
+                    "platform": {
+                      "urn": "urn:li:dataPlatform:devguard_ml",
+                      "name": "devguard_ml"
+                    }
+                  },
+                  "degree": 2
+                }
+              ],
+              "offset": 0,
+              "returned": 2,
+              "hasMore": false
+            }
+          },
+          "isError": false
+        }
+      }
+    },
+    {
+      "tool": "get_lineage",
+      "arguments": {
+        "urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+        "upstream": true,
+        "max_hops": 2
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 23,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"upstreams\":{\"total\":2,\"facets\":[{\"field\":\"degree\",\"displayName\":\"Degree of Dependencies\",\"aggregations\":[{\"value\":\"1\",\"count\":0},{\"value\":\"2\",\"count\":0},{\"value\":\"3+\",\"count\":0}]},{\"field\":\"_entityType\",\"displayName\":\"Type\",\"aggregations\":[{\"value\":\"DATA_JOB\",\"count\":1},{\"value\":\"DATASET\",\"count\":1}]},{\"field\":\"typeNames\",\"displayName\":\"Sub Type\",\"aggregations\":[{\"value\":\"Table\",\"count\":1}]},{\"field\":\"platform\",\"displayName\":\"Platform\",\"aggregations\":[{\"value\":\"urn:li:dataPlatform:postgres\",\"count\":1,\"entity\":{\"urn\":\"urn:li:dataPlatform:postgres\"}},{\"value\":\"urn:li:dataPlatform:devguard_ml\",\"count\":1,\"entity\":{\"urn\":\"urn:li:dataPlatform:devguard_ml\"}}]},{\"field\":\"container\",\"displayName\":\"Container\",\"aggregations\":[{\"value\":\"urn:li:container:f9adf01d7f1f656e17d2728821a5273d\",\"count\":1,\"entity\":{\"urn\":\"urn:li:container:f9adf01d7f1f656e17d2728821a5273d\"}}]},{\"field\":\"origin\",\"displayName\":\"Environment\",\"aggregations\":[{\"value\":\"PROD\",\"count\":1}]},{\"field\":\"_entityType\u241etypeNames\",\"displayName\":\"Type\u241eSub Type\",\"aggregations\":[{\"value\":\"DATASET\u241eTable\",\"count\":1},{\"value\":\"DATA_JOB\",\"count\":1},{\"value\":\"DATASET\",\"count\":1}]},{\"field\":\"hasSiblings\",\"displayName\":\"hasSiblings\",\"aggregations\":[{\"value\":\"true\",\"count\":1}]},{\"field\":\"removed\",\"displayName\":\"removed\",\"aggregations\":[{\"value\":\"true\",\"count\":0}]},{\"field\":\"entity\",\"displayName\":\"Type\",\"aggregations\":[{\"value\":\"DATASET\",\"count\":1},{\"value\":\"DATA_JOB\",\"count\":1}]}],\"searchResults\":[{\"entity\":{\"urn\":\"urn:li:dataJob:(urn:li:dataFlow:(devguard_ml,substrate_ml,PROD),train_churn_model)\",\"type\":\"DATA_JOB\",\"dataFlow\":{\"urn\":\"urn:li:dataFlow:(devguard_ml,substrate_ml,PROD)\",\"orchestrator\":\"devguard_ml\",\"flowId\":\"substrate_ml\",\"cluster\":\"PROD\",\"properties\":{\"name\":\"substrate_ml\",\"description\":\"DevGuard substrate ML pipeline. Invoked directly (no orchestrator); source of truth is substrate/ml/train_churn_model.py.\",\"project\":\"devguard-ai\"},\"platform\":{\"urn\":\"urn:li:dataPlatform:devguard_ml\",\"name\":\"devguard_ml\"}},\"jobId\":\"train_churn_model\",\"properties\":{\"name\":\"train_churn_model\",\"description\":\"Reads analytics_marts.user_order_features and fits a scikit-learn LogisticRegression churn-risk classifier.\",\"customProperties\":[{\"key\":\"script\",\"value\":\"substrate/ml/train_churn_model.py\"}]},\"health\":[{\"type\":\"INCIDENTS\",\"status\":\"PASS\"}]},\"degree\":1},{\"entity\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\",\"type\":\"DATASET\",\"name\":\"user_order_features\",\"platform\":{\"urn\":\"urn:li:dataPlatform:postgres\",\"name\":\"postgres\"},\"properties\":{\"name\":\"user_order_features\"},\"subTypes\":{\"typeNames\":[\"Table\"]},\"health\":[{\"type\":\"INCIDENTS\",\"status\":\"PASS\"}]},\"degree\":2}],\"offset\":0,\"returned\":2,\"hasMore\":false}}"
+            }
+          ],
+          "structuredContent": {
+            "upstreams": {
+              "total": 2,
+              "facets": [
+                {
+                  "field": "degree",
+                  "displayName": "Degree of Dependencies",
+                  "aggregations": [
+                    {
+                      "value": "1",
+                      "count": 0
+                    },
+                    {
+                      "value": "2",
+                      "count": 0
+                    },
+                    {
+                      "value": "3+",
+                      "count": 0
+                    }
+                  ]
+                },
+                {
+                  "field": "_entityType",
+                  "displayName": "Type",
+                  "aggregations": [
+                    {
+                      "value": "DATA_JOB",
+                      "count": 1
+                    },
+                    {
+                      "value": "DATASET",
+                      "count": 1
+                    }
+                  ]
+                },
+                {
+                  "field": "typeNames",
+                  "displayName": "Sub Type",
+                  "aggregations": [
+                    {
+                      "value": "Table",
+                      "count": 1
+                    }
+                  ]
+                },
+                {
+                  "field": "platform",
+                  "displayName": "Platform",
+                  "aggregations": [
+                    {
+                      "value": "urn:li:dataPlatform:postgres",
+                      "count": 1,
+                      "entity": {
+                        "urn": "urn:li:dataPlatform:postgres"
+                      }
+                    },
+                    {
+                      "value": "urn:li:dataPlatform:devguard_ml",
+                      "count": 1,
+                      "entity": {
+                        "urn": "urn:li:dataPlatform:devguard_ml"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "field": "container",
+                  "displayName": "Container",
+                  "aggregations": [
+                    {
+                      "value": "urn:li:container:f9adf01d7f1f656e17d2728821a5273d",
+                      "count": 1,
+                      "entity": {
+                        "urn": "urn:li:container:f9adf01d7f1f656e17d2728821a5273d"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "field": "origin",
+                  "displayName": "Environment",
+                  "aggregations": [
+                    {
+                      "value": "PROD",
+                      "count": 1
+                    }
+                  ]
+                },
+                {
+                  "field": "_entityType\u241etypeNames",
+                  "displayName": "Type\u241eSub Type",
+                  "aggregations": [
+                    {
+                      "value": "DATASET\u241eTable",
+                      "count": 1
+                    },
+                    {
+                      "value": "DATA_JOB",
+                      "count": 1
+                    },
+                    {
+                      "value": "DATASET",
+                      "count": 1
+                    }
+                  ]
+                },
+                {
+                  "field": "hasSiblings",
+                  "displayName": "hasSiblings",
+                  "aggregations": [
+                    {
+                      "value": "true",
+                      "count": 1
+                    }
+                  ]
+                },
+                {
+                  "field": "removed",
+                  "displayName": "removed",
+                  "aggregations": [
+                    {
+                      "value": "true",
+                      "count": 0
+                    }
+                  ]
+                },
+                {
+                  "field": "entity",
+                  "displayName": "Type",
+                  "aggregations": [
+                    {
+                      "value": "DATASET",
+                      "count": 1
+                    },
+                    {
+                      "value": "DATA_JOB",
+                      "count": 1
+                    }
+                  ]
+                }
+              ],
+              "searchResults": [
+                {
+                  "entity": {
+                    "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard_ml,substrate_ml,PROD),train_churn_model)",
+                    "type": "DATA_JOB",
+                    "dataFlow": {
+                      "urn": "urn:li:dataFlow:(devguard_ml,substrate_ml,PROD)",
+                      "orchestrator": "devguard_ml",
+                      "flowId": "substrate_ml",
+                      "cluster": "PROD",
+                      "properties": {
+                        "name": "substrate_ml",
+                        "description": "DevGuard substrate ML pipeline. Invoked directly (no orchestrator); source of truth is substrate/ml/train_churn_model.py.",
+                        "project": "devguard-ai"
+                      },
+                      "platform": {
+                        "urn": "urn:li:dataPlatform:devguard_ml",
+                        "name": "devguard_ml"
+                      }
+                    },
+                    "jobId": "train_churn_model",
+                    "properties": {
+                      "name": "train_churn_model",
+                      "description": "Reads analytics_marts.user_order_features and fits a scikit-learn LogisticRegression churn-risk classifier.",
+                      "customProperties": [
+                        {
+                          "key": "script",
+                          "value": "substrate/ml/train_churn_model.py"
+                        }
+                      ]
+                    },
+                    "health": [
+                      {
+                        "type": "INCIDENTS",
+                        "status": "PASS"
+                      }
+                    ]
+                  },
+                  "degree": 1
+                },
+                {
+                  "entity": {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+                    "type": "DATASET",
+                    "name": "user_order_features",
+                    "platform": {
+                      "urn": "urn:li:dataPlatform:postgres",
+                      "name": "postgres"
+                    },
+                    "properties": {
+                      "name": "user_order_features"
+                    },
+                    "subTypes": {
+                      "typeNames": [
+                        "Table"
+                      ]
+                    },
+                    "health": [
+                      {
+                        "type": "INCIDENTS",
+                        "status": "PASS"
+                      }
+                    ]
+                  },
+                  "degree": 2
+                }
+              ],
+              "offset": 0,
+              "returned": 2,
+              "hasMore": false
+            }
+          },
+          "isError": false
+        }
+      }
+    },
+    {
+      "tool": "get_lineage_paths_between",
+      "arguments": {
+        "source_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+        "direction": "downstream"
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 24,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"metadata\":{\"queryType\":\"lineage-path-trace\",\"direction\":\"downstream\",\"pathType\":\"dataset-level\",\"fields\":{\"paths\":{\"description\":\"Array of lineage paths showing transformation chains from source to target\",\"structure\":\"Each path contains alternating entities (SCHEMA_FIELD or DATASET) and optional transformation QUERY entities\",\"queryEntities\":\"QUERY entities are returned as URNs only. Use get_entities(query_urn) to fetch SQL statement and other query details.\"}}},\"source\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"},\"target\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\"},\"pathCount\":1,\"paths\":[{\"path\":[{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\"type\":\"DATASET\"},{\"urn\":\"urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8\",\"type\":\"QUERY\"},{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\",\"type\":\"DATASET\"},{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)\",\"type\":\"DATASET\"},{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\",\"type\":\"DATASET\"}]}]}"
+            }
+          ],
+          "structuredContent": {
+            "metadata": {
+              "queryType": "lineage-path-trace",
+              "direction": "downstream",
+              "pathType": "dataset-level",
+              "fields": {
+                "paths": {
+                  "description": "Array of lineage paths showing transformation chains from source to target",
+                  "structure": "Each path contains alternating entities (SCHEMA_FIELD or DATASET) and optional transformation QUERY entities",
+                  "queryEntities": "QUERY entities are returned as URNs only. Use get_entities(query_urn) to fetch SQL statement and other query details."
+                }
+              }
+            },
+            "source": {
+              "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+            },
+            "target": {
+              "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)"
+            },
+            "pathCount": 1,
+            "paths": [
+              {
+                "path": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+                    "type": "DATASET"
+                  },
+                  {
+                    "urn": "urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8",
+                    "type": "QUERY"
+                  },
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+                    "type": "DATASET"
+                  },
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+                    "type": "DATASET"
+                  },
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+                    "type": "DATASET"
+                  }
+                ]
+              }
+            ]
+          },
+          "isError": false
+        }
+      }
+    },
+    {
+      "tool": "get_lineage_paths_between",
+      "arguments": {
+        "source_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+        "source_column": "user_id",
+        "target_column": "user_id",
+        "direction": "downstream"
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 25,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"metadata\":{\"queryType\":\"lineage-path-trace\",\"direction\":\"downstream\",\"pathType\":\"column-level\",\"fields\":{\"paths\":{\"description\":\"Array of lineage paths showing transformation chains from source to target\",\"structure\":\"Each path contains alternating entities (SCHEMA_FIELD or DATASET) and optional transformation QUERY entities\",\"queryEntities\":\"QUERY entities are returned as URNs only. Use get_entities(query_urn) to fetch SQL statement and other query details.\"}}},\"source\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\"column\":\"user_id\"},\"target\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\",\"column\":\"user_id\"},\"pathCount\":1,\"paths\":[{\"path\":[{\"urn\":\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD),user_id)\",\"type\":\"SCHEMA_FIELD\",\"fieldPath\":\"user_id\",\"parent\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\"type\":\"DATASET\"}},{\"urn\":\"urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8\",\"type\":\"QUERY\"},{\"urn\":\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD),user_id)\",\"type\":\"SCHEMA_FIELD\",\"fieldPath\":\"user_id\",\"parent\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\",\"type\":\"DATASET\"}},{\"urn\":\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),user_id)\",\"type\":\"SCHEMA_FIELD\",\"fieldPath\":\"user_id\",\"parent\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)\",\"type\":\"DATASET\"}},{\"urn\":\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),user_id)\",\"type\":\"SCHEMA_FIELD\",\"fieldPath\":\"user_id\",\"parent\":{\"urn\":\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\",\"type\":\"DATASET\"}}]}]}"
+            }
+          ],
+          "structuredContent": {
+            "metadata": {
+              "queryType": "lineage-path-trace",
+              "direction": "downstream",
+              "pathType": "column-level",
+              "fields": {
+                "paths": {
+                  "description": "Array of lineage paths showing transformation chains from source to target",
+                  "structure": "Each path contains alternating entities (SCHEMA_FIELD or DATASET) and optional transformation QUERY entities",
+                  "queryEntities": "QUERY entities are returned as URNs only. Use get_entities(query_urn) to fetch SQL statement and other query details."
+                }
+              }
+            },
+            "source": {
+              "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+              "column": "user_id"
+            },
+            "target": {
+              "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+              "column": "user_id"
+            },
+            "pathCount": 1,
+            "paths": [
+              {
+                "path": [
+                  {
+                    "urn": "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD),user_id)",
+                    "type": "SCHEMA_FIELD",
+                    "fieldPath": "user_id",
+                    "parent": {
+                      "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+                      "type": "DATASET"
+                    }
+                  },
+                  {
+                    "urn": "urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8",
+                    "type": "QUERY"
+                  },
+                  {
+                    "urn": "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD),user_id)",
+                    "type": "SCHEMA_FIELD",
+                    "fieldPath": "user_id",
+                    "parent": {
+                      "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+                      "type": "DATASET"
+                    }
+                  },
+                  {
+                    "urn": "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),user_id)",
+                    "type": "SCHEMA_FIELD",
+                    "fieldPath": "user_id",
+                    "parent": {
+                      "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+                      "type": "DATASET"
+                    }
+                  },
+                  {
+                    "urn": "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),user_id)",
+                    "type": "SCHEMA_FIELD",
+                    "fieldPath": "user_id",
+                    "parent": {
+                      "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+                      "type": "DATASET"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "isError": false
+        }
+      }
+    }
+  ]
+}

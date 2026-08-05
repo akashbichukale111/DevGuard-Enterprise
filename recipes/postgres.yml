@@ -1,0 +1,45 @@
+# DataHub ingestion — the substrate Postgres (the design thesis hard gate:
+# "datahub ingest -c recipes/postgres.yml ... committed and runnable").
+#
+#   datahub ingest -c recipes/postgres.yml
+#
+# This produces REAL dataset entities with REAL schemas, profiled from the
+# running database. Nothing here is hand-authored metadata.
+# Required whenever stateful_ingestion is enabled: the state is keyed by this
+# name, so it must be stable across runs.
+pipeline_name: "devguard_substrate_postgres"
+
+source:
+  type: postgres
+  config:
+    host_port: "${SUBSTRATE_PG_HOST_PORT:-localhost:5433}"
+    database: "${SUBSTRATE_PG_DB:-devguard}"
+    username: "${SUBSTRATE_PG_USER:-devguard}"
+    password: "${SUBSTRATE_PG_PASSWORD:-devguard}"
+
+    # Only our substrate schemas. Without this the recipe also ingests
+    # information_schema and pg_catalog, which buries the hero assets in noise.
+    schema_pattern:
+      allow:
+        - "raw"
+        - "analytics_staging"
+        - "analytics_marts"
+
+    include_tables: true
+    include_views: true
+
+    # Column-level profiling. The design thesis wants "real schemas, real profiling" — this is
+    # what makes the null-rate / value-drift faults in the fault-injection evaluation suite
+    # detectable from the catalog rather than invented.
+    profiling:
+      enabled: true
+      profile_table_level_only: false
+
+    stateful_ingestion:
+      enabled: true
+
+sink:
+  type: datahub-rest
+  config:
+    server: "${DATAHUB_GMS_URL:-http://localhost:8080}"
+    token: "${DATAHUB_GMS_TOKEN}"

@@ -1,0 +1,20 @@
+# Committed on purpose: no secrets here. These are local substrate credentials
+# for a throwaway Postgres that holds only generated rows (the secret-hygiene rule — .env.example
+# only, never a real token).
+devguard_substrate:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('SUBSTRATE_PG_HOST', 'localhost') }}"
+      port: "{{ env_var('SUBSTRATE_PG_PORT', '5433') | int }}"
+      user: "{{ env_var('SUBSTRATE_PG_USER', 'devguard') }}"
+      password: "{{ env_var('SUBSTRATE_PG_PASSWORD', 'devguard') }}"
+      dbname: "{{ env_var('SUBSTRATE_PG_DB', 'devguard') }}"
+      # Overridable so the Referee can validate a PROPOSED fix in a throwaway
+      # schema before anyone approves it (step 13). Without this the only way
+      # to find out whether a patch works is to apply it to the real marts,
+      # which is precisely the "never apply directly" the agent design forbids the Surgeon.
+      # Defaults to `analytics`, so every existing command is unchanged.
+      schema: "{{ env_var('SUBSTRATE_DBT_SCHEMA', 'analytics') }}"
+      threads: 4

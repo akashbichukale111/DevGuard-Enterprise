@@ -1,0 +1,5 @@
+the retrieval ablation ablation: retrieval=off.
+
+No document lookup was attempted. This is a deliberate experimental condition, NOT a failed or empty search — the tools were offered by the server and simply not called.
+
+negotiated tools (8): ['get_dataset_queries', 'get_entities', 'get_lineage', 'get_lineage_paths_between', 'grep_documents', 'list_schema_fields', 'search', 'search_documents']
