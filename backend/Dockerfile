@@ -2,7 +2,7 @@
 # Multi-stage: build wheels in one layer, ship a slim runtime.
 #
 # BUILD CONTEXT IS THE REPOSITORY ROOT, not ./backend. That is deliberate, and it
-# is the fix for AUDIT B1 and B2 — which together meant this image had never
+# is the fix for two defects which together meant this image had never
 # built and could never have booted:
 #
 #   B1  `COPY requirements.txt .` failed outright, because requirements.txt lives

@@ -1,4 +1,4 @@
-the retrieval ablation ablation: retrieval=off.
+§9A ablation: retrieval=off.
 
 No document lookup was attempted. This is a deliberate experimental condition, NOT a failed or empty search — the tools were offered by the server and simply not called.
 

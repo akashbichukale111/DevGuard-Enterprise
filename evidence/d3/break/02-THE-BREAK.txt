@@ -4,12 +4,12 @@ ALTER TABLE
 
 $ \d raw.users   (after)
                             Table "raw.users"
-   Column    |           Type           | Collation | Nullable | Default
+   Column    |           Type           | Collation | Nullable | Default 
 -------------+--------------------------+-----------+----------+---------
- customer_id | bigint                   |           | not null |
- email       | text                     |           | not null |
- country     | text                     |           | not null |
- signup_ts   | timestamp with time zone |           | not null |
+ customer_id | bigint                   |           | not null | 
+ email       | text                     |           | not null | 
+ country     | text                     |           | not null | 
+ signup_ts   | timestamp with time zone |           | not null | 
  is_active   | boolean                  |           | not null | true
 Indexes:
     "users_pkey" PRIMARY KEY, btree (customer_id)

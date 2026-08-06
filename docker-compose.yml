@@ -7,7 +7,7 @@
 # runs the OTLP exporter can point at SigNoz Cloud instead (see DEPLOYMENT.md).
 
 # NOTE: no top-level `version:` key. Compose v2 ignores it and warns
-# ("the attribute `version` is obsolete") on every invocation — AUDIT B7.
+# ("the attribute `version` is obsolete") on every invocation.
 
 services:
   redis:
@@ -25,7 +25,7 @@ services:
     build:
       # Context is the REPO ROOT, not ./backend — requirements.txt and
       # groq_client.py live here, and main.py imports `backend.*` as a package.
-      # AUDIT B1/B2: the previous `context: ./backend` made this image
+      # The previous `context: ./backend` made this image
       # unbuildable and unbootable. See backend/Dockerfile for the full note.
       context: .
       dockerfile: backend/Dockerfile
@@ -35,7 +35,7 @@ services:
     environment:
       # NOT `${GROQ_API_KEY:?...}`. The `:?` form aborts `docker compose up`
       # outright when the variable is unset, which contradicts this project's
-      # own guarantee that the backend boots without a key (AUDIT B4) and made
+      # own guarantee that the backend boots without a key, and made
       # the documented one-command start impossible on a clean clone. Unset is
       # allowed: scans then fail at the LLM call with a clear error, which is
       # The designed keyless behaviour.

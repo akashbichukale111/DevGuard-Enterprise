@@ -1,19 +1,19 @@
 $ SELECT count(*) FROM analytics_staging.stg_users;   -- the broken view
- count
+ count 
 -------
   1715
 (1 row)
 
 
 $ SELECT count(*), max(user_id) FROM analytics_marts.user_order_features;   -- the STALE mart
- rows | max_user_id
+ rows | max_user_id 
 ------+-------------
  1715 |        2000
 (1 row)
 
 
 $ SELECT relname, pg_catalog.obj_description(oid) FROM pg_class WHERE relname='user_order_features';
-       relname       | n_live_tup |         last_analyzed
+       relname       | n_live_tup |         last_analyzed         
 ---------------------+------------+-------------------------------
  user_order_features |       1715 | 2026-08-01 02:17:11.578736+00
 (1 row)

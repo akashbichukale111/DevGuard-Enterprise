@@ -4,18 +4,18 @@ exit code: 0
 11:52:31  Running with dbt=1.12.0
 11:52:31  Registered adapter: postgres=1.11.0
 11:52:32  Found 3 models, 2 sources, 477 macros
-11:52:32
+11:52:32  
 11:52:32  Concurrency: 4 threads (target='dev')
-11:52:32
+11:52:32  
 11:52:32  1 of 3 START sql view model analytics_staging.stg_orders ....................... [RUN]
 11:52:32  2 of 3 START sql view model analytics_staging.stg_users ........................ [RUN]
 11:52:32  1 of 3 OK created sql view model analytics_staging.stg_orders .................. [CREATE VIEW in 0.22s]
 11:52:32  2 of 3 OK created sql view model analytics_staging.stg_users ................... [CREATE VIEW in 0.22s]
 11:52:32  3 of 3 START sql table model analytics_marts.user_order_features ............... [RUN]
 11:52:33  3 of 3 OK created sql table model analytics_marts.user_order_features .......... [SELECT 1715 in 0.09s]
-11:52:33
+11:52:33  
 11:52:33  Finished running 1 table model, 2 view models in 0 hours 0 minutes and 0.49 seconds (0.49s).
-11:52:33
+11:52:33  
 11:52:33  Completed successfully
-11:52:33
+11:52:33  
 11:52:33  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=3

@@ -1,18 +1,76 @@
+<div align="center">
+
 # DevGuard Enterprise
 
-**An AI agent platform for data incident response, built on [DataHub](https://datahubproject.io/) — with enterprise observability powered by [SigNoz](https://signoz.io/).**
+**A closed-loop, governed incident agent for data platforms.**
+
+It detects a real production break, proves root cause and blast radius from the
+**DataHub** graph, fixes it under a least-privilege policy gate routed to the asset's
+real registered owner, verifies recovery, and only then writes verified incident
+knowledge back into DataHub as first-class metadata — so the next incident on a
+related asset starts from more knowledge than the last one.
+
+**Built with DataHub · MCP over stdio · Observability by SigNoz**
+
+`Agents That Do Real Work` &nbsp;·&nbsp; `Production ML Agents`
+
+[**Live demo**](#see-it-in-60-seconds) &nbsp;·&nbsp; [**Evidence**](evidence/) &nbsp;·&nbsp; [**Architecture**](ARCHITECTURE.md) &nbsp;·&nbsp; [**Security**](SECURITY.md) &nbsp;·&nbsp; [**Disclosure**](DISCLOSURE.md)
 
 [![CI](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-676%20passing-brightgreen.svg)](tests/)
+[![DataHub](https://img.shields.io/badge/DataHub-v1.6.0-1890FF.svg)](https://datahubproject.io/)
+[![MCP](https://img.shields.io/badge/MCP-mcp--server--datahub%400.6.0-6E56CF.svg)](https://modelcontextprotocol.io/)
+[![SigNoz](https://img.shields.io/badge/SigNoz-v0.135.0-E75536.svg)](https://signoz.io/)
 [![Python](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org/)
-[![Tests](https://img.shields.io/badge/tests-676%20passing-brightgreen.svg)](tests/)
+
+</div>
 
 ---
 
-## Table of contents
+## See it in 60 seconds
+
+The Command Center replays **real recorded runs** from committed proof packs —
+no DataHub, no database, no API key, no backend:
+
+```bash
+git clone https://github.com/akashbichukale111/DevGuard-Enterprise.git
+cd DevGuard-Enterprise && pip install -r requirements.txt
+cd frontend && npm ci && cd .. && make replay-serve
+```
+
+Then open <http://localhost:8000/command/>.
+
+![The Command Center replaying a completed remediation loop — nine agents, the evidence ledger, and the five write-back artifacts that landed in DataHub](evidence/d10/screenshots/d6-loop-pass2.png)
+
+<sub>*Every number on this screen is read out of a proof pack. Every evidence chip opens the exact captured request and response behind its claim. Values that were never measured render `N/A` with the reason attached.*</sub>
+
+---
+
+## What it writes back to DataHub
+
+Nothing is written until recovery is verified. Then five artifacts land, idempotently:
+
+| # | Artifact | DataHub surface | Captured proof |
+|---|---|---|---|
+| 1 | Incident raised, then resolved | `raiseIncident` → `updateIncidentStatus` | [`urn:li:incident:885d8202…`](evidence/proof-pack/d6-loop-pass2/scribe/artifact1-raiseIncident.json) |
+| 2 | Post-mortem runbook | `save_document` → Context Document | [`urn:li:document:shared-5547ea0e…`](evidence/proof-pack/d6-loop-pass2/scribe/artifact2-save_document.json) |
+| 3 | Column-level tag + description | `add_tags` / `update_description` on the schema field | [server response](evidence/proof-pack/d6-loop-pass2/scribe/artifact3-add_tags.json) |
+| 4 | Structured incident facts | `add_structured_properties` | [server response](evidence/proof-pack/d6-loop-pass2/scribe/artifact4-add_structured_properties.json) |
+| 5 | Ownership signal | `add_owners`, or the approval was routed to the existing owner | [write-back summary](evidence/proof-pack/d6-loop-pass2/scribe/write-back-summary.json) |
+
+**And the loop closes:** on the second pass the Archivist retrieves the runbook the
+first pass wrote — four documents, straight out of the catalog.
+
+---
+
+<details>
+<summary><b>Contents</b></summary>
 
 [Overview](#overview) · [Problem](#the-problem) · [How it works](#how-it-works) · [Architecture](#architecture) · [Screenshots](#screenshots) · [Demo](#demo--replay-a-real-recorded-run) · [Quick start](#quick-start) · [Installation](#installation) · [Features](#features) · [Technology stack](#technology-stack) · [Evidence](#evidence) · [Evaluation](#evaluation) · [Benchmarks](#benchmarks) · [Reproducibility](#reproducibility) · [Project structure](#project-structure) · [Deployment](#deployment) · [Security model](#security-model) · [Limitations](#limitations) · [Roadmap](#roadmap) · [Acknowledgements](#acknowledgements) · [License](#license)
+
+</details>
 
 ---
 
@@ -50,19 +108,21 @@ DevGuard Enterprise closes both halves of that loop.
 
 A failure is detected from real runtime evidence, resolved to real catalog entities, explained from a typed evidence chain, fixed under human approval, verified, and written back:
 
-| # | Agent | Model? | Tool allowlist | Responsibility |
+| # | Agent | Kind | Tool allowlist | Responsibility |
 |---|---|---|---|---|
 | 1 | **Watcher** | deterministic | runtime evidence only | Detect the failure from exit codes and build output. Detection is the last place that should be probabilistic. |
-| 2 | **Cartographer** | LLM | `search`, `get_entities`, `list_schema_fields` | Resolve the failing artifact to real DataHub URNs and pull schema truth. |
-| 3 | **Archivist** | LLM | `search_documents`, `grep_documents` | Negotiate catalog capabilities, then retrieve prior runbooks. On a clean catalog it must find nothing *and say so distinguishably from an error*. |
-| 4 | **Pathfinder** | LLM | `get_lineage`, `get_lineage_paths_between`, `get_dataset_queries` | Column-level blast radius, terminating at the ML model. |
-| 5 | **Diagnostician** | LLM | **none** | Root cause from the typed evidence bundle only — or `INSUFFICIENT_EVIDENCE`. |
+| 2 | **Cartographer** | deterministic + MCP | `search`, `get_entities`, `list_schema_fields` | Resolve the failing artifact to real DataHub URNs and pull schema truth. |
+| 3 | **Archivist** | deterministic + MCP | `search_documents`, `grep_documents` | Negotiate catalog capabilities, then retrieve prior runbooks. On a clean catalog it must find nothing *and say so distinguishably from an error*. |
+| 4 | **Pathfinder** | deterministic + MCP | `get_lineage`, `get_lineage_paths_between`, `get_dataset_queries` | Column-level blast radius across datasets, plus a dataset-level traversal terminating at the ML model. |
+| 5 | **Diagnostician** | **LLM** | **none** | Root cause from the typed evidence bundle only — or `INSUFFICIENT_EVIDENCE`. |
 | 6 | **Surgeon** | deterministic | git branch/patch — **never apply** | Propose the minimal fix as a diff on a branch. |
 | 7 | **Referee** | deterministic | test runner, verification queries | Validate the fix in a throwaway schema *before* approval; verify recovery *after* remediation. |
-| 8 | **Magistrate** | deterministic + LLM | `get_entities` (owners, read-only) | Risk classification, autonomy policy, owner-routed approval. |
+| 8 | **Magistrate** | deterministic | `get_entities` (owners, read-only) | Risk classification, autonomy policy, owner-routed approval. |
 | 9 | **Scribe** | deterministic | five mutation tools | **The only agent that writes to DataHub.** Five knowledge artifacts, idempotent, stamped. |
 
-Six of the nine agents use **no model at all**. That is deliberate: an LLM cannot make an exit code more true, and a deterministic agent cannot hallucinate.
+**Eight of the nine agents use no model at all.** Only the Diagnostician calls one, and it holds zero tools. That split is the design: an LLM cannot make an exit code more true, a deterministic agent cannot hallucinate, and the one agent that *does* reason cannot act.
+
+> **What the committed evidence shows.** Every recorded run in this repository executed with no model reachable — all 49 handoff records carry `model=null, tokens=0`, and the Diagnostician returns `REASONER_UNAVAILABLE`. The root causes in those runs were derived deterministically from runtime evidence, and each one says so in its own artifact. The refusal path, the evidence rule and the chain validation are proven; the quality of model reasoning is not. See [Limitations](#limitations).
 
 ### The evidence rule
 
@@ -81,6 +141,40 @@ Nothing is written before recovery is verified. When it is, the Scribe lands fiv
 | 5 | Ownership assignment | `ownership` |
 
 Writes are idempotent on `(incident_id, artifact_type, target_urn)`, and every artifact is stamped with the evidence IDs and chain digest that justified it. A dry run records the exact payloads it *would* send and sends nothing.
+
+### How DataHub is reached — MCP over stdio
+
+`backend/v2/datahub_client.py` spawns the official server as a subprocess and speaks
+**JSON-RPC 2.0 over stdio**:
+
+```python
+subprocess.Popen(["uvx", "mcp-server-datahub@0.6.0"], stdin=PIPE, stdout=PIPE, ...)
+self._send({"jsonrpc": "2.0", "method": method, "params": params})
+```
+
+This matters for three reasons a reviewer can check:
+
+1. **It is the real protocol.** Not an HTTP envelope shaped like MCP. The server's own
+   `initialize` / `tools/list` / `tools/call` handshake is what runs — the captured tool
+   list and full input schemas are in [`evidence/d0/`](evidence/d0/).
+2. **Arguments are read, not guessed.** Agents construct calls against the live
+   `inputSchema` returned by the server, which is why tool contracts can be asserted in
+   tests with no server running.
+3. **The allowlist sits in front of the pipe.** Tool, entity-type and URN-scope checks
+   run in `DataHubMCPClient.call` *before* a request is serialised, so a violation is a
+   Python exception with a stack trace rather than a server-side rejection to interpret.
+
+**Tools used — 8 read, 5 write, of the 18 the server exposes:**
+
+| Read | Write (Scribe only) |
+|---|---|
+| `search` · `get_entities` · `list_schema_fields` | `add_tags` · `update_description` |
+| `get_lineage` · `get_lineage_paths_between` | `save_document` |
+| `get_dataset_queries` | `add_structured_properties` · `add_owners` |
+| `search_documents` · `grep_documents` | |
+
+Incidents are not exposed over MCP in self-hosted DataHub, so artifact 1 drops to raw
+GraphQL (`raiseIncident` / `updateIncidentStatus`) — documented rather than skipped.
 
 ---
 
@@ -251,7 +345,7 @@ Each path is documented step by step in **[docs/INSTALLATION.md](docs/INSTALLATI
 - Nine bounded agents, each with an explicit tool allowlist enforced *before* the request reaches the wire
 - Typed handoffs recording `from_agent`, `to_agent`, evidence IDs, decision, duration, tokens and model
 - Structural refusal — `INSUFFICIENT_EVIDENCE` is a designed outcome, not a failure path
-- Column-level blast radius terminating at the ML model
+- Column-level blast radius across datasets; a dataset-level traversal terminates at the ML model
 
 **DataHub integration**
 - Read: search, entity resolution, schema fields, column-level lineage, lineage paths, dataset queries
@@ -512,7 +606,9 @@ Issues and pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING
 
 ## AI-assisted development
 
-AI coding assistants were used as an engineering productivity tool during development, in the same category as an IDE or a linter. All architecture, implementation decisions, testing, validation and final verification were reviewed by the project author, who is responsible for the contents of this repository. The evidence, evaluation and benchmark artifacts committed here were produced by executing the code in this repository, not written as prose.
+AI coding assistants were used as an engineering productivity tool during development, in the same category as an IDE or a linter. All architecture, implementation decisions, testing, validation and final verification were reviewed by the project author, who is responsible for the contents of this repository.
+
+Full component attribution — what was authored in-window versus carried over, and what the evidence does and does not show — is in **[DISCLOSURE.md](DISCLOSURE.md)**.
 
 ---
 

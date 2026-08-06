@@ -38,7 +38,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Backend must import without an API key
-        # This is the regression guard for AUDIT.md B4: the backend used to
+        # Regression guard: the backend used to
         # raise at import time when GROQ_API_KEY was unset, which made it
         # untestable and unbootable without a paid key.
         run: python -c "import backend.main; print('import backend.main OK')"

@@ -1,9 +1,9 @@
 $ dbt run  (BEFORE the rename)
-02:16:40
+02:16:40  
 02:16:40  Finished running 1 table model, 2 view models in 0 hours 0 minutes and 0.43 seconds (0.43s).
-02:16:40
+02:16:40  
 02:16:40  Completed successfully
-02:16:40
+02:16:40  
 02:16:40  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=3
 
 $ python substrate/ml/train_churn_model.py  (BEFORE the rename)
