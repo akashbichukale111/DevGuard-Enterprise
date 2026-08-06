@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="DevGuard">
+  <!--
+    Browser-tab mark. Next.js App Router picks `app/icon.svg` up automatically
+    and emits the <link rel="icon"> tags, which is what stops every page load
+    404-ing on the default /favicon.ico request.
+
+    The gradient is the same indigo -> cyan as the `.dg-logo-mini` badge in the
+    platform header (#4f46e5 -> #06b6d4), and the glyph is the shield the
+    Scanner header already uses, so the tab matches the product.
+  -->
+  <defs>
+    <linearGradient id="dg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="url(#dg)"/>
+  <path
+    d="M16 6.5 L24 9.6 v6.2 c0 4.6-3.2 8.3-8 9.7-4.8-1.4-8-5.1-8-9.7 V9.6 Z"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="2.1"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M12.4 16.1 l2.6 2.7 4.6-5.2"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="2.1"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
