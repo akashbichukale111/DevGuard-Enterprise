@@ -97,8 +97,11 @@ export default function BlastRadiusPanel({
       }
       tone={ml.length > 0 ? "alert" : "default"}
     >
+      {/* min-w-0 on both columns: grid items default to min-width:auto, which
+          makes a column refuse to shrink below its content and pushes the page
+          sideways on a phone. The URN rows inside already truncate. */}
       <div className="grid gap-3 lg:grid-cols-2">
-        <div>
+        <div className="min-w-0">
           <h3 className="mb-1 text-[10px] uppercase tracking-[0.12em] text-slate-500">
             Column-level trace · {radius.column_level.length} entities
             <span
@@ -119,7 +122,7 @@ export default function BlastRadiusPanel({
           )}
         </div>
 
-        <div>
+        <div className="min-w-0">
           <h3 className="mb-1 text-[10px] uppercase tracking-[0.12em] text-slate-500">
             Dataset-level trace · {radius.dataset_level.length} entities
             <span

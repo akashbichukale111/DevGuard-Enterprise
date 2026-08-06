@@ -141,7 +141,7 @@ export function MissingLedger({ bundle }: { bundle: ReplayBundle }) {
       <dl className="space-y-1">
         {entries.map(([field, why]) => (
           <div key={field} className="grid gap-1 sm:grid-cols-[14rem_1fr]">
-            <dt className="font-mono text-[10px] text-slate-400">{field}</dt>
+            <dt className="min-w-0 break-words font-mono text-[10px] text-slate-400">{field}</dt>
             <dd className="text-[11px] leading-snug text-slate-500">{why}</dd>
           </div>
         ))}
