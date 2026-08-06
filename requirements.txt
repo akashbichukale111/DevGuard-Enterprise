@@ -66,6 +66,11 @@ opentelemetry-instrumentation-logging==0.41b0
 # leave with it and this comment can go too.
 websockets==12.0
 httpx==0.25.2
+# Required by FastAPI to parse multipart/form-data, which is how the ZIP
+# archive reaches POST /scan/zip. FastAPI raises at import time if a route
+# declares UploadFile without it, so this is a hard runtime dependency of
+# `backend.main`, not a convenience.
+python-multipart==0.0.32
 
 # --- test-only (not needed to run DevGuard) ----------------------------------
 pytest==8.4.2
