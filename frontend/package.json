@@ -6,12 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "prebuild": "node scripts/copy-monaco.mjs"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
     "framer-motion": "^11.3.19",
     "lucide-react": "^1.25.0",
+    "monaco-editor": "0.55.1",
     "next": "^16.2.12",
     "react": "^18.3.1",
     "react-countup": "^6.5.3",

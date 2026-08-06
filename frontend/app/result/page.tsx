@@ -4,6 +4,9 @@ import { useEffect, useMemo, useState, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { DiffEditor } from "@monaco-editor/react";
+
+// Side-effect import: self-hosted Monaco loader path. See lib/monaco.ts.
+import "@/lib/monaco";
 import MetricCard from "@/components/MetricCard";
 import TraceWaterfall, { TraceSpan } from "@/components/TraceWaterfall";
 

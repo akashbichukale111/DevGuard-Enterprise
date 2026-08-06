@@ -1,6 +1,9 @@
 "use client";
 
 import { DiffEditor } from "@monaco-editor/react";
+
+// Side-effect import: self-hosted Monaco loader path. See lib/monaco.ts.
+import "@/lib/monaco";
 import {
   DataSourceBadge,
   NotAvailable,
