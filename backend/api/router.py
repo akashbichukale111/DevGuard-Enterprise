@@ -32,12 +32,21 @@ import uuid
 from collections import deque
 from typing import Any, Optional
 
-from fastapi import APIRouter, Header, HTTPException, Request, WebSocket, WebSocketDisconnect
+from fastapi import (
+    APIRouter,
+    File,
+    Header,
+    HTTPException,
+    Request,
+    UploadFile,
+    WebSocket,
+    WebSocketDisconnect,
+)
 from opentelemetry import trace
 from opentelemetry.trace import format_trace_id
 from pydantic import BaseModel, ValidationError
 
-from backend.core import audit, cache, languages, telemetry
+from backend.core import audit, cache, languages, project_scan, telemetry
 from backend.core.ai_agent import AgentExecutionError
 from backend.core.mcp_client import get_mcp_client
 from backend.core.resilience import (
@@ -863,6 +872,250 @@ async def reject(scan_id: str, reason: Optional[str] = None):
     )
     _pending_approvals.pop(scan_id, None)
     return {"scan_id": scan_id, "status": "rejected", "reason": reason}
+
+
+# ===========================================================================
+# Project scans (ZIP upload / repository)
+# ===========================================================================
+#
+# A project scan is N single-file scans, not a new pipeline. Collection
+# (backend.core.project_scan) turns an archive or a clone into a bounded list
+# of source files; each one then goes through `run_pipeline_resilient` — the
+# same call `POST /scan` makes — so the breaker, the fallback model, the cache
+# and the evidence all behave identically to a paste-and-scan.
+#
+# The work runs in a background task because 25 files is 25 pipeline runs and
+# no HTTP client should hold a connection open for that. The POST returns a
+# project_id plus the collection summary immediately; `GET /scan/project/{id}`
+# reports progress and per-file results as they land.
+
+#: project_id -> job state, same lifetime rules as _scan_results.
+_project_scans: dict[str, dict[str, Any]] = {}
+_project_scan_stored_at: dict[str, float] = {}
+
+#: Pipeline runs in flight per project. Kept low deliberately: each one is
+#: several model calls, and the provider rate limit is the real constraint.
+PROJECT_SCAN_CONCURRENCY = int(os.environ.get("DEVGUARD_PROJECT_CONCURRENCY", "3"))
+
+#: Largest archive we will accept, before decompression.
+MAX_UPLOAD_BYTES = 25 * 1024 * 1024
+
+
+def _evict_project_scans() -> None:
+    """Age and count limits for project state, mirroring _evict_scan_state."""
+    mono = time.monotonic()
+    for pid, stored in list(_project_scan_stored_at.items()):
+        if mono - stored > SCAN_RESULT_TTL_SECONDS:
+            _project_scans.pop(pid, None)
+            _project_scan_stored_at.pop(pid, None)
+    if len(_project_scans) > SCAN_RESULT_MAX_ENTRIES:
+        by_age = sorted(_project_scans, key=lambda pid: _project_scan_stored_at.get(pid, 0.0))
+        for pid in by_age[: len(_project_scans) - SCAN_RESULT_MAX_ENTRIES]:
+            _project_scans.pop(pid, None)
+            _project_scan_stored_at.pop(pid, None)
+
+
+async def _scan_one_file(
+    source: project_scan.SourceFile, semaphore: asyncio.Semaphore
+) -> dict[str, Any]:
+    """
+    Run the existing pipeline over one collected file.
+
+    A failure here is recorded against that file and never aborts the project:
+    one unparseable file in a repository must not discard the findings from the
+    other twenty-four.
+    """
+    async with semaphore:
+        started = time.perf_counter()
+        try:
+            req = ScanRequest(code=source.code, language=source.language)
+            cached = await cache.get_cached(req)
+            result = cached if cached is not None else await run_pipeline_resilient(req)
+            if cached is None:
+                await cache.set_cached(req, result)
+
+            vulns = result.scan.vulnerabilities
+            return {
+                "path": source.path,
+                "language": source.language,
+                "status": "complete",
+                "cached": cached is not None,
+                "duration_ms": round((time.perf_counter() - started) * 1000, 1),
+                "vulnerability_count": len(vulns),
+                "max_severity": _max_severity_label(vulns),
+                "vulnerabilities": [v.model_dump(mode="json") for v in vulns],
+                "converged": result.converged,
+            }
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("project scan: %s failed (%s)", source.path, exc)
+            return {
+                "path": source.path,
+                "language": source.language,
+                "status": "failed",
+                "duration_ms": round((time.perf_counter() - started) * 1000, 1),
+                "error": str(exc)[:300],
+                "vulnerability_count": 0,
+                "max_severity": None,
+                "vulnerabilities": [],
+            }
+
+
+def _max_severity_label(vulns: list[Any]) -> Optional[str]:
+    """Highest severity present, or None when nothing was found."""
+    order = ["low", "medium", "high", "critical"]
+    present = [v.severity.value for v in vulns]
+    ranked = [s for s in order if s in present]
+    return ranked[-1] if ranked else None
+
+
+async def _run_project_scan(project_id: str, collection: project_scan.Collection) -> None:
+    """Drive every collected file through the pipeline, updating job state."""
+    job = _project_scans[project_id]
+    semaphore = asyncio.Semaphore(max(1, PROJECT_SCAN_CONCURRENCY))
+    try:
+        tasks = [
+            asyncio.create_task(_scan_one_file(f, semaphore)) for f in collection.files
+        ]
+        for completed in asyncio.as_completed(tasks):
+            job["files"].append(await completed)
+            job["completed"] = len(job["files"])
+        job["files"].sort(key=lambda f: f["path"])
+        # A project where every file errored has found nothing, but it has not
+        # established that there is nothing to find. Reporting it as "complete"
+        # alongside total_vulnerabilities: 0 would read as a clean bill of
+        # health for code that was never actually analysed, so the status
+        # distinguishes the three outcomes.
+        failed = sum(1 for f in job["files"] if f["status"] == "failed")
+        if failed == len(job["files"]) and failed > 0:
+            job["status"] = "failed"
+            job["error"] = "Every file failed to scan; no code was analysed."
+        elif failed:
+            job["status"] = "complete_with_errors"
+        else:
+            job["status"] = "complete"
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("project scan %s aborted", project_id)
+        job["status"] = "failed"
+        job["error"] = str(exc)[:300]
+    finally:
+        job["finished_at"] = time.time()
+        _project_scan_stored_at[project_id] = time.monotonic()
+
+
+def _start_project_scan(source_label: str, collection: project_scan.Collection) -> dict[str, Any]:
+    """Register a job, kick off the background run, and describe it."""
+    if not collection.files:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                "No scannable source files were found. DevGuard scans "
+                + ", ".join(lang.label for lang in languages.LANGUAGES)
+                + " sources."
+            ),
+        )
+
+    project_id = str(uuid.uuid4())
+    _project_scans[project_id] = {
+        "project_id": project_id,
+        "source": source_label,
+        "status": "running",
+        "started_at": time.time(),
+        "finished_at": None,
+        "total": len(collection.files),
+        "completed": 0,
+        "files": [],
+        "collection": collection.as_summary(),
+    }
+    _project_scan_stored_at[project_id] = time.monotonic()
+    _evict_project_scans()
+
+    # Held so the task is not garbage-collected mid-flight; discarded on done.
+    task = asyncio.create_task(_run_project_scan(project_id, collection))
+    _project_scan_tasks.add(task)
+    task.add_done_callback(_project_scan_tasks.discard)
+
+    return {
+        "project_id": project_id,
+        "status": "running",
+        "total": len(collection.files),
+        "collection": collection.as_summary(),
+    }
+
+
+_project_scan_tasks: set[asyncio.Task] = set()
+
+
+@router.post("/scan/zip")
+async def scan_zip(file: UploadFile = File(...)):
+    """
+    Scan every supported source file in an uploaded ZIP archive.
+
+    The archive is read in memory and never written to disk. See
+    `backend.core.project_scan` for the zip-slip, zip-bomb and symlink
+    handling — this endpoint's job is the size limit and the job lifecycle.
+    """
+    data = await file.read(MAX_UPLOAD_BYTES + 1)
+    if len(data) > MAX_UPLOAD_BYTES:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Archive exceeds the {MAX_UPLOAD_BYTES // (1024 * 1024)} MB upload limit.",
+        )
+    if not data:
+        raise HTTPException(status_code=422, detail="The uploaded archive is empty.")
+
+    try:
+        collection = project_scan.collect_from_zip(data)
+    except project_scan.ProjectScanError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+    return _start_project_scan(f"zip:{file.filename or 'archive.zip'}", collection)
+
+
+@router.post("/scan/repository")
+async def scan_repository(request: Request):
+    """
+    Shallow-clone a public repository and scan its supported source files.
+
+    Only https:// URLs on an allowlist of public hosts are accepted; see
+    `project_scan.validate_repo_url`, which is the SSRF boundary.
+    """
+    try:
+        body = await request.json()
+    except (ValueError, TypeError) as exc:
+        raise HTTPException(status_code=422, detail=f"Invalid request body: {exc}")
+
+    url = (body or {}).get("repo_url") or (body or {}).get("url")
+    try:
+        # Cloning blocks; keep the event loop free for in-flight scans.
+        collection = await asyncio.to_thread(project_scan.collect_from_repository, url)
+    except project_scan.ProjectScanError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+    return _start_project_scan(f"repo:{project_scan.validate_repo_url(url)}", collection)
+
+
+@router.get("/scan/project/{project_id}")
+async def project_scan_status(project_id: str):
+    """Progress and per-file results for a project scan."""
+    job = _project_scans.get(project_id)
+    if job is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Unknown project scan id — it may have expired.",
+        )
+
+    scanned = [f for f in job["files"] if f["status"] == "complete"]
+    failed = [f for f in job["files"] if f["status"] == "failed"]
+    return {
+        **job,
+        # Counted over the files that were actually analysed. `files_failed`
+        # sits beside it so a zero can never be mistaken for a clean result on
+        # code that never reached the model.
+        "total_vulnerabilities": sum(f["vulnerability_count"] for f in scanned),
+        "files_with_findings": sum(1 for f in scanned if f["vulnerability_count"]),
+        "files_analysed": len(scanned),
+        "files_failed": len(failed),
+    }
 
 
 # ===========================================================================
