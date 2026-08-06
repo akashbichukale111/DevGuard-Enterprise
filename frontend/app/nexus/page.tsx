@@ -248,10 +248,20 @@ export default function NexusCommandCenter() {
         <div className="pointer-events-none absolute -top-40 left-1/2 h-[700px] w-[1000px] -translate-x-1/2 rounded-full dg-bloom" />
         <div className="pointer-events-none absolute inset-0 dg-scanlines opacity-[0.5]" />
 
-        <div className="relative z-10 mx-auto flex min-h-screen max-w-6xl flex-col px-4 py-8 sm:px-6 lg:py-12">
+        <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-8 sm:px-6 lg:py-12 xl:max-w-7xl">
           <NexusHeader completeCount={completeCount} errorCount={errorCount} />
 
           <StatusStrip results={results} />
+
+          {/* The primary action sits above the readouts, not below them. It
+              used to render after all five panels, which on a 1600x1000 screen
+              put it at y=2030 — two full viewports of scrolling before the
+              main control of a command deck came into view. */}
+          <GodModeButton
+            onClick={handleInitiateGodMode}
+            active={isGodModeActive}
+            completeCount={completeCount}
+          />
 
           {/* ── Module readouts ───────────────────────────────────────────────
               Each module now renders its own dedicated panel component instead
@@ -259,7 +269,7 @@ export default function NexusCommandCenter() {
               (unused) as a reference/fallback for the shared HUD chrome each
               of these five should replicate — corner brackets, accent glow,
               status pill, stat + readout column. */}
-          <section className="mt-10 flex flex-col gap-6">
+          <section className="mt-10 grid grid-cols-1 gap-6 xl:grid-cols-2">
             <OmniHealPanel
               data={results.omniHeal.data}
               status={results.omniHeal.status}
@@ -288,20 +298,16 @@ export default function NexusCommandCenter() {
               elapsedMs={results.truthSerum.elapsedMs}
               onRunSingle={() => runModule(MODULES[3])}
             />
-            <ExecutiveCommanderPanel
-              data={results.execCommander.data}
-              status={results.execCommander.status}
-              error={results.execCommander.error}
-              elapsedMs={results.execCommander.elapsedMs}
-              onRunSingle={() => runModule(MODULES[4])}
-            />
+            <div className="min-w-0 xl:col-span-2">
+              <ExecutiveCommanderPanel
+                data={results.execCommander.data}
+                status={results.execCommander.status}
+                error={results.execCommander.error}
+                elapsedMs={results.execCommander.elapsedMs}
+                onRunSingle={() => runModule(MODULES[4])}
+              />
+            </div>
           </section>
-
-          <GodModeButton
-            onClick={handleInitiateGodMode}
-            active={isGodModeActive}
-            completeCount={completeCount}
-          />
 
           <footer className="mt-10 flex items-center justify-center gap-4 pb-6 text-[11px] text-slate-600">
             <Link href="/" className="transition-colors hover:text-slate-400">
