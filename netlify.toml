@@ -1,16 +1,23 @@
 # Static deploy of the DevGuard Command Center (replay mode).
-# Needs no backend, no DataHub, no database and no API key — it renders the
-# committed proof packs.
+#
+# Pure Node build. No Python, no DataHub, no database, no API key: the replay
+# bundles in frontend/public/replay/ are committed, generated from the proof
+# packs under evidence/proof-pack/ by `make replay`. CI regenerates them on
+# every push and fails if they drift from the packs.
+#
+# Deploy from the REPOSITORY ROOT, not from frontend/ — Next.js writes its
+# static export to frontend/out.
 
 [build]
-  command = "pip install -r requirements.txt && python scripts/build_replay.py && cd frontend && npm ci && NEXT_OUTPUT=export npm run build"
+  command = "cd frontend && npm ci && NEXT_OUTPUT=export npm run build"
   publish = "frontend/out"
 
 [build.environment]
-  PYTHON_VERSION = "3.11"
   NODE_VERSION = "20"
+  NEXT_OUTPUT = "export"
 
 [[redirects]]
   from = "/"
   to = "/command/"
   status = 302
+  force = true

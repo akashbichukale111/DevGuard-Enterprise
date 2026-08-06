@@ -1,0 +1,402 @@
+{
+ "schema_version": 1,
+ "run_id": "d5-refusal",
+ "built_at": "2026-08-06T00:57:21.319704+00:00",
+ "source_pack": "evidence/proof-pack/d5-refusal",
+ "pack_written_at": "2026-08-01T09:50:31.727726+00:00",
+ "artifact_count": 5,
+ "banners": {
+  "replay": true,
+  "replay_text": "REPLAY OF RECORDED RUN \u2014 NOT LIVE",
+  "dry_run": false,
+  "seeded_catalog": false
+ },
+ "incident": {
+  "incident_id": "D5REF",
+  "dataset_urn": null,
+  "datahub_link": null,
+  "severity": null,
+  "state": "DIAGNOSING",
+  "states": [
+   "DETECTED",
+   "DIAGNOSING",
+   "AWAITING_APPROVAL",
+   "REMEDIATING",
+   "VERIFIED",
+   "KNOWLEDGE_WRITTEN"
+  ],
+  "states_reached": [
+   "DETECTED",
+   "DIAGNOSING"
+  ],
+  "started_at": "2026-08-01T09:49:58.676752+00:00",
+  "ended_at": "2026-08-01T09:50:31.725454+00:00",
+  "elapsed_ms": 33048.7
+ },
+ "rail": [
+  {
+   "agent": "watcher",
+   "state": "done",
+   "duration_ms": 0.6,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 4,
+   "evidence_ids": [
+    "EV-D5REF-001",
+    "EV-D5REF-002",
+    "EV-D5REF-003",
+    "EV-D5REF-004"
+   ],
+   "records": [
+    {
+     "from_agent": "watcher",
+     "to_agent": "cartographer",
+     "incident_id": "D5REF",
+     "evidence_ids": [
+      "EV-D5REF-001",
+      "EV-D5REF-002",
+      "EV-D5REF-003",
+      "EV-D5REF-004"
+     ],
+     "decision": "OK",
+     "rationale": "Observed a real failure in dbt run.",
+     "started_at": "2026-08-01T09:49:58.676752Z",
+     "ended_at": "2026-08-01T09:49:58.677363Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [],
+     "duration_ms": 0.6
+    }
+   ]
+  },
+  {
+   "agent": "archivist",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "cartographer",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "pathfinder",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "sentinel",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "diagnostician",
+   "state": "refused",
+   "duration_ms": 0.1,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": [
+    {
+     "from_agent": "diagnostician",
+     "to_agent": "scribe",
+     "incident_id": "D5REF",
+     "evidence_ids": [],
+     "decision": "INSUFFICIENT_EVIDENCE",
+     "rationale": "INSUFFICIENT_EVIDENCE (NO_GRAPH_EVIDENCE). \u00a77 requires at least one RUNTIME and one DATAHUB_GRAPH item; this chain is missing DATAHUB_GRAPH. Stopping the loop rather than guessing.",
+     "started_at": "2026-08-01T09:50:31.725402Z",
+     "ended_at": "2026-08-01T09:50:31.725454Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [],
+     "duration_ms": 0.1
+    }
+   ]
+  },
+  {
+   "agent": "surgeon",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "referee",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "magistrate",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "scribe",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "auditor",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  }
+ ],
+ "evidence": [
+  {
+   "id": "EV-D5REF-001",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "`dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)",
+   "raw_ref": "evidence/proof-pack/d5-refusal/watcher/dbt-run.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T09:49:58.677282Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D5REF-002",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "model stg_users failed to build (models/staging/stg_users.sql)",
+   "raw_ref": "evidence/proof-pack/d5-refusal/watcher/dbt-run.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T09:49:58.677331Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D5REF-003",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "database reports column \"user_id\" does not exist",
+   "raw_ref": "evidence/proof-pack/d5-refusal/watcher/dbt-run.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T09:49:58.677341Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D5REF-004",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "1 downstream model(s) SKIPped \u2014 not rebuilt, not dropped, therefore stale",
+   "raw_ref": "evidence/proof-pack/d5-refusal/watcher/dbt-run.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T09:49:58.677348Z",
+   "untrusted": false,
+   "distinct": false
+  }
+ ],
+ "chain": {
+  "digest": "e1c21616bd685a90",
+  "is_sufficient": false,
+  "missing_for_sufficiency": [
+   "DATAHUB_GRAPH"
+  ],
+  "datahub_error": "DataHubUnavailableError: MCP server exited rc=1; stderr tail:\n    graph.test_connection()\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/ingestion/graph/client.py\", line 238, in test_connection\n    super().test_connection()\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/emitter/rest_emitter.py\", line 708, in test_connection\n    self.fetch_server_config()\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/emitter/rest_emitter.py\", line 657, in fetch_server_config\n    response = self._session.get(url)\n               ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\", line 671, in get\n    return self.request(\"GET\", url, params=params, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\", line 651, in request\n    resp = self.send(prep, **send_kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\", line 784, in send\n    r = adapter.send(request, **kwargs)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/adapters.py\", line 729, in send\n    raise ConnectionError(e, request=request)\nrequests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=1): Max retries exceeded with url: /config (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=1): Failed to establish a new connection: [Errno 111] Connection refused\"))\n"
+ },
+ "prior_knowledge": {
+  "state": null,
+  "rationale": null,
+  "documents": [],
+  "capabilities_ref": null,
+  "document_count": null
+ },
+ "blast_radius": null,
+ "root_cause": {
+  "refused": true,
+  "decision": "INSUFFICIENT_EVIDENCE",
+  "rationale": "INSUFFICIENT_EVIDENCE (NO_GRAPH_EVIDENCE). \u00a77 requires at least one RUNTIME and one DATAHUB_GRAPH item; this chain is missing DATAHUB_GRAPH. Stopping the loop rather than guessing.",
+  "missing_evidence_classes": [
+   "DATAHUB_GRAPH"
+  ],
+  "datahub_error": "DataHubUnavailableError: MCP server exited rc=1; stderr tail:\n    graph.test_connection()\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/ingestion/graph/client.py\", line 238, in test_connection\n    super().test_connection()\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/emitter/rest_emitter.py\", line 708, in test_connection\n    self.fetch_server_config()\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/emitter/rest_emitter.py\", line 657, in fetch_server_config\n    response = self._session.get(url)\n               ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\", line 671, in get\n    return self.request(\"GET\", url, params=params, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\", line 651, in request\n    resp = self.send(prep, **send_kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\", line 784, in send\n    r = adapter.send(request, **kwargs)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/adapters.py\", line 729, in send\n    raise ConnectionError(e, request=request)\nrequests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=1): Max retries exceeded with url: /config (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=1): Failed to establish a new connection: [Errno 111] Connection refused\"))\n",
+  "statement": "INSUFFICIENT_EVIDENCE (NO_GRAPH_EVIDENCE). \u00a77 requires at least one RUNTIME and one DATAHUB_GRAPH item; this chain is missing DATAHUB_GRAPH. Stopping the loop rather than guessing.",
+  "by_model": false,
+  "chain_ids": [
+   "EV-D5REF-001",
+   "EV-D5REF-002",
+   "EV-D5REF-003",
+   "EV-D5REF-004"
+  ],
+  "raw_ref": null
+ },
+ "policy": null,
+ "write_back": null,
+ "security": {
+  "is_demo": false,
+  "sources_scanned": 0,
+  "attempts_detected": 0,
+  "detections": [],
+  "action_taken": null,
+  "untrusted_sources": []
+ },
+ "metrics": {
+  "time_to_root_cause_ms": null,
+  "total_loop_ms": 33048.7,
+  "mcp_calls": 0,
+  "tokens": null,
+  "tokens_note": "0 recorded \u2014 no model was invoked in this run",
+  "cost_usd": null,
+  "models": [],
+  "evidence_count": 4,
+  "handoff_count": 2,
+  "source": "summed from handoff-rail.json in this proof pack"
+ },
+ "artifacts": [
+  {
+   "name": "watcher/dbt-run.txt",
+   "raw_ref": "evidence/proof-pack/d5-refusal/watcher/dbt-run.txt",
+   "bytes": 1427,
+   "truncated": false,
+   "note": "Raw output of the command the Watcher observed.",
+   "written_at": "2026-08-01T09:49:58.677256+00:00"
+  },
+  {
+   "name": "datahub-unavailable.txt",
+   "raw_ref": "evidence/proof-pack/d5-refusal/datahub-unavailable.txt",
+   "bytes": 1819,
+   "truncated": false,
+   "note": "The catalog could not be reached. No DATAHUB_GRAPH evidence exists for this run.",
+   "written_at": "2026-08-01T09:50:31.724832+00:00"
+  },
+  {
+   "name": "evidence-chain.json",
+   "raw_ref": "evidence/proof-pack/d5-refusal/evidence-chain.json",
+   "bytes": 3450,
+   "truncated": false,
+   "note": "\u00a77's chain for this scenario.",
+   "written_at": "2026-08-01T09:50:31.726931+00:00"
+  },
+  {
+   "name": "diagnosis.json",
+   "raw_ref": "evidence/proof-pack/d5-refusal/diagnosis.json",
+   "bytes": 378,
+   "truncated": false,
+   "note": "The Diagnostician's typed output.",
+   "written_at": "2026-08-01T09:50:31.727150+00:00"
+  },
+  {
+   "name": "handoff-rail.json",
+   "raw_ref": "evidence/proof-pack/d5-refusal/handoff-rail.json",
+   "bytes": 1017,
+   "truncated": false,
+   "note": "\u00a76's envelopes, in order.",
+   "written_at": "2026-08-01T09:50:31.727685+00:00"
+  }
+ ],
+ "raw": {
+  "evidence/proof-pack/d5-refusal/watcher/dbt-run.txt": {
+   "name": "watcher/dbt-run.txt",
+   "bytes": 1427,
+   "note": "Raw output of the command the Watcher observed.",
+   "written_at": "2026-08-01T09:49:58.677256+00:00",
+   "truncated_in_bundle": false,
+   "content": "$ dbt run\nexit code: 1\n\n09:49:57  Running with dbt=1.12.0\n09:49:57  Registered adapter: postgres=1.11.0\n09:49:57  Found 3 models, 2 sources, 477 macros\n09:49:57  \n09:49:57  Concurrency: 4 threads (target='dev')\n09:49:57  \n09:49:57  1 of 3 START sql view model analytics_staging.stg_orders ....................... [RUN]\n09:49:57  2 of 3 START sql view model analytics_staging.stg_users ........................ [RUN]\n09:49:58  2 of 3 ERROR creating sql view model analytics_staging.stg_users ............... [ERROR in 0.10s]\n09:49:58  1 of 3 OK created sql view model analytics_staging.stg_orders .................. [CREATE VIEW in 0.15s]\n09:49:58  3 of 3 SKIP relation analytics_marts.user_order_features ....................... [SKIP]\n09:49:58  \n09:49:58  Finished running 1 table model, 2 view models in 0 hours 0 minutes and 0.31 seconds (0.31s).\n09:49:58  \n09:49:58  Completed with 1 error, 0 partial successes, and 0 warnings:\n09:49:58  \n09:49:58  [ERROR]: in model stg_users (models/staging/stg_users.sql)\n09:49:58    Database Error in model stg_users (models/staging/stg_users.sql)\n  column \"user_id\" does not exist\n  LINE 13:     user_id,\n               ^\n  compiled code at target/run/devguard_substrate/models/staging/stg_users.sql\n09:49:58  \n09:49:58    compiled code at target/compiled/devguard_substrate/models/staging/stg_users.sql\n09:49:58  \n09:49:58  Done. PASS=1 WARN=0 ERROR=1 SKIP=1 NO-OP=0 REUSED=0 TOTAL=3\n"
+  },
+  "evidence/proof-pack/d5-refusal/datahub-unavailable.txt": {
+   "name": "datahub-unavailable.txt",
+   "bytes": 1819,
+   "note": "The catalog could not be reached. No DATAHUB_GRAPH evidence exists for this run.",
+   "written_at": "2026-08-01T09:50:31.724832+00:00",
+   "truncated_in_bundle": false,
+   "content": "GMS URL: http://localhost:1\n\nDataHubUnavailableError: MCP server exited rc=1; stderr tail:\n    graph.test_connection()\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/ingestion/graph/client.py\", line 238, in test_connection\n    super().test_connection()\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/emitter/rest_emitter.py\", line 708, in test_connection\n    self.fetch_server_config()\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/emitter/rest_emitter.py\", line 657, in fetch_server_config\n    response = self._session.get(url)\n               ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\", line 671, in get\n    return self.request(\"GET\", url, params=params, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\", line 651, in request\n    resp = self.send(prep, **send_kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\", line 784, in send\n    r = adapter.send(request, **kwargs)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/adapters.py\", line 729, in send\n    raise ConnectionError(e, request=request)\nrequests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=1): Max retries exceeded with url: /config (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=1): Failed to establish a new connection: [Errno 111] Connection refused\"))\n\n"
+  },
+  "evidence/proof-pack/d5-refusal/evidence-chain.json": {
+   "name": "evidence-chain.json",
+   "bytes": 3450,
+   "note": "\u00a77's chain for this scenario.",
+   "written_at": "2026-08-01T09:50:31.726931+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"incident_id\": \"D5REF\",\n  \"digest\": \"e1c21616bd685a90\",\n  \"is_sufficient\": false,\n  \"missing_for_sufficiency\": [\n    \"DATAHUB_GRAPH\"\n  ],\n  \"datahub_error\": \"DataHubUnavailableError: MCP server exited rc=1; stderr tail:\\n    graph.test_connection()\\n  File \\\"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/ingestion/graph/client.py\\\", line 238, in test_connection\\n    super().test_connection()\\n  File \\\"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/emitter/rest_emitter.py\\\", line 708, in test_connection\\n    self.fetch_server_config()\\n  File \\\"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/datahub/emitter/rest_emitter.py\\\", line 657, in fetch_server_config\\n    response = self._session.get(url)\\n               ^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\\\", line 671, in get\\n    return self.request(\\\"GET\\\", url, params=params, **kwargs)\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\\\", line 651, in request\\n    resp = self.send(prep, **send_kwargs)\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/sessions.py\\\", line 784, in send\\n    r = adapter.send(request, **kwargs)\\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/root/.cache/uv/archive-v0/wrrZkR7RegxKlqjPceCOZ/lib/python3.11/site-packages/requests/adapters.py\\\", line 729, in send\\n    raise ConnectionError(e, request=request)\\nrequests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=1): Max retries exceeded with url: /config (Caused by NewConnectionError(\\\"HTTPConnection(host='localhost', port=1): Failed to establish a new connection: [Errno 111] Connection refused\\\"))\\n\",\n  \"items\": [\n    {\n      \"id\": \"EV-D5REF-001\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T09:49:58.677282Z\",\n      \"claim\": \"`dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)\",\n      \"raw_ref\": \"evidence/proof-pack/d5-refusal/watcher/dbt-run.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D5REF-002\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T09:49:58.677331Z\",\n      \"claim\": \"model stg_users failed to build (models/staging/stg_users.sql)\",\n      \"raw_ref\": \"evidence/proof-pack/d5-refusal/watcher/dbt-run.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D5REF-003\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T09:49:58.677341Z\",\n      \"claim\": \"database reports column \\\"user_id\\\" does not exist\",\n      \"raw_ref\": \"evidence/proof-pack/d5-refusal/watcher/dbt-run.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D5REF-004\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T09:49:58.677348Z\",\n      \"claim\": \"1 downstream model(s) SKIPped \\u2014 not rebuilt, not dropped, therefore stale\",\n      \"raw_ref\": \"evidence/proof-pack/d5-refusal/watcher/dbt-run.txt\",\n      \"datahub_urn\": null\n    }\n  ]\n}\n"
+  },
+  "evidence/proof-pack/d5-refusal/diagnosis.json": {
+   "name": "diagnosis.json",
+   "bytes": 378,
+   "note": "The Diagnostician's typed output.",
+   "written_at": "2026-08-01T09:50:31.727150+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"verdict\": \"INSUFFICIENT_EVIDENCE\",\n  \"is_refusal\": true,\n  \"statement\": \"INSUFFICIENT_EVIDENCE (NO_GRAPH_EVIDENCE). \\u00a77 requires at least one RUNTIME and one DATAHUB_GRAPH item; this chain is missing DATAHUB_GRAPH. Stopping the loop rather than guessing.\",\n  \"cited_evidence_ids\": [],\n  \"refusal_reasons\": [\n    \"NO_GRAPH_EVIDENCE\"\n  ],\n  \"model\": null,\n  \"tokens\": 0\n}\n"
+  },
+  "evidence/proof-pack/d5-refusal/handoff-rail.json": {
+   "name": "handoff-rail.json",
+   "bytes": 1017,
+   "note": "\u00a76's envelopes, in order.",
+   "written_at": "2026-08-01T09:50:31.727685+00:00",
+   "truncated_in_bundle": false,
+   "content": "[\n  {\n    \"from_agent\": \"watcher\",\n    \"to_agent\": \"cartographer\",\n    \"incident_id\": \"D5REF\",\n    \"evidence_ids\": [\n      \"EV-D5REF-001\",\n      \"EV-D5REF-002\",\n      \"EV-D5REF-003\",\n      \"EV-D5REF-004\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"Observed a real failure in dbt run.\",\n    \"started_at\": \"2026-08-01T09:49:58.676752Z\",\n    \"ended_at\": \"2026-08-01T09:49:58.677363Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [],\n    \"duration_ms\": 0.6\n  },\n  {\n    \"from_agent\": \"diagnostician\",\n    \"to_agent\": \"scribe\",\n    \"incident_id\": \"D5REF\",\n    \"evidence_ids\": [],\n    \"decision\": \"INSUFFICIENT_EVIDENCE\",\n    \"rationale\": \"INSUFFICIENT_EVIDENCE (NO_GRAPH_EVIDENCE). \\u00a77 requires at least one RUNTIME and one DATAHUB_GRAPH item; this chain is missing DATAHUB_GRAPH. Stopping the loop rather than guessing.\",\n    \"started_at\": \"2026-08-01T09:50:31.725402Z\",\n    \"ended_at\": \"2026-08-01T09:50:31.725454Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [],\n    \"duration_ms\": 0.1\n  }\n]\n"
+  }
+ },
+ "missing": {
+  "incident.severity": "the run stopped before the Magistrate classified risk",
+  "prior_knowledge": "the Archivist did not run in this pack",
+  "blast_radius": "the Pathfinder did not run in this pack",
+  "policy": "the run stopped before remediation",
+  "write_back": "the run stopped before the Scribe",
+  "metrics.time_to_root_cause_ms": "the chain was insufficient and the Diagnostician refused, so no root cause was reached \u2014 there is no time-to-root-cause to report",
+  "metrics.cost_usd": "no model was invoked in this run (every handoff records model=null; the Diagnostician reports REASONER_UNAVAILABLE), so there is no cost to report \u2014 this is not a zero cost, it is an unmeasured one."
+ }
+}
