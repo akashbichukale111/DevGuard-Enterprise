@@ -27,6 +27,8 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from backend.core.languages import DEFAULT_LANGUAGE, resolve
+
 
 # ---------------------------------------------------------------------------
 # Enums — typed vocabularies shared across agents
@@ -378,6 +380,23 @@ class ScanRequest(BaseModel):
         description="Raw source code to scan for vulnerabilities.",
     )
     language: str = Field(
-        default="python",
-        description="Source language hint (python, javascript, etc.).",
+        default=DEFAULT_LANGUAGE,
+        description=(
+            "Source language. One of the ids in backend.core.languages.LANGUAGES. "
+            "Unknown values normalise to the default rather than rejecting the "
+            "scan — the pipeline is prompt-driven and degrades sensibly."
+        ),
     )
+
+    @field_validator("language")
+    @classmethod
+    def _normalise_language(cls, v: str) -> str:
+        """
+        Lower-case and fall back to the default for anything unrecognised.
+
+        Normalising here rather than rejecting keeps the endpoint tolerant of
+        older clients (which sent no language at all) while guaranteeing that
+        everything downstream — the cache key, the span attribute and the three
+        agent prompts — sees an id that exists in the registry.
+        """
+        return resolve(v).id

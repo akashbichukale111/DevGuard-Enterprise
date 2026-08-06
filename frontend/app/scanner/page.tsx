@@ -15,11 +15,26 @@ import { useScanSocket, type StatusLine } from "@/lib/useScanSocket";
 
 // ── Demo-ready content ───────────────────────────────────────────────────────
 
+// Mirrors backend.core.languages.LANGUAGES, which is the registry the Scanner,
+// Fixer and Validator prompts read and which the upload path maps extensions
+// against. GET /languages serves the same list; this constant is the offline
+// fallback so the picker still renders when the backend is unreachable. Adding
+// a language means adding it in BOTH places — the backend registry is the one
+// that decides what is actually supported.
 const LANGUAGES = [
-  { id: "python", label: "Python" },
-  { id: "javascript", label: "JavaScript" },
+  { id: "python", label: "Python", ext: "py" },
+  { id: "javascript", label: "JavaScript", ext: "js" },
+  { id: "typescript", label: "TypeScript", ext: "ts" },
+  { id: "java", label: "Java", ext: "java" },
 ] as const;
 type LanguageId = (typeof LANGUAGES)[number]["id"];
+
+const LANGUAGE_EXT: Record<LanguageId, string> = {
+  python: "py",
+  javascript: "js",
+  typescript: "ts",
+  java: "java",
+};
 
 // Realistic vulnerable snippet shown as a hint — SQLi (CWE-89) + XSS (CWE-79),
 // which lines up with the live status copy so the demo tells one coherent story.
@@ -51,6 +66,38 @@ app.get("/user", async (req, res) => {
   // CWE-79: unescaped user data reflected into HTML
   res.send("<h1>Welcome " + rows[0].name + "</h1>");
 });
+`,
+  typescript: `// Paste code to scan — or run this sample (it's deliberately vulnerable)
+import express, { Request, Response } from "express";
+import { db } from "./db";
+
+const app = express();
+
+app.get("/user", async (req: Request, res: Response) => {
+  const id = req.query.id as string;
+  // CWE-89: string-built SQL query
+  const rows: any[] = await db.query("SELECT name FROM users WHERE id = " + id);
+  // CWE-79: unescaped user data reflected into HTML
+  res.send("<h1>Welcome " + rows[0].name + "</h1>");
+});
+`,
+  java: `// Paste code to scan — or run this sample (it's deliberately vulnerable)
+import java.sql.*;
+import javax.servlet.http.*;
+
+public class UserServlet extends HttpServlet {
+  protected void doGet(HttpServletRequest req, HttpServletResponse res)
+      throws Exception {
+    String id = req.getParameter("id");
+    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/app");
+    // CWE-89: user input concatenated straight into SQL
+    Statement st = conn.createStatement();
+    ResultSet rs = st.executeQuery("SELECT name FROM users WHERE id = " + id);
+    rs.next();
+    // CWE-79: reflected back to the browser without escaping
+    res.getWriter().write("<h1>Welcome " + rs.getString("name") + "</h1>");
+  }
+}
 `,
 };
 
@@ -119,7 +166,13 @@ export default function AgentWorkspace() {
       // so the whole scan lives under one distributed trace.
       const { data, trace } = await fetchWithTrace<{ scan_id: string }>(
         `${process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000"}/scan`,
-        { method: "POST", body: JSON.stringify({ code: effectiveCode }) }
+        {
+          method: "POST",
+          // `language` was never sent before, so the backend always fell back
+          // to its default and the picker above was decorative. It now reaches
+          // the Scanner, Fixer and Validator prompts.
+          body: JSON.stringify({ code: effectiveCode, language }),
+        }
       );
       // Don't block on progress — the POST just hands us a scan_id, then the
       // socket drives everything.
@@ -135,7 +188,7 @@ export default function AgentWorkspace() {
     } finally {
       setSubmitting(false);
     }
-  }, [effectiveCode, isScanning, scan]);
+  }, [effectiveCode, isScanning, language, scan]);
 
   // On success, play the exit animation, THEN navigate. We drive this from an
   // effect (not inline) so it fires exactly once when phase flips to success.
@@ -187,7 +240,7 @@ export default function AgentWorkspace() {
                       <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
                       <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
                       <span className="ml-3 text-xs font-medium text-slate-400">
-                        untitled.{language === "python" ? "py" : "js"}
+                        untitled.{LANGUAGE_EXT[language]}
                       </span>
                     </div>
                     <LanguagePicker
