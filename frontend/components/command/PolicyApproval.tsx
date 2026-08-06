@@ -68,7 +68,7 @@ export default function PolicyApproval({
       }
     >
       <div className="grid gap-3 lg:grid-cols-2">
-        <div className="space-y-2">
+        <div className="min-w-0 space-y-2">
           <div>
             <div className="text-[10px] uppercase tracking-[0.12em] text-slate-500">
               Registered owner (from the graph)
@@ -132,7 +132,7 @@ export default function PolicyApproval({
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="min-w-0 space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <div className="rounded border border-white/10 bg-black/20 p-2">
               <div className="text-[10px] uppercase tracking-[0.12em] text-slate-500">

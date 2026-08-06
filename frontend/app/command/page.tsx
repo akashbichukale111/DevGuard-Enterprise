@@ -170,7 +170,11 @@ function CommandCenter() {
       <HandoffRail bundle={bundle} onOpenRaw={setRawRef} />
 
       <div className="grid gap-2 xl:grid-cols-[22rem_1fr]">
-        <div className="xl:sticky xl:top-2 xl:max-h-[calc(100vh-1rem)]">
+        {/* min-w-0: a grid item defaults to min-width:auto, so this column
+            refused to shrink below the ledger's min-content width (456px) and
+            pushed the page into horizontal scroll on a phone. The right-hand
+            column already carried it; this one did not. */}
+        <div className="min-w-0 xl:sticky xl:top-2 xl:max-h-[calc(100vh-1rem)]">
           <EvidenceLedger bundle={bundle} onOpenRaw={setRawRef} />
         </div>
 
