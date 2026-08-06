@@ -3,8 +3,5 @@
   "framework": null,
   "installCommand": "cd frontend && npm ci",
   "buildCommand": "cd frontend && NEXT_OUTPUT=export npm run build",
-  "outputDirectory": "frontend/out",
-  "redirects": [
-    { "source": "/", "destination": "/command/", "permanent": false }
-  ]
+  "outputDirectory": "frontend/out"
 }

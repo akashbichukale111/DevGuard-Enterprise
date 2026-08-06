@@ -16,8 +16,3 @@
   NODE_VERSION = "20"
   NEXT_OUTPUT = "export"
 
-[[redirects]]
-  from = "/"
-  to = "/command/"
-  status = 302
-  force = true
