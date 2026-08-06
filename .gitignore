@@ -10,6 +10,13 @@ node_modules/
 # Static export of the Command Center — a build artifact of `make replay-build`.
 frontend/out/
 
+# Monaco's AMD bundle, staged out of node_modules into public/ by
+# `frontend/scripts/copy-monaco.mjs` on every build so the editors load from
+# this origin rather than the jsdelivr CDN. 16 MB of vendored dependency code,
+# reproduced deterministically from the pinned monaco-editor version — a build
+# artifact, not source.
+frontend/public/monaco/
+
 # NOTE: `frontend/public/replay/` IS committed, deliberately.
 #
 # These bundles are generated from the committed proof packs by `make replay`.

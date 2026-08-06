@@ -67,8 +67,20 @@ const config = [
   // ignored `node_modules` by default and `next lint` scoped itself to the app
   // directories. The flat CLI lints the whole tree unless told otherwise, so
   // without this it would walk `.next/` and report on generated code.
+  //
+  // `public/monaco/**` is Monaco's own minified AMD bundle, staged out of
+  // node_modules by `scripts/copy-monaco.mjs` on every build. It is vendored
+  // dependency code, not source: linting it reports rules-of-hooks errors
+  // against minified identifiers in ts.worker and editor.api that no one can
+  // or should fix here.
   {
-    ignores: [".next/**", "node_modules/**", "out/**", "next-env.d.ts"],
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      "out/**",
+      "public/monaco/**",
+      "next-env.d.ts",
+    ],
   },
   ...nextCoreWebVitals,
   newRulesFromTheNext16Bump,

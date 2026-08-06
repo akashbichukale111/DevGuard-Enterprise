@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import Editor, { type OnMount } from "@monaco-editor/react";
 
+// Side-effect import: points the Monaco loader at the self-hosted bundle in
+// public/monaco/vs instead of the jsdelivr CDN. Must precede the first mount.
+import "@/lib/monaco";
+
 import { fetchWithTrace, FetchTraceError } from "@/lib/otel-frontend";
 import { useScanSocket, type StatusLine } from "@/lib/useScanSocket";
 
