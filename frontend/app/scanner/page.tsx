@@ -13,6 +13,7 @@ import "@/lib/monaco";
 
 import { fetchWithTrace, FetchTraceError } from "@/lib/otel-frontend";
 import { useScanSocket, type StatusLine } from "@/lib/useScanSocket";
+import ProjectScan from "@/components/scanner/ProjectScan";
 
 // ── Demo-ready content ───────────────────────────────────────────────────────
 
@@ -160,6 +161,7 @@ export default function AgentWorkspace() {
   // Name of the uploaded file, so the editor tab shows what is being scanned
   // instead of a generic "untitled".
   const [filename, setFilename] = useState<string | null>(null);
+  const [mode, setMode] = useState<"snippet" | "project">("snippet");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isScanning = scan.phase === "scanning" || submitting;
@@ -305,7 +307,38 @@ export default function AgentWorkspace() {
             >
               <Header routing={scan.routing} />
 
-              <section className="mt-8 flex-1">
+              {/* Snippet vs project. The snippet workspace below is untouched;
+                  project mode is an additional input path onto the same
+                  pipeline, not a replacement for it. */}
+              <div className="mt-7 flex items-center gap-1.5 self-start rounded-xl border border-white/10 bg-white/[0.03] p-1">
+                {(
+                  [
+                    ["snippet", "Snippet"],
+                    ["project", "Project"],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setMode(id)}
+                    disabled={isScanning}
+                    className={`rounded-lg px-4 py-1.5 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                      mode === id
+                        ? "bg-white/[0.1] text-white"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {mode === "project" ? (
+                <section className="mt-5 flex-1">
+                  <ProjectScan />
+                </section>
+              ) : (
+              <section className="mt-5 flex-1">
                 <div className="dg-panel relative rounded-2xl">
                   {/* Toolbar */}
                   <div className="flex items-center justify-between gap-3 border-b border-white/5 px-4 py-3 sm:px-5">
@@ -453,6 +486,7 @@ export default function AgentWorkspace() {
                 {/* Live status stream */}
                 <StatusStream lines={scan.lines} score={scan.finalScore} />
               </section>
+              )}
 
               <Footer />
             </motion.div>
