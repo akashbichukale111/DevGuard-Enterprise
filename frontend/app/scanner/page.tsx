@@ -341,7 +341,7 @@ export default function AgentWorkspace() {
               <section className="mt-5 flex-1">
                 <div className="dg-panel relative rounded-2xl">
                   {/* Toolbar */}
-                  <div className="flex items-center justify-between gap-3 border-b border-white/5 px-4 py-3 sm:px-5">
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-white/5 px-4 py-3 sm:px-5">
                     <div className="flex items-center gap-2">
                       <span className="h-2.5 w-2.5 rounded-full bg-rose-400/70" />
                       <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
@@ -350,7 +350,7 @@ export default function AgentWorkspace() {
                         {filename ?? `untitled.${LANGUAGE_EXT[language]}`}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <input
                         ref={fileInputRef}
                         type="file"
@@ -574,7 +574,7 @@ function LanguagePicker({
   disabled?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-1 rounded-lg bg-white/[0.03] p-0.5">
+    <div className="flex flex-wrap items-center gap-1 rounded-lg bg-white/[0.03] p-0.5">
       {LANGUAGES.map((l) => (
         <button
           key={l.id}
