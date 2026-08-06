@@ -16,6 +16,7 @@ import {
   Bug,
   Code2,
   GitBranch,
+  Network,
   Radar as RadarIcon,
   ShieldCheck,
   Sparkles,
@@ -23,18 +24,21 @@ import {
 } from "lucide-react";
 
 // ═════════════════════════════════════════════════════════════════════════
-// DevGuard AI — Landing / Gateway Page
+// DevGuard — Platform entry
 // -----------------------------------------------------------------------
-// This is intentionally NOT a scrolling marketing page. It's a single-
-// viewport "gateway console": boot up, confirm the mesh is alive, then
-// present exactly one decision — which seat do you want, Developer or SRE?
-// Everything lives above the fold; the two destinations (/scanner, /nexus)
-// carry their own deep-dive content, so this page's only job is routing
-// with maximum ceremony on the way out.
+// Not a marketing page: a gateway console. Boot up, show real platform
+// status, then present the three modules. DevGuard Enterprise is the
+// flagship and sits full width above the two seats it did not used to
+// share the page with; Scanner and Nexus keep the card language and the
+// routing ceremony they already had.
 //
-// Palette: #05050a void, cyan-core (#06b6d4) = Developer/Scanner track,
-// violet/rose (#818cf8 / #f43f5e) = SRE/Nexus track — the two accent
-// families double as a color-coded fork in the road.
+// Each destination owns its own deep-dive content, so this page only
+// routes. It was a fixed single viewport when there were two cards; with
+// three it scrolls rather than clipping.
+//
+// Palette: #05050a void. violet (#a78bfa) = Enterprise/DataHub,
+// cyan (#06b6d4) = Developer/Scanner, rose (#f43f5e) = SRE/Nexus — the
+// accent families double as a colour-coded fork in the road.
 // ═════════════════════════════════════════════════════════════════════════
 
 const BOOT_LINES: { text: string; tone: "system" | "network" | "ai" | "auth" }[] = [
@@ -322,11 +326,13 @@ function LiveTelemetryBar() {
 
 interface TransitionSpec {
   label: string;
-  accent: "cyan" | "rose";
+  accent: "cyan" | "rose" | "violet";
 }
 
 function NavigationTransition({ spec }: { spec: TransitionSpec }) {
-  const isCyan = spec.accent === "cyan";
+  // The wipe has two painted variants; violet reuses the cyan wipe rather than
+  // adding a third gradient, so the Enterprise transition needs no new CSS.
+  const isCyan = spec.accent !== "rose";
   return (
     <motion.div
       className="fixed inset-0 z-[200] flex items-center justify-center overflow-hidden bg-black"
@@ -367,9 +373,20 @@ interface ActionCardDef {
 }
 
 const ACCENT_STYLES: Record<
-  "cyan" | "rose",
+  "cyan" | "rose" | "violet",
   { text: string; border: string; ring: string; glow: string; conic: string }
 > = {
+  // Flagship accent for the Enterprise module. Kept distinct from the two
+  // existing seats so the hero reads as a third destination, not a variant of
+  // one of them.
+  violet: {
+    text: "text-violet-300",
+    border: "border-violet-400/25",
+    ring: "ring-violet-400/15",
+    glow: "rgba(167,139,250,0.16)",
+    conic:
+      "conic-gradient(from 0deg, transparent 0%, rgba(167,139,250,0.65) 20%, transparent 40%, rgba(34,211,238,0.4) 60%, transparent 80%, rgba(167,139,250,0.5) 100%)",
+  },
   cyan: {
     text: "text-cyan-300",
     border: "border-cyan-400/25",
@@ -462,6 +479,113 @@ function ActionCard({
 }
 
 // ═════════════════════════════════════════════════════════════════════════
+// Enterprise hero card (flagship — full width, above the two seats)
+// ═════════════════════════════════════════════════════════════════════════
+
+// Same visual grammar as ActionCard — same tilt hook, same conic sweep, same
+// stat chips — at hero scale. It is a separate component rather than a variant
+// prop because the layout differs (two columns, larger type) and forking the
+// shared card to carry a size flag would make both harder to read.
+//
+// Every chip below is a fact that can be checked in this repository:
+// the pinned catalog version in versions.env, and the five write-back
+// artifacts in evidence/proof-pack/<run>/scribe/. Nothing here is a
+// projection or a counter.
+const ENTERPRISE_CHIPS: { label: string; value: string }[] = [
+  { label: "Catalog", value: "DataHub v1.6.0" },
+  { label: "Protocol", value: "MCP over stdio" },
+  { label: "Write-back", value: "5 artifacts" },
+];
+
+function EnterpriseHeroCard({
+  onNavigate,
+}: {
+  onNavigate: (href: string, spec: TransitionSpec, origin: { x: number; y: number }) => void;
+}) {
+  const { ref, rotateX, rotateY, bg, onMouseMove, onMouseLeave } = useTilt(3);
+  const a = ACCENT_STYLES.violet;
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    onNavigate(
+      "/command",
+      { label: "Opening Enterprise Command Center…", accent: "violet" },
+      { x: e.clientX, y: e.clientY }
+    );
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={{ rotateX, rotateY, transformPerspective: 1400, ["--card-glow" as string]: a.glow }}
+      whileHover={{ y: -3 }}
+      className={`dg-gateway-card group relative w-full overflow-hidden rounded-2xl border ${a.border} bg-white/[0.035] p-6 backdrop-blur-xl ring-1 ${a.ring} sm:p-7`}
+    >
+      <div
+        aria-hidden
+        className="dg-card-conic pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        style={{ ["--conic" as string]: a.conic }}
+      />
+      <motion.div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: bg }} />
+
+      <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:gap-8">
+        <div className="flex-1">
+          <div className="flex items-center gap-3">
+            <div className={`flex h-11 w-11 items-center justify-center rounded-xl border ${a.border} bg-white/[0.05]`}>
+              <Network className={`h-5 w-5 ${a.text}`} />
+            </div>
+            <span className={`font-mono text-[10px] uppercase tracking-[0.2em] ${a.text}`}>
+              Flagship &middot; Built with DataHub
+            </span>
+          </div>
+
+          <h3 className="mt-4 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            DevGuard Enterprise
+          </h3>
+          <p className={`mt-1 text-xs font-semibold uppercase tracking-wider ${a.text}`}>
+            Governed incident agent for the data platform
+          </p>
+          <p className="mt-3 max-w-2xl text-[13.5px] leading-relaxed text-slate-400">
+            Detects a real production break, proves root cause and blast radius from the
+            DataHub graph, fixes it under an owner-routed policy gate, verifies recovery,
+            and only then writes verified incident knowledge back into the catalog &mdash;
+            so the next incident starts from more knowledge than the last one.
+          </p>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            {ENTERPRISE_CHIPS.map((s) => (
+              <span
+                key={s.label}
+                className="rounded-lg border border-white/10 bg-black/30 px-2.5 py-1 font-mono text-[10.5px] text-slate-400"
+              >
+                {s.label}: <span className="text-white">{s.value}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="lg:w-64 lg:shrink-0">
+          <button
+            type="button"
+            onClick={handleClick}
+            className={`dg-enter-btn flex w-full items-center justify-between rounded-xl border ${a.border} bg-white/[0.05] px-5 py-3.5 text-left transition-colors hover:bg-white/[0.1]`}
+          >
+            <span className="text-sm font-semibold text-white">Open Command Center</span>
+            <ArrowRight className={`h-4 w-4 ${a.text} transition-transform group-hover:translate-x-1`} />
+          </button>
+          <p className="mt-2.5 text-center text-[10.5px] leading-relaxed text-slate-500 lg:text-left">
+            Replays recorded runs from committed proof packs. No catalog, database
+            or API key required.
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════════════
 // Page
 // ═════════════════════════════════════════════════════════════════════════
 
@@ -532,7 +656,11 @@ export default function LandingPage() {
         )}
       </AnimatePresence>
 
-      <main className="relative flex h-[100dvh] w-full flex-col overflow-hidden bg-[#05050a] text-slate-200 antialiased">
+      {/* Was a fixed single-viewport gateway (h-100dvh + overflow-hidden) when it
+          offered two destinations. With the Enterprise hero above them the
+          content can exceed the viewport on short screens, so the shell scrolls
+          rather than clipping the third card. */}
+      <main className="relative flex min-h-[100dvh] w-full flex-col overflow-x-hidden overflow-y-auto bg-[#05050a] text-slate-200 antialiased">
         <div className="pointer-events-none absolute inset-0 dg-grid opacity-[0.18]" />
         <div className="pointer-events-none absolute -top-32 left-1/2 h-[560px] w-[900px] -translate-x-1/2 rounded-full dg-bloom" />
         <div className="pointer-events-none absolute inset-0 dg-scanlines opacity-[0.2]" />
@@ -543,7 +671,7 @@ export default function LandingPage() {
           initial={{ opacity: 0 }}
           animate={booted ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: booted ? 0.05 : 0 }}
-          className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 py-6 sm:px-6"
+          className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 py-10 sm:px-6 sm:py-12"
         >
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -552,35 +680,44 @@ export default function LandingPage() {
             className="dg-badge inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/[0.06] px-4 py-1.5 text-[11px] font-medium text-cyan-200"
           >
             <Sparkles className="h-3.5 w-3.5" />
-            Self-observing AI security pipeline
+            One platform &middot; three modules &middot; one evidence model
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.28, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-5 max-w-3xl text-center text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-[52px]"
+            className="mt-5 max-w-3xl text-center text-3xl font-bold tracking-tight text-white sm:text-[44px] lg:text-[48px]"
           >
-            <span className="dg-gradient-text">Autonomous AI Security</span>
-            <br />
-            <span className="dg-gradient-text-2">&amp; Observability Mesh</span>
+            <span className="dg-gradient-text">The DevGuard</span>{" "}
+            <span className="dg-gradient-text-2">Platform</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-4 max-w-lg text-center text-sm leading-relaxed text-slate-400 sm:text-base"
+            className="mt-4 max-w-xl text-center text-sm leading-relaxed text-slate-400 sm:text-base"
           >
-            Choose your seat. Every path runs through the same self-observing
-            pipeline &mdash; traced end-to-end in SigNoz.
+            Agents that read a real catalog, refuse when the evidence will not
+            support an answer, and write what they proved back where the next
+            engineer will find it &mdash; every step traced end to end.
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 22 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-7 w-full sm:mt-8"
+          >
+            <EnterpriseHeroCard onNavigate={handleNavigate} />
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.52, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-8 grid w-full grid-cols-1 gap-5 sm:mt-10 sm:grid-cols-2 sm:gap-6"
+            transition={{ delay: 0.62, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-5 grid w-full grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6"
           >
             {ACTION_CARDS.map((def) => (
               <ActionCard key={def.href} def={def} onNavigate={handleNavigate} />
