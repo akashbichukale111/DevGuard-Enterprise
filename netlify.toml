@@ -1,0 +1,16 @@
+# Static deploy of the DevGuard Command Center (replay mode).
+# Needs no backend, no DataHub, no database and no API key — it renders the
+# committed proof packs.
+
+[build]
+  command = "pip install -r requirements.txt && python scripts/build_replay.py && cd frontend && npm ci && NEXT_OUTPUT=export npm run build"
+  publish = "frontend/out"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/"
+  to = "/command/"
+  status = 302

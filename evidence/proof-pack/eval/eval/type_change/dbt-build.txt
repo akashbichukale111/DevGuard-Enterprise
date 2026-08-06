@@ -5,9 +5,9 @@ exit code: 1  errored_models=1  failed_tests=0
 13:16:19  Running with dbt=1.12.0
 13:16:19  Registered adapter: postgres=1.11.0
 13:16:19  Found 3 models, 8 data tests, 2 sources, 477 macros
-13:16:19
+13:16:19  
 13:16:19  Concurrency: 4 threads (target='dev')
-13:16:19
+13:16:19  
 13:16:19  1 of 11 START sql view model analytics_eval_staging.stg_orders ................. [RUN]
 13:16:19  2 of 11 START sql view model analytics_eval_staging.stg_users .................. [RUN]
 13:16:20  2 of 11 OK created sql view model analytics_eval_staging.stg_users ............. [CREATE VIEW in 0.14s]
@@ -30,11 +30,11 @@ exit code: 1  errored_models=1  failed_tests=0
 13:16:20  10 of 11 PASS unique_stg_orders_order_id ....................................... [PASS in 0.07s]
 13:16:20  11 of 11 START sql table model analytics_eval_marts.user_order_features ........ [RUN]
 13:16:20  11 of 11 ERROR creating sql table model analytics_eval_marts.user_order_features  [ERROR in 0.04s]
-13:16:20
+13:16:20  
 13:16:20  Finished running 1 table model, 8 data tests, 2 view models in 0 hours 0 minutes and 0.57 seconds (0.57s).
-13:16:20
+13:16:20  
 13:16:20  Completed with 1 error, 0 partial successes, and 0 warnings:
-13:16:20
+13:16:20  
 13:16:20  [ERROR]: in model user_order_features (models/marts/user_order_features.sql)
 13:16:20    Database Error in model user_order_features (models/marts/user_order_features.sql)
   function sum(text) does not exist
@@ -42,7 +42,7 @@ exit code: 1  errored_models=1  failed_tests=0
                         ^
   HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
   compiled code at target/run/devguard_substrate/models/marts/user_order_features.sql
-13:16:20
+13:16:20  
 13:16:20    compiled code at target/compiled/devguard_substrate/models/marts/user_order_features.sql
-13:16:20
+13:16:20  
 13:16:20  Done. PASS=10 WARN=0 ERROR=1 SKIP=0 NO-OP=0 REUSED=0 TOTAL=11

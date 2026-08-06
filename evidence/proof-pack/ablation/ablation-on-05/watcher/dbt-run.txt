@@ -4,26 +4,26 @@ exit code: 1
 12:32:17  Running with dbt=1.12.0
 12:32:17  Registered adapter: postgres=1.11.0
 12:32:17  Found 3 models, 2 sources, 477 macros
-12:32:17
+12:32:17  
 12:32:17  Concurrency: 4 threads (target='dev')
-12:32:17
+12:32:17  
 12:32:17  1 of 3 START sql view model analytics_staging.stg_orders ....................... [RUN]
 12:32:17  2 of 3 START sql view model analytics_staging.stg_users ........................ [RUN]
 12:32:17  2 of 3 ERROR creating sql view model analytics_staging.stg_users ............... [ERROR in 0.12s]
 12:32:17  1 of 3 OK created sql view model analytics_staging.stg_orders .................. [CREATE VIEW in 0.14s]
 12:32:17  3 of 3 SKIP relation analytics_marts.user_order_features ....................... [SKIP]
-12:32:17
+12:32:17  
 12:32:17  Finished running 1 table model, 2 view models in 0 hours 0 minutes and 0.29 seconds (0.29s).
-12:32:17
+12:32:17  
 12:32:17  Completed with 1 error, 0 partial successes, and 0 warnings:
-12:32:17
+12:32:17  
 12:32:17  [ERROR]: in model stg_users (models/staging/stg_users.sql)
 12:32:17    Database Error in model stg_users (models/staging/stg_users.sql)
   column "user_id" does not exist
   LINE 13:     user_id,
                ^
   compiled code at target/run/devguard_substrate/models/staging/stg_users.sql
-12:32:17
+12:32:17  
 12:32:17    compiled code at target/compiled/devguard_substrate/models/staging/stg_users.sql
-12:32:17
+12:32:17  
 12:32:17  Done. PASS=1 WARN=0 ERROR=1 SKIP=1 NO-OP=0 REUSED=0 TOTAL=3

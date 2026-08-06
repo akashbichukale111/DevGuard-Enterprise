@@ -1,6 +1,6 @@
 # DevGuard AI — frontend production image (Next.js 16, standalone output).
 #
-# This file did not exist before: AUDIT A1 / B-series recorded that
+# This file did not exist before. A review recorded that
 # docker-compose.yml referenced `frontend/Dockerfile` while no such file was in
 # the repository, so `docker compose up` could never have succeeded. This is that
 # missing file.
@@ -56,7 +56,7 @@ RUN addgroup --system --gid 1001 nodejs \
 #
 # There is deliberately NO `COPY /app/public ./public`: this app has no public/
 # directory, and COPY of a missing path is a hard build failure. That is the same
-# mistake AUDIT A1 recorded against the original compose file (referencing a
+# mistake recorded against the original compose file (referencing a
 # Dockerfile that did not exist), so it is called out rather than left to bite.
 # If a public/ directory is ever added, add the COPY back with it.
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
