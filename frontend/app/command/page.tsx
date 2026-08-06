@@ -197,7 +197,15 @@ function CommandCenter() {
         Replay of <span className="text-slate-400">{bundle.source_pack}</span> · captured{" "}
         {bundle.pack_written_at ?? "unknown"} · bundle built {bundle.built_at} ·{" "}
         {bundle.artifact_count ?? 0} artifacts embedded. Every number on this screen is read from
-        that proof pack; nothing is computed live and nothing is typed by hand.
+        that proof pack; nothing is computed live and nothing is typed by hand.{" "}
+        {/* The commit this build came from. Without it, someone opening a
+            deployed replay URL cannot confirm the build in front of them is
+            the one that was submitted. */}
+        Build{" "}
+        <span className="text-slate-400">
+          {(process.env.NEXT_PUBLIC_COMMIT_SHA || "").slice(0, 7) || "unknown"}
+        </span>
+        .
       </footer>
 
       <RawViewer bundle={bundle} rawRef={rawRef} onClose={() => setRawRef(null)} />
