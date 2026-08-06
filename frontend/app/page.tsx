@@ -416,7 +416,12 @@ function ActionCard({
   const a = ACCENT_STYLES[def.accent];
   const Icon = def.icon;
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Let the browser handle middle-click, ctrl/cmd-click and shift-click so
+    // open-in-new-tab still works; only a plain left-click plays the transition.
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+      return;
+    }
     e.preventDefault();
     onNavigate(
       def.href,
@@ -465,15 +470,28 @@ function ActionCard({
           ))}
         </div>
 
-        <button
-          type="button"
-          onClick={handleClick}
-          className={`dg-enter-btn mt-6 flex items-center justify-between rounded-xl border ${a.border} bg-white/[0.03] px-5 py-3.5 text-left transition-colors hover:bg-white/[0.08]`}
+        {/* Visual affordance only. The whole card is the click target — see the
+            stretched anchor below — so this must not be a nested <button>. */}
+        <span
+          className={`dg-enter-btn mt-6 flex items-center justify-between rounded-xl border ${a.border} bg-white/[0.03] px-5 py-3.5 text-left transition-colors group-hover:bg-white/[0.08]`}
         >
           <span className="text-sm font-semibold text-white">Enter {def.title}</span>
           <ArrowRight className={`h-4 w-4 ${a.text} transition-transform group-hover:translate-x-1`} />
-        </button>
+        </span>
       </div>
+
+      {/* Stretched link: makes the entire card clickable rather than just the
+          button at the bottom. A real <a href> rather than an onClick handler on
+          the card, so the destination shows on hover, middle-click and
+          open-in-new-tab behave normally, and it is reachable by keyboard. The
+          handler intercepts a plain left-click to play the navigation
+          transition, and defers to the browser for modified clicks. */}
+      <a
+        href={def.href}
+        onClick={handleClick}
+        aria-label={`Enter ${def.title}`}
+        className="absolute inset-0 z-20 rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40"
+      />
     </motion.div>
   );
 }
@@ -505,7 +523,12 @@ function EnterpriseHeroCard({
   const { ref, rotateX, rotateY, bg, onMouseMove, onMouseLeave } = useTilt(3);
   const a = ACCENT_STYLES.violet;
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Let the browser handle middle-click, ctrl/cmd-click and shift-click so
+    // open-in-new-tab still works; only a plain left-click plays the transition.
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+      return;
+    }
     e.preventDefault();
     onNavigate(
       "/command",
@@ -521,7 +544,7 @@ function EnterpriseHeroCard({
       onMouseLeave={onMouseLeave}
       style={{ rotateX, rotateY, transformPerspective: 1400, ["--card-glow" as string]: a.glow }}
       whileHover={{ y: -3 }}
-      className={`dg-gateway-card group relative w-full overflow-hidden rounded-2xl border ${a.border} bg-white/[0.035] p-6 backdrop-blur-xl ring-1 ${a.ring} sm:p-7`}
+      className={`dg-gateway-card dg-hero-card group relative w-full overflow-hidden rounded-2xl border ${a.border} bg-white/[0.035] p-4 backdrop-blur-xl ring-1 ${a.ring} sm:p-5`}
     >
       <div
         aria-hidden
@@ -530,31 +553,30 @@ function EnterpriseHeroCard({
       />
       <motion.div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: bg }} />
 
-      <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:gap-8">
+      <div className="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-8">
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <div className={`flex h-11 w-11 items-center justify-center rounded-xl border ${a.border} bg-white/[0.05]`}>
-              <Network className={`h-5 w-5 ${a.text}`} />
+            <div className={`flex h-7 w-7 items-center justify-center rounded-xl border ${a.border} bg-white/[0.05]`}>
+              <Network className={`h-4 w-4 ${a.text}`} />
             </div>
             <span className={`font-mono text-[10px] uppercase tracking-[0.2em] ${a.text}`}>
               Flagship &middot; Built with DataHub
             </span>
           </div>
 
-          <h3 className="mt-4 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+          <h3 className="mt-2.5 text-xl font-bold leading-tight tracking-tight text-white sm:text-2xl">
             DevGuard Enterprise
           </h3>
-          <p className={`mt-1 text-xs font-semibold uppercase tracking-wider ${a.text}`}>
+          <p className={`mt-0.5 text-[11px] font-semibold uppercase tracking-wider ${a.text}`}>
             Governed incident agent for the data platform
           </p>
-          <p className="mt-3 max-w-2xl text-[13.5px] leading-relaxed text-slate-400">
+          <p className="mt-1.5 max-w-3xl text-[13px] leading-snug text-slate-400">
             Detects a real production break, proves root cause and blast radius from the
             DataHub graph, fixes it under an owner-routed policy gate, verifies recovery,
-            and only then writes verified incident knowledge back into the catalog &mdash;
-            so the next incident starts from more knowledge than the last one.
+            and only then writes verified incident knowledge back into the catalog.
           </p>
 
-          <div className="mt-5 flex flex-wrap gap-2">
+          <div className="mt-2.5 flex flex-wrap gap-2">
             {ENTERPRISE_CHIPS.map((s) => (
               <span
                 key={s.label}
@@ -567,20 +589,30 @@ function EnterpriseHeroCard({
         </div>
 
         <div className="lg:w-64 lg:shrink-0">
-          <button
-            type="button"
-            onClick={handleClick}
-            className={`dg-enter-btn flex w-full items-center justify-between rounded-xl border ${a.border} bg-white/[0.05] px-5 py-3.5 text-left transition-colors hover:bg-white/[0.1]`}
+          {/* Visual affordance only. The whole card is the click target — see
+              the stretched anchor below — so this must not be a nested
+              <button>. */}
+          <span
+            className={`dg-enter-btn flex w-full items-center justify-between rounded-xl border ${a.border} bg-white/[0.05] px-5 py-3 text-left transition-colors group-hover:bg-white/[0.1]`}
           >
             <span className="text-sm font-semibold text-white">Open Command Center</span>
             <ArrowRight className={`h-4 w-4 ${a.text} transition-transform group-hover:translate-x-1`} />
-          </button>
-          <p className="mt-2.5 text-center text-[10.5px] leading-relaxed text-slate-500 lg:text-left">
+          </span>
+          <p className="mt-2 text-center text-[10.5px] leading-snug text-slate-500 lg:text-left">
             Replays recorded runs from committed proof packs. No catalog, database
             or API key required.
           </p>
         </div>
       </div>
+
+      {/* Stretched link: same pattern as ActionCard, so the whole hero is the
+          click target rather than just the button in the right-hand column. */}
+      <a
+        href="/command"
+        onClick={handleClick}
+        aria-label="Open Command Center"
+        className="absolute inset-0 z-20 rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40"
+      />
     </motion.div>
   );
 }
@@ -852,6 +884,14 @@ function GlobalStyles() {
       }
       .dg-gateway-card:hover {
         box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 30px 90px -26px rgba(0, 0, 0, 0.95);
+      }
+      /* The 300px floor above keeps the two module cards the same height as
+         each other. The Enterprise hero is a single full-width card with
+         nothing to match, and the floor was holding it well above its natural
+         height — releasing it is what lets all three cards fit in one
+         1920x1080 viewport without scrolling. */
+      .dg-hero-card {
+        min-height: 0;
       }
 
       .dg-card-conic {
