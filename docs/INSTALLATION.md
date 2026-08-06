@@ -23,17 +23,22 @@ No API key, no catalog, no database, no network.
 
 ```bash
 git clone https://github.com/akashbichukale111/DevGuard-Enterprise.git
-cd DevGuard-Enterprise
+cd DevGuard-Enterprise/frontend
 
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-
-cd frontend && npm ci && cd ..
-
-make replay-serve
+npm ci && npm run dev
 ```
 
-Open <http://localhost:8000/command/>.
+Open <http://localhost:3000/command>.
+
+**Node only.** The replay bundles under `frontend/public/replay/` are committed, so
+nothing has to be generated first. For the static export the hosted demo serves:
+
+```bash
+cd frontend && NEXT_OUTPUT=export npm run build   # → frontend/out/
+```
+
+`make replay-serve` does the same thing plus regenerating the bundles from the proof
+packs, and does need Python.
 
 Verify it does what it claims:
 
