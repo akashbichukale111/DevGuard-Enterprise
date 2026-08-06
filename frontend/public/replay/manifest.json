@@ -1,0 +1,89 @@
+{
+ "runs": [
+  {
+   "run_id": "d6-loop-pass2",
+   "headline": "Full loop \u2014 5 write-back artifact(s) landed in DataHub",
+   "incident_id": "D6110916",
+   "state": "KNOWLEDGE_WRITTEN",
+   "captured_at": "2026-08-01T11:09:34.625980+00:00",
+   "evidence_count": 30,
+   "artifact_count": 32,
+   "refused": false,
+   "dry_run": false,
+   "bytes": 163333
+  },
+  {
+   "run_id": "d6-loop-pass1",
+   "headline": "Full loop \u2014 5 write-back artifact(s) landed in DataHub",
+   "incident_id": "D6105859",
+   "state": "KNOWLEDGE_WRITTEN",
+   "captured_at": "2026-08-01T10:59:17.238022+00:00",
+   "evidence_count": 29,
+   "artifact_count": 31,
+   "refused": false,
+   "dry_run": false,
+   "bytes": 155575
+  },
+  {
+   "run_id": "d6-dry-run",
+   "headline": "Full loop, dry run \u2014 every payload captured, nothing written",
+   "incident_id": "D6115219",
+   "state": "VERIFIED",
+   "captured_at": "2026-08-01T11:52:35.248699+00:00",
+   "evidence_count": 31,
+   "artifact_count": 32,
+   "refused": false,
+   "dry_run": true,
+   "bytes": 169224
+  },
+  {
+   "run_id": "d6-fail-the-fix",
+   "headline": "Partial run \u2014 reached REMEDIATING",
+   "incident_id": "D6111931",
+   "state": "REMEDIATING",
+   "captured_at": "2026-08-01T11:19:43.629985+00:00",
+   "evidence_count": 24,
+   "artifact_count": 24,
+   "refused": false,
+   "dry_run": false,
+   "bytes": 143904
+  },
+  {
+   "run_id": "d5-refusal",
+   "headline": "Refusal \u2014 insufficient evidence (DATAHUB_GRAPH)",
+   "incident_id": "D5REF",
+   "state": "DIAGNOSING",
+   "captured_at": "2026-08-01T09:50:31.727726+00:00",
+   "evidence_count": 4,
+   "artifact_count": 5,
+   "refused": true,
+   "dry_run": false,
+   "bytes": 23051
+  },
+  {
+   "run_id": "d5-full",
+   "headline": "Partial run \u2014 reached DIAGNOSING",
+   "incident_id": "D5FUL",
+   "state": "DIAGNOSING",
+   "captured_at": "2026-08-01T10:00:28.810613+00:00",
+   "evidence_count": 12,
+   "artifact_count": 13,
+   "refused": false,
+   "dry_run": false,
+   "bytes": 80285
+  },
+  {
+   "run_id": "d4-evidence-chain",
+   "headline": "Partial run \u2014 reached DIAGNOSING",
+   "incident_id": "D4",
+   "state": "DIAGNOSING",
+   "captured_at": "2026-08-01T07:13:51.886889+00:00",
+   "evidence_count": 12,
+   "artifact_count": 12,
+   "refused": false,
+   "dry_run": false,
+   "bytes": 78812
+  }
+ ],
+ "default": "d6-loop-pass2"
+}

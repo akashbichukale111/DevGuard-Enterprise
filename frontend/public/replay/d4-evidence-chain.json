@@ -1,0 +1,869 @@
+{
+ "schema_version": 1,
+ "run_id": "d4-evidence-chain",
+ "built_at": "2026-08-06T00:57:21.323949+00:00",
+ "source_pack": "evidence/proof-pack/d4-evidence-chain",
+ "pack_written_at": "2026-08-01T07:13:51.886889+00:00",
+ "artifact_count": 12,
+ "banners": {
+  "replay": true,
+  "replay_text": "REPLAY OF RECORDED RUN \u2014 NOT LIVE",
+  "dry_run": false,
+  "seeded_catalog": false
+ },
+ "incident": {
+  "incident_id": "D4",
+  "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+  "datahub_link": null,
+  "severity": null,
+  "state": "DIAGNOSING",
+  "states": [
+   "DETECTED",
+   "DIAGNOSING",
+   "AWAITING_APPROVAL",
+   "REMEDIATING",
+   "VERIFIED",
+   "KNOWLEDGE_WRITTEN"
+  ],
+  "states_reached": [
+   "DETECTED",
+   "DIAGNOSING"
+  ],
+  "started_at": "2026-08-01T07:13:48.412509+00:00",
+  "ended_at": "2026-08-01T07:13:51.868759+00:00",
+  "elapsed_ms": 3456.2
+ },
+ "rail": [
+  {
+   "agent": "watcher",
+   "state": "done",
+   "duration_ms": 0.8,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 4,
+   "evidence_ids": [
+    "EV-D4-001",
+    "EV-D4-002",
+    "EV-D4-003",
+    "EV-D4-004"
+   ],
+   "records": [
+    {
+     "from_agent": "watcher",
+     "to_agent": "cartographer",
+     "incident_id": "D4",
+     "evidence_ids": [
+      "EV-D4-001",
+      "EV-D4-002",
+      "EV-D4-003",
+      "EV-D4-004"
+     ],
+     "decision": "OK",
+     "rationale": "Observed a real failure in dbt run.",
+     "started_at": "2026-08-01T07:13:48.412509Z",
+     "ended_at": "2026-08-01T07:13:48.413295Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [],
+     "duration_ms": 0.8
+    }
+   ]
+  },
+  {
+   "agent": "archivist",
+   "state": "done",
+   "duration_ms": 57.0,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 2,
+   "evidence_count": 1,
+   "evidence_ids": [
+    "EV-D4-005"
+   ],
+   "records": [
+    {
+     "from_agent": "archivist",
+     "to_agent": "cartographer",
+     "incident_id": "D4",
+     "evidence_ids": [
+      "EV-D4-005"
+     ],
+     "decision": "OK",
+     "rationale": "NO PRIOR KNOWLEDGE \u2014 document retrieval ran and matched nothing.",
+     "started_at": "2026-08-01T07:13:50.702070Z",
+     "ended_at": "2026-08-01T07:13:50.759070Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [
+      {
+       "tool": "grep_documents",
+       "arguments": {
+        "pattern": "user_id"
+       },
+       "ok": false,
+       "duration_ms": 5.372761999979048,
+       "raw_ref": "evidence/proof-pack/d4-evidence-chain/archivist/grep_documents.json",
+       "error": "1 validation error for call[grep_documents]\nurns\n  Missing required argument [type=missing_argument, input_value={'pattern': 'user_id'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing_argument"
+      },
+      {
+       "tool": "search_documents",
+       "arguments": {
+        "query": "user_id"
+       },
+       "ok": true,
+       "duration_ms": 49.0956040000583,
+       "raw_ref": "evidence/proof-pack/d4-evidence-chain/archivist/search_documents.json",
+       "error": null
+      }
+     ],
+     "duration_ms": 57.0
+    }
+   ]
+  },
+  {
+   "agent": "cartographer",
+   "state": "done",
+   "duration_ms": 257.3,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 2,
+   "evidence_count": 2,
+   "evidence_ids": [
+    "EV-D4-006",
+    "EV-D4-007"
+   ],
+   "records": [
+    {
+     "from_agent": "cartographer",
+     "to_agent": "pathfinder",
+     "incident_id": "D4",
+     "evidence_ids": [
+      "EV-D4-006",
+      "EV-D4-007"
+     ],
+     "decision": "OK",
+     "rationale": "Resolved 'stg_users' to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD) and read 5 columns from the catalog.",
+     "started_at": "2026-08-01T07:13:50.759121Z",
+     "ended_at": "2026-08-01T07:13:51.016465Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [
+      {
+       "tool": "search",
+       "arguments": {
+        "query": "stg_users"
+       },
+       "ok": true,
+       "duration_ms": 144.1484730000866,
+       "raw_ref": "evidence/proof-pack/d4-evidence-chain/cartographer/search-stg_users.json",
+       "error": null
+      },
+      {
+       "tool": "list_schema_fields",
+       "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+       },
+       "ok": true,
+       "duration_ms": 110.52987099992606,
+       "raw_ref": "evidence/proof-pack/d4-evidence-chain/cartographer/schema-stg_users.json",
+       "error": null
+      }
+     ],
+     "duration_ms": 257.3
+    }
+   ]
+  },
+  {
+   "agent": "pathfinder",
+   "state": "done",
+   "duration_ms": 852.2,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 4,
+   "evidence_count": 5,
+   "evidence_ids": [
+    "EV-D4-008",
+    "EV-D4-009",
+    "EV-D4-010",
+    "EV-D4-011",
+    "EV-D4-012"
+   ],
+   "records": [
+    {
+     "from_agent": "pathfinder",
+     "to_agent": "diagnostician",
+     "incident_id": "D4",
+     "evidence_ids": [
+      "EV-D4-008",
+      "EV-D4-009",
+      "EV-D4-010",
+      "EV-D4-011",
+      "EV-D4-012"
+     ],
+     "decision": "OK",
+     "rationale": "7 impacted entities dataset-level, 5 carrying column user_id (terminates at urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)).",
+     "started_at": "2026-08-01T07:13:51.016524Z",
+     "ended_at": "2026-08-01T07:13:51.868759Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [
+      {
+       "tool": "get_lineage",
+       "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "upstream": false,
+        "max_hops": 5
+       },
+       "ok": true,
+       "duration_ms": 335.7097729999623,
+       "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream.json",
+       "error": null
+      },
+      {
+       "tool": "get_lineage",
+       "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "upstream": false,
+        "max_hops": 5,
+        "column": "user_id"
+       },
+       "ok": true,
+       "duration_ms": 201.28455799999756,
+       "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream-column.json",
+       "error": null
+      },
+      {
+       "tool": "get_lineage_paths_between",
+       "arguments": {
+        "source_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+        "direction": "downstream",
+        "source_column": "user_id",
+        "target_column": "user_id"
+       },
+       "ok": true,
+       "duration_ms": 272.43940399989697,
+       "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage_paths_between.json",
+       "error": null
+      },
+      {
+       "tool": "get_dataset_queries",
+       "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "column": "user_id"
+       },
+       "ok": true,
+       "duration_ms": 38.526405000084196,
+       "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_dataset_queries.json",
+       "error": null
+      }
+     ],
+     "duration_ms": 852.2
+    }
+   ]
+  },
+  {
+   "agent": "sentinel",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "diagnostician",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "surgeon",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "referee",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "magistrate",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "scribe",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "auditor",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  }
+ ],
+ "evidence": [
+  {
+   "id": "EV-D4-001",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "`dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T07:13:48.413203Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D4-002",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "model stg_users failed to build (models/staging/stg_users.sql)",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T07:13:48.413255Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D4-003",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "database reports column \"user_id\" does not exist",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T07:13:48.413273Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D4-004",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "1 downstream model(s) SKIPped \u2014 not rebuilt, not dropped, therefore stale",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T07:13:48.413280Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D4-005",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "MCP server offered 8 tools; document tools present",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/archivist/capabilities.json",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T07:13:50.703604Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D4-006",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/cartographer/search-stg_users.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T07:13:50.905405Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D4-007",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "catalog schema for stg_users has 5 columns: country, email, is_active, signup_ts, user_id",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/cartographer/schema-stg_users.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T07:13:51.016424Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D4-008",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "7 downstream entities impacted within 5 hops of devguard.raw.users (dataset-level)",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T07:13:51.353790Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D4-009",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "5 entities carry column user_id downstream of devguard.raw.users (column-level)",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream-column.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T07:13:51.556492Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D4-010",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "blast radius terminates at registered ML model urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream.json",
+   "datahub_urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T07:13:51.556525Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D4-011",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "column-level path is 5 hops via column user_id",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage_paths_between.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T07:13:51.829702Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D4-012",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "1 catalog query references user_id (source: SYSTEM)",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_dataset_queries.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T07:13:51.868672Z",
+   "untrusted": false,
+   "distinct": false
+  }
+ ],
+ "chain": {
+  "digest": "a16d2927e4e56487",
+  "is_sufficient": true,
+  "missing_for_sufficiency": [],
+  "datahub_error": null
+ },
+ "prior_knowledge": {
+  "state": "NONE",
+  "rationale": "NO PRIOR KNOWLEDGE \u2014 document retrieval ran and matched nothing.",
+  "documents": [],
+  "document_count": 0,
+  "time_to_root_cause_s": null,
+  "capabilities_ref": "evidence/proof-pack/d4-evidence-chain/archivist/capabilities.json"
+ },
+ "blast_radius": {
+  "root_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+  "column": "user_id",
+  "dataset_level": [
+   {
+    "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard_ml,substrate_ml,PROD),train_churn_model)",
+    "entity_type": "DATA_JOB",
+    "hops": 4,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)",
+    "entity_type": "DATASET",
+    "hops": 1,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+    "entity_type": "MLMODEL",
+    "hops": 5,
+    "is_ml_model": true
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+    "entity_type": "DATASET",
+    "hops": 2,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)",
+    "entity_type": "DATASET",
+    "hops": 2,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+    "entity_type": "DATASET",
+    "hops": 3,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+    "entity_type": "DATASET",
+    "hops": 1,
+    "is_ml_model": false
+   }
+  ],
+  "column_level": [
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)",
+    "entity_type": "DATASET",
+    "hops": 1,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+    "entity_type": "DATASET",
+    "hops": 2,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)",
+    "entity_type": "DATASET",
+    "hops": 2,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+    "entity_type": "DATASET",
+    "hops": 3,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+    "entity_type": "DATASET",
+    "hops": 1,
+    "is_ml_model": false
+   }
+  ],
+  "column_path": [
+   "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD),user_id)",
+   "urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8",
+   "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD),user_id)",
+   "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),user_id)",
+   "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),user_id)"
+  ],
+  "terminal_ml_models": [
+   {
+    "urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+    "entity_type": "MLMODEL",
+    "hops": 5,
+    "is_ml_model": true
+   }
+  ],
+  "max_hops": 3,
+  "queries": [
+   {
+    "urn": "urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8",
+    "statement": "SELECT\n  user_id,\n  email,\n  country,\n  signup_ts,\n  is_active\nFROM raw.users\nWHERE\n  is_active",
+    "source": "SYSTEM"
+   }
+  ],
+  "queries_raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_dataset_queries.json"
+ },
+ "root_cause": {
+  "refused": false,
+  "decision": null,
+  "rationale": null,
+  "missing_evidence_classes": [],
+  "datahub_error": null,
+  "statement": null,
+  "by_model": false,
+  "chain_ids": [
+   "EV-D4-001",
+   "EV-D4-002",
+   "EV-D4-003",
+   "EV-D4-004",
+   "EV-D4-005",
+   "EV-D4-006",
+   "EV-D4-007",
+   "EV-D4-008",
+   "EV-D4-009",
+   "EV-D4-010",
+   "EV-D4-011",
+   "EV-D4-012"
+  ],
+  "raw_ref": null
+ },
+ "policy": null,
+ "write_back": null,
+ "security": {
+  "is_demo": false,
+  "sources_scanned": 0,
+  "attempts_detected": 0,
+  "detections": [],
+  "action_taken": null,
+  "untrusted_sources": []
+ },
+ "metrics": {
+  "time_to_root_cause_ms": 3456.2,
+  "total_loop_ms": 3456.2,
+  "mcp_calls": 8,
+  "tokens": null,
+  "tokens_note": "0 recorded \u2014 no model was invoked in this run",
+  "cost_usd": null,
+  "models": [],
+  "evidence_count": 12,
+  "handoff_count": 4,
+  "source": "summed from handoff-rail.json in this proof pack"
+ },
+ "artifacts": [
+  {
+   "name": "watcher/dbt-run.txt",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt",
+   "bytes": 1427,
+   "truncated": false,
+   "note": "Raw output of the command the Watcher observed.",
+   "written_at": "2026-08-01T07:13:48.413161+00:00"
+  },
+  {
+   "name": "archivist/capabilities.json",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/archivist/capabilities.json",
+   "bytes": 8371,
+   "truncated": false,
+   "note": "The negotiated capability set for THIS run. Not a constant.",
+   "written_at": "2026-08-01T07:13:50.703572+00:00"
+  },
+  {
+   "name": "archivist/grep_documents.json",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/archivist/grep_documents.json",
+   "bytes": 577,
+   "truncated": false,
+   "note": "Raw document-retrieval response.",
+   "written_at": "2026-08-01T07:13:50.709347+00:00"
+  },
+  {
+   "name": "archivist/search_documents.json",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/archivist/search_documents.json",
+   "bytes": 460,
+   "truncated": false,
+   "note": "Raw document-retrieval response.",
+   "written_at": "2026-08-01T07:13:50.758952+00:00"
+  },
+  {
+   "name": "cartographer/search-stg_users.json",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/cartographer/search-stg_users.json",
+   "bytes": 2622,
+   "truncated": false,
+   "note": "Name -> URN resolution. The seam where analysis can go to the wrong asset.",
+   "written_at": "2026-08-01T07:13:50.905249+00:00"
+  },
+  {
+   "name": "cartographer/schema-stg_users.json",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/cartographer/schema-stg_users.json",
+   "bytes": 771,
+   "truncated": false,
+   "note": "The CATALOG's schema. During drift this deliberately disagrees with the database, and that gap is the incident.",
+   "written_at": "2026-08-01T07:13:51.016335+00:00"
+  },
+  {
+   "name": "pathfinder/get_lineage-downstream.json",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream.json",
+   "bytes": 8332,
+   "truncated": false,
+   "note": "Dataset-level blast radius. Reaches the dataJob and the mlModel.",
+   "written_at": "2026-08-01T07:13:51.353600+00:00"
+  },
+  {
+   "name": "pathfinder/get_lineage-downstream-column.json",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream-column.json",
+   "bytes": 7157,
+   "truncated": false,
+   "note": "Column-level blast radius. Every hit carries lineageColumns. Does NOT reach the mlModel \u2014 that edge is dataset-level (integration finding 14).",
+   "written_at": "2026-08-01T07:13:51.556315+00:00"
+  },
+  {
+   "name": "pathfinder/get_lineage_paths_between.json",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage_paths_between.json",
+   "bytes": 2543,
+   "truncated": false,
+   "note": "Column-level path. The middle element is the real SQL.",
+   "written_at": "2026-08-01T07:13:51.829609+00:00"
+  },
+  {
+   "name": "pathfinder/get_dataset_queries.json",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/pathfinder/get_dataset_queries.json",
+   "bytes": 847,
+   "truncated": false,
+   "note": "Real SQL touching the column, ingested rather than authored.",
+   "written_at": "2026-08-01T07:13:51.868588+00:00"
+  },
+  {
+   "name": "evidence-chain.json",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/evidence-chain.json",
+   "bytes": 5355,
+   "truncated": false,
+   "note": "\u00a77's chain. is_sufficient is the D4 gate.",
+   "written_at": "2026-08-01T07:13:51.885716+00:00"
+  },
+  {
+   "name": "handoff-rail.json",
+   "raw_ref": "evidence/proof-pack/d4-evidence-chain/handoff-rail.json",
+   "bytes": 5377,
+   "truncated": false,
+   "note": "\u00a76's AgentHandoff envelopes, in order. The UI rail renders these.",
+   "written_at": "2026-08-01T07:13:51.886778+00:00"
+  }
+ ],
+ "raw": {
+  "evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt": {
+   "name": "watcher/dbt-run.txt",
+   "bytes": 1427,
+   "note": "Raw output of the command the Watcher observed.",
+   "written_at": "2026-08-01T07:13:48.413161+00:00",
+   "truncated_in_bundle": false,
+   "content": "$ dbt run\nexit code: 1\n\n07:13:46  Running with dbt=1.12.0\n07:13:47  Registered adapter: postgres=1.11.0\n07:13:47  Found 3 models, 2 sources, 477 macros\n07:13:47  \n07:13:47  Concurrency: 4 threads (target='dev')\n07:13:47  \n07:13:47  1 of 3 START sql view model analytics_staging.stg_orders ....................... [RUN]\n07:13:47  2 of 3 START sql view model analytics_staging.stg_users ........................ [RUN]\n07:13:47  2 of 3 ERROR creating sql view model analytics_staging.stg_users ............... [ERROR in 0.09s]\n07:13:47  1 of 3 OK created sql view model analytics_staging.stg_orders .................. [CREATE VIEW in 0.15s]\n07:13:47  3 of 3 SKIP relation analytics_marts.user_order_features ....................... [SKIP]\n07:13:47  \n07:13:47  Finished running 1 table model, 2 view models in 0 hours 0 minutes and 0.28 seconds (0.28s).\n07:13:47  \n07:13:47  Completed with 1 error, 0 partial successes, and 0 warnings:\n07:13:47  \n07:13:47  [ERROR]: in model stg_users (models/staging/stg_users.sql)\n07:13:47    Database Error in model stg_users (models/staging/stg_users.sql)\n  column \"user_id\" does not exist\n  LINE 13:     user_id,\n               ^\n  compiled code at target/run/devguard_substrate/models/staging/stg_users.sql\n07:13:47  \n07:13:47    compiled code at target/compiled/devguard_substrate/models/staging/stg_users.sql\n07:13:47  \n07:13:47  Done. PASS=1 WARN=0 ERROR=1 SKIP=1 NO-OP=0 REUSED=0 TOTAL=3\n"
+  },
+  "evidence/proof-pack/d4-evidence-chain/archivist/capabilities.json": {
+   "name": "archivist/capabilities.json",
+   "bytes": 8371,
+   "note": "The negotiated capability set for THIS run. Not a constant.",
+   "written_at": "2026-08-01T07:13:50.703572+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"serverInfo\": {\n    \"name\": \"datahub\",\n    \"version\": \"3.4.5\"\n  },\n  \"protocolVersion\": \"2024-11-05\",\n  \"tool_count\": 8,\n  \"tools\": [\n    \"get_dataset_queries\",\n    \"get_entities\",\n    \"get_lineage\",\n    \"get_lineage_paths_between\",\n    \"grep_documents\",\n    \"list_schema_fields\",\n    \"search\",\n    \"search_documents\"\n  ],\n  \"input_schemas\": {\n    \"get_dataset_queries\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"urn\": {\n          \"type\": \"string\"\n        },\n        \"column\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"source\": {\n          \"anyOf\": [\n            {\n              \"enum\": [\n                \"MANUAL\",\n                \"SYSTEM\"\n              ],\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"start\": {\n          \"default\": 0,\n          \"type\": \"integer\"\n        },\n        \"count\": {\n          \"default\": 10,\n          \"type\": \"integer\"\n        }\n      },\n      \"required\": [\n        \"urn\"\n      ],\n      \"type\": \"object\"\n    },\n    \"get_entities\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"urns\": {\n          \"anyOf\": [\n            {\n              \"items\": {\n                \"type\": \"string\"\n              },\n              \"type\": \"array\"\n            },\n            {\n              \"type\": \"string\"\n            }\n          ]\n        }\n      },\n      \"required\": [\n        \"urns\"\n      ],\n      \"type\": \"object\"\n    },\n    \"get_lineage\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"urn\": {\n          \"type\": \"string\"\n        },\n        \"column\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"query\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"filter\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"upstream\": {\n          \"default\": true,\n          \"type\": \"boolean\"\n        },\n        \"max_hops\": {\n          \"default\": 1,\n          \"type\": \"integer\"\n        },\n        \"max_results\": {\n          \"default\": 30,\n          \"type\": \"integer\"\n        },\n        \"offset\": {\n          \"default\": 0,\n          \"type\": \"integer\"\n        }\n      },\n      \"required\": [\n        \"urn\"\n      ],\n      \"type\": \"object\"\n    },\n    \"get_lineage_paths_between\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"source_urn\": {\n          \"type\": \"string\",\n          \"description\": \"URN of the source dataset\"\n        },\n        \"target_urn\": {\n          \"type\": \"string\",\n          \"description\": \"URN of the target dataset\"\n        },\n        \"source_column\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null,\n          \"description\": \"Optional column name in source dataset\"\n        },\n        \"target_column\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null,\n          \"description\": \"Optional column name in target dataset (required if source_column provided)\"\n        },\n        \"direction\": {\n          \"anyOf\": [\n            {\n              \"enum\": [\n                \"upstream\",\n                \"downstream\"\n              ],\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null,\n          \"description\": \"Optional direction to search. If None (default), automatically discovers\\n      the path by trying downstream first, then upstream. Specify \\\"downstream\\\" or\\n      \\\"upstream\\\" explicitly for better performance if you know the direction.\"\n        }\n      },\n      \"required\": [\n        \"source_urn\",\n        \"target_urn\"\n      ],\n      \"type\": \"object\"\n    },\n    \"grep_documents\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"urns\": {\n          \"items\": {\n            \"type\": \"string\"\n          },\n          \"type\": \"array\"\n        },\n        \"pattern\": {\n          \"type\": \"string\"\n        },\n        \"context_chars\": {\n          \"default\": 200,\n          \"type\": \"integer\"\n        },\n        \"max_matches_per_doc\": {\n          \"default\": 5,\n          \"type\": \"integer\"\n        },\n        \"start_offset\": {\n          \"default\": 0,\n          \"type\": \"integer\"\n        }\n      },\n      \"required\": [\n        \"urns\",\n        \"pattern\"\n      ],\n      \"type\": \"object\"\n    },\n    \"list_schema_fields\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"urn\": {\n          \"type\": \"string\",\n          \"description\": \"Dataset URN\"\n        },\n        \"keywords\": {\n          \"anyOf\": [\n            {\n              \"items\": {\n                \"type\": \"string\"\n              },\n              \"type\": \"array\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null,\n          \"description\": \"Optional list of keywords to filter schema fields (OR matching).\\n     - Single keyword: Treated as one keyword (NOT split on whitespace). Use for field names or exact phrases.\\n     - Multiple keywords: Multiple keywords, matches any (OR logic).\\n     - None or empty list: Returns all fields in priority order (same as get_entities).\\n     Matches against fieldPath, description, label, tags, and glossary terms.\\n     Matching fields are returned first, sorted by match count.\"\n        },\n        \"limit\": {\n          \"default\": 100,\n          \"type\": \"integer\",\n          \"description\": \"Maximum number of fields to return (default: 100)\"\n        },\n        \"offset\": {\n          \"default\": 0,\n          \"type\": \"integer\",\n          \"description\": \"Number of fields to skip for pagination (default: 0)\"\n        }\n      },\n      \"required\": [\n        \"urn\"\n      ],\n      \"type\": \"object\"\n    },\n    \"search\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"query\": {\n          \"default\": \"*\",\n          \"type\": \"string\"\n        },\n        \"filter\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"num_results\": {\n          \"default\": 10,\n          \"type\": \"integer\"\n        },\n        \"sort_by\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"sort_order\": {\n          \"anyOf\": [\n            {\n              \"enum\": [\n                \"asc\",\n                \"desc\"\n              ],\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": \"desc\"\n        },\n        \"offset\": {\n          \"default\": 0,\n          \"type\": \"integer\"\n        }\n      },\n      \"type\": \"object\"\n    },\n    \"search_documents\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"query\": {\n          \"default\": \"*\",\n          \"type\": \"string\"\n        },\n        \"semantic_query\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"filter\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"num_results\": {\n          \"default\": 10,\n          \"type\": \"integer\"\n        },\n        \"offset\": {\n          \"default\": 0,\n          \"type\": \"integer\"\n        }\n      },\n      \"type\": \"object\"\n    }\n  }\n}\n"
+  },
+  "evidence/proof-pack/d4-evidence-chain/archivist/grep_documents.json": {
+   "name": "archivist/grep_documents.json",
+   "bytes": 577,
+   "note": "Raw document-retrieval response.",
+   "written_at": "2026-08-01T07:13:50.709347+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"pattern\": \"user_id\"\n  },\n  \"ok\": false,\n  \"text\": \"1 validation error for call[grep_documents]\\nurns\\n  Missing required argument [type=missing_argument, input_value={'pattern': 'user_id'}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/missing_argument\",\n  \"error\": \"1 validation error for call[grep_documents]\\nurns\\n  Missing required argument [type=missing_argument, input_value={'pattern': 'user_id'}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/missing_argument\"\n}\n"
+  },
+  "evidence/proof-pack/d4-evidence-chain/archivist/search_documents.json": {
+   "name": "archivist/search_documents.json",
+   "bytes": 460,
+   "note": "Raw document-retrieval response.",
+   "written_at": "2026-08-01T07:13:50.758952+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"query\": \"user_id\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"start\\\":0,\\\"count\\\":10,\\\"total\\\":0,\\\"facets\\\":[{\\\"field\\\":\\\"_entityType\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DOCUMENT\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"removed\\\",\\\"displayName\\\":\\\"removed\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"entity\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DOCUMENT\\\",\\\"count\\\":0}]}]}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d4-evidence-chain/cartographer/search-stg_users.json": {
+   "name": "cartographer/search-stg_users.json",
+   "bytes": 2622,
+   "note": "Name -> URN resolution. The seam where analysis can go to the wrong asset.",
+   "written_at": "2026-08-01T07:13:50.905249+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"query\": \"stg_users\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"start\\\":0,\\\"count\\\":10,\\\"total\\\":3,\\\"searchResults\\\":[{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)\\\",\\\"properties\\\":{\\\"name\\\":\\\"stg_users\\\"}}},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\",\\\"properties\\\":{\\\"name\\\":\\\"stg_users\\\"}}},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\\\",\\\"properties\\\":{\\\"name\\\":\\\"users\\\"}}}],\\\"facets\\\":[{\\\"field\\\":\\\"container\\\",\\\"displayName\\\":\\\"Container\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\\\",\\\"count\\\":1,\\\"entity\\\":{\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Schema\\\"]},\\\"properties\\\":{\\\"name\\\":\\\"analytics_staging\\\"}}},{\\\"value\\\":\\\"urn:li:container:0f40c4f798ed2fe1f304eafa2896e685\\\",\\\"count\\\":1,\\\"entity\\\":{\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Schema\\\"]},\\\"properties\\\":{\\\"name\\\":\\\"raw\\\"}}}]},{\\\"field\\\":\\\"_entityType\\u241etypeNames\\\",\\\"displayName\\\":\\\"Type\\u241eSub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":3},{\\\"value\\\":\\\"DATASET\\u241eTable\\\",\\\"count\\\":1},{\\\"value\\\":\\\"DATASET\\u241eView\\\",\\\"count\\\":1},{\\\"value\\\":\\\"DATASET\\u241eModel\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"hasSiblings\\\",\\\"displayName\\\":\\\"hasSiblings\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":3}]},{\\\"field\\\":\\\"_entityType\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":3},{\\\"value\\\":\\\"DATA_JOB\\\",\\\"count\\\":0},{\\\"value\\\":\\\"DATA_FLOW\\\",\\\"count\\\":0},{\\\"value\\\":\\\"CORP_USER\\\",\\\"count\\\":0},{\\\"value\\\":\\\"CONTAINER\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"origin\\\",\\\"displayName\\\":\\\"Environment\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"PROD\\\",\\\"count\\\":3}]},{\\\"field\\\":\\\"hasActiveIncidents\\\",\\\"displayName\\\":\\\"hasActiveIncidents\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"platform\\\",\\\"displayName\\\":\\\"Platform\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"count\\\":2},{\\\"value\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"typeNames\\\",\\\"displayName\\\":\\\"Sub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"Table\\\",\\\"count\\\":1},{\\\"value\\\":\\\"Model\\\",\\\"count\\\":1},{\\\"value\\\":\\\"View\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"removed\\\",\\\"displayName\\\":\\\"removed\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"entity\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":3},{\\\"value\\\":\\\"CONTAINER\\\",\\\"count\\\":0},{\\\"value\\\":\\\"DATA_FLOW\\\",\\\"count\\\":0},{\\\"value\\\":\\\"CORP_USER\\\",\\\"count\\\":0},{\\\"value\\\":\\\"DATA_JOB\\\",\\\"count\\\":0}]}]}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d4-evidence-chain/cartographer/schema-stg_users.json": {
+   "name": "cartographer/schema-stg_users.json",
+   "bytes": 771,
+   "note": "The CATALOG's schema. During drift this deliberately disagrees with the database, and that gap is the incident.",
+   "written_at": "2026-08-01T07:13:51.016335+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\",\\\"fields\\\":[{\\\"fieldPath\\\":\\\"country\\\",\\\"nativeDataType\\\":\\\"TEXT\\\",\\\"nullable\\\":true},{\\\"fieldPath\\\":\\\"email\\\",\\\"nativeDataType\\\":\\\"TEXT\\\",\\\"nullable\\\":true},{\\\"fieldPath\\\":\\\"is_active\\\",\\\"nativeDataType\\\":\\\"BOOLEAN\\\",\\\"nullable\\\":true},{\\\"fieldPath\\\":\\\"signup_ts\\\",\\\"nativeDataType\\\":\\\"TIMESTAMP WITH TIME ZONE\\\",\\\"nullable\\\":true},{\\\"fieldPath\\\":\\\"user_id\\\",\\\"nativeDataType\\\":\\\"BIGINT\\\",\\\"nullable\\\":true}],\\\"totalFields\\\":5,\\\"returned\\\":5,\\\"remainingCount\\\":0,\\\"matchingCount\\\":null,\\\"offset\\\":0}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream.json": {
+   "name": "pathfinder/get_lineage-downstream.json",
+   "bytes": 8332,
+   "note": "Dataset-level blast radius. Reaches the dataJob and the mlModel.",
+   "written_at": "2026-08-01T07:13:51.353600+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n    \"upstream\": false,\n    \"max_hops\": 5\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"downstreams\\\":{\\\"total\\\":7,\\\"facets\\\":[{\\\"field\\\":\\\"degree\\\",\\\"displayName\\\":\\\"Degree of Dependencies\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"1\\\",\\\"count\\\":0},{\\\"value\\\":\\\"2\\\",\\\"count\\\":0},{\\\"value\\\":\\\"3+\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"_entityType\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":5},{\\\"value\\\":\\\"DATA_JOB\\\",\\\"count\\\":1},{\\\"value\\\":\\\"MLMODEL\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"typeNames\\\",\\\"displayName\\\":\\\"Sub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"Model\\\",\\\"count\\\":2},{\\\"value\\\":\\\"Table\\\",\\\"count\\\":1},{\\\"value\\\":\\\"Source\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"platform\\\",\\\"displayName\\\":\\\"Platform\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"count\\\":3,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\"}},{\\\"value\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"count\\\":2,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\"}},{\\\"value\\\":\\\"urn:li:dataPlatform:devguard_ml\\\",\\\"count\\\":2,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:devguard_ml\\\"}}]},{\\\"field\\\":\\\"container\\\",\\\"displayName\\\":\\\"Container\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:container:f9adf01d7f1f656e17d2728821a5273d\\\",\\\"count\\\":1,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:container:f9adf01d7f1f656e17d2728821a5273d\\\"}},{\\\"value\\\":\\\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\\\",\\\"count\\\":1,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\\\"}}]},{\\\"field\\\":\\\"origin\\\",\\\"displayName\\\":\\\"Environment\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"PROD\\\",\\\"count\\\":6}]},{\\\"field\\\":\\\"_entityType\\u241etypeNames\\\",\\\"displayName\\\":\\\"Type\\u241eSub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":5},{\\\"value\\\":\\\"DATASET\\u241eModel\\\",\\\"count\\\":2},{\\\"value\\\":\\\"DATASET\\u241eTable\\\",\\\"count\\\":1},{\\\"value\\\":\\\"DATA_JOB\\\",\\\"count\\\":1},{\\\"value\\\":\\\"DATASET\\u241eSource\\\",\\\"count\\\":1},{\\\"value\\\":\\\"MLMODEL\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"hasSiblings\\\",\\\"displayName\\\":\\\"hasSiblings\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":5}]},{\\\"field\\\":\\\"removed\\\",\\\"displayName\\\":\\\"removed\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"entity\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":5},{\\\"value\\\":\\\"MLMODEL\\\",\\\"count\\\":1},{\\\"value\\\":\\\"DATA_JOB\\\",\\\"count\\\":1}]}],\\\"searchResults\\\":[{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataJob:(urn:li:dataFlow:(devguard_ml,substrate_ml,PROD),train_churn_model)\\\",\\\"type\\\":\\\"DATA_JOB\\\",\\\"dataFlow\\\":{\\\"urn\\\":\\\"urn:li:dataFlow:(devguard_ml,substrate_ml,PROD)\\\",\\\"orchestrator\\\":\\\"devguard_ml\\\",\\\"flowId\\\":\\\"substrate_ml\\\",\\\"cluster\\\":\\\"PROD\\\",\\\"properties\\\":{\\\"name\\\":\\\"substrate_ml\\\",\\\"description\\\":\\\"DevGuard substrate ML pipeline. Invoked directly (no orchestrator); source of truth is substrate/ml/train_churn_model.py.\\\",\\\"project\\\":\\\"devguard-ai\\\"},\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:devguard_ml\\\",\\\"name\\\":\\\"devguard_ml\\\"}},\\\"jobId\\\":\\\"train_churn_model\\\",\\\"properties\\\":{\\\"name\\\":\\\"train_churn_model\\\",\\\"description\\\":\\\"Reads analytics_marts.user_order_features and fits a scikit-learn LogisticRegression churn-risk classifier.\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"script\\\",\\\"value\\\":\\\"substrate/ml/train_churn_model.py\\\"}]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":4},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"name\\\":\\\"dbt\\\"},\\\"properties\\\":{\\\"name\\\":\\\"users\\\",\\\"description\\\":\\\"Raw user records.\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"catalog_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"node_type\\\",\\\"value\\\":\\\"source\\\"},{\\\"key\\\":\\\"dbt_file_path\\\",\\\"value\\\":\\\"models/staging/sources.yml\\\"},{\\\"key\\\":\\\"catalog_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/catalog/v1.json\\\"},{\\\"key\\\":\\\"catalog_type\\\",\\\"value\\\":\\\"BASE TABLE\\\"},{\\\"key\\\":\\\"manifest_adapter\\\",\\\"value\\\":\\\"postgres\\\"},{\\\"key\\\":\\\"manifest_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"dbt_package_name\\\",\\\"value\\\":\\\"devguard_substrate\\\"},{\\\"key\\\":\\\"language\\\",\\\"value\\\":\\\"sql\\\"},{\\\"key\\\":\\\"dbt_unique_id\\\",\\\"value\\\":\\\"source.devguard_substrate.raw.users\\\"},{\\\"key\\\":\\\"manifest_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/manifest/v12.json\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Source\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":1},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)\\\",\\\"type\\\":\\\"MLMODEL\\\",\\\"name\\\":\\\"devguard_churn_risk\\\",\\\"description\\\":\\\"DevGuard churn-risk model. Real scikit-learn LogisticRegression trained on 1715 rows from analytics_marts.user_order_features.\\\",\\\"origin\\\":\\\"PROD\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:devguard_ml\\\",\\\"name\\\":\\\"devguard_ml\\\"}},\\\"degree\\\":5},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"user_order_features\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"name\\\":\\\"dbt\\\"},\\\"properties\\\":{\\\"name\\\":\\\"user_order_features\\\",\\\"description\\\":\\\"\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"catalog_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"node_type\\\",\\\"value\\\":\\\"model\\\"},{\\\"key\\\":\\\"materialization\\\",\\\"value\\\":\\\"table\\\"},{\\\"key\\\":\\\"dbt_file_path\\\",\\\"value\\\":\\\"models/marts/user_order_features.sql\\\"},{\\\"key\\\":\\\"catalog_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/catalog/v1.json\\\"},{\\\"key\\\":\\\"catalog_type\\\",\\\"value\\\":\\\"BASE TABLE\\\"},{\\\"key\\\":\\\"manifest_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"manifest_adapter\\\",\\\"value\\\":\\\"postgres\\\"},{\\\"key\\\":\\\"dbt_package_name\\\",\\\"value\\\":\\\"devguard_substrate\\\"},{\\\"key\\\":\\\"language\\\",\\\"value\\\":\\\"sql\\\"},{\\\"key\\\":\\\"dbt_unique_id\\\",\\\"value\\\":\\\"model.devguard_substrate.user_order_features\\\"},{\\\"key\\\":\\\"manifest_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/manifest/v12.json\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Model\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":2},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"stg_users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"name\\\":\\\"dbt\\\"},\\\"properties\\\":{\\\"name\\\":\\\"stg_users\\\",\\\"description\\\":\\\"\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"catalog_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"node_type\\\",\\\"value\\\":\\\"model\\\"},{\\\"key\\\":\\\"materialization\\\",\\\"value\\\":\\\"view\\\"},{\\\"key\\\":\\\"dbt_file_path\\\",\\\"value\\\":\\\"models/staging/stg_users.sql\\\"},{\\\"key\\\":\\\"catalog_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/catalog/v1.json\\\"},{\\\"key\\\":\\\"catalog_type\\\",\\\"value\\\":\\\"VIEW\\\"},{\\\"key\\\":\\\"manifest_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"manifest_adapter\\\",\\\"value\\\":\\\"postgres\\\"},{\\\"key\\\":\\\"dbt_package_name\\\",\\\"value\\\":\\\"devguard_substrate\\\"},{\\\"key\\\":\\\"language\\\",\\\"value\\\":\\\"sql\\\"},{\\\"key\\\":\\\"dbt_unique_id\\\",\\\"value\\\":\\\"model.devguard_substrate.stg_users\\\"},{\\\"key\\\":\\\"manifest_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/manifest/v12.json\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Model\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":2},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"user_order_features\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"name\\\":\\\"postgres\\\"},\\\"properties\\\":{\\\"name\\\":\\\"user_order_features\\\"},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Table\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":3},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"stg_users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"name\\\":\\\"postgres\\\"},\\\"properties\\\":{\\\"name\\\":\\\"stg_users\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"view_definition\\\",\\\"value\\\":\\\" SELECT user_id,\\\\n    email,\\\\n    country,\\\\n    signup_ts,\\\\n    is_active\\\\n   FROM raw.users\\\\n  WHERE is_active;\\\"},{\\\"key\\\":\\\"is_view\\\",\\\"value\\\":\\\"True\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"View\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":1}],\\\"offset\\\":0,\\\"returned\\\":7,\\\"hasMore\\\":false}}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream-column.json": {
+   "name": "pathfinder/get_lineage-downstream-column.json",
+   "bytes": 7157,
+   "note": "Column-level blast radius. Every hit carries lineageColumns. Does NOT reach the mlModel \u2014 that edge is dataset-level (integration finding 14).",
+   "written_at": "2026-08-01T07:13:51.556315+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n    \"upstream\": false,\n    \"max_hops\": 5,\n    \"column\": \"user_id\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"downstreams\\\":{\\\"total\\\":5,\\\"facets\\\":[{\\\"field\\\":\\\"degree\\\",\\\"displayName\\\":\\\"Degree of Dependencies\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"1\\\",\\\"count\\\":0},{\\\"value\\\":\\\"2\\\",\\\"count\\\":0},{\\\"value\\\":\\\"3+\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"_entityType\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":5}]},{\\\"field\\\":\\\"typeNames\\\",\\\"displayName\\\":\\\"Sub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"Model\\\",\\\"count\\\":2},{\\\"value\\\":\\\"Table\\\",\\\"count\\\":1},{\\\"value\\\":\\\"Source\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"platform\\\",\\\"displayName\\\":\\\"Platform\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"count\\\":3,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\"}},{\\\"value\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"count\\\":2,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\"}}]},{\\\"field\\\":\\\"container\\\",\\\"displayName\\\":\\\"Container\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:container:f9adf01d7f1f656e17d2728821a5273d\\\",\\\"count\\\":1,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:container:f9adf01d7f1f656e17d2728821a5273d\\\"}},{\\\"value\\\":\\\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\\\",\\\"count\\\":1,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\\\"}}]},{\\\"field\\\":\\\"origin\\\",\\\"displayName\\\":\\\"Environment\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"PROD\\\",\\\"count\\\":5}]},{\\\"field\\\":\\\"_entityType\\u241etypeNames\\\",\\\"displayName\\\":\\\"Type\\u241eSub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":5},{\\\"value\\\":\\\"DATASET\\u241eModel\\\",\\\"count\\\":2},{\\\"value\\\":\\\"DATASET\\u241eTable\\\",\\\"count\\\":1},{\\\"value\\\":\\\"DATASET\\u241eSource\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"hasSiblings\\\",\\\"displayName\\\":\\\"hasSiblings\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":5}]},{\\\"field\\\":\\\"removed\\\",\\\"displayName\\\":\\\"removed\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"entity\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":5}]}],\\\"searchResults\\\":[{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"name\\\":\\\"dbt\\\"},\\\"properties\\\":{\\\"name\\\":\\\"users\\\",\\\"description\\\":\\\"Raw user records.\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"catalog_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"node_type\\\",\\\"value\\\":\\\"source\\\"},{\\\"key\\\":\\\"dbt_file_path\\\",\\\"value\\\":\\\"models/staging/sources.yml\\\"},{\\\"key\\\":\\\"catalog_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/catalog/v1.json\\\"},{\\\"key\\\":\\\"catalog_type\\\",\\\"value\\\":\\\"BASE TABLE\\\"},{\\\"key\\\":\\\"manifest_adapter\\\",\\\"value\\\":\\\"postgres\\\"},{\\\"key\\\":\\\"manifest_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"dbt_package_name\\\",\\\"value\\\":\\\"devguard_substrate\\\"},{\\\"key\\\":\\\"language\\\",\\\"value\\\":\\\"sql\\\"},{\\\"key\\\":\\\"dbt_unique_id\\\",\\\"value\\\":\\\"source.devguard_substrate.raw.users\\\"},{\\\"key\\\":\\\"manifest_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/manifest/v12.json\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Source\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":1,\\\"lineageColumns\\\":[\\\"user_id\\\"]},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"user_order_features\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"name\\\":\\\"dbt\\\"},\\\"properties\\\":{\\\"name\\\":\\\"user_order_features\\\",\\\"description\\\":\\\"\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"catalog_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"node_type\\\",\\\"value\\\":\\\"model\\\"},{\\\"key\\\":\\\"materialization\\\",\\\"value\\\":\\\"table\\\"},{\\\"key\\\":\\\"dbt_file_path\\\",\\\"value\\\":\\\"models/marts/user_order_features.sql\\\"},{\\\"key\\\":\\\"catalog_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/catalog/v1.json\\\"},{\\\"key\\\":\\\"catalog_type\\\",\\\"value\\\":\\\"BASE TABLE\\\"},{\\\"key\\\":\\\"manifest_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"manifest_adapter\\\",\\\"value\\\":\\\"postgres\\\"},{\\\"key\\\":\\\"dbt_package_name\\\",\\\"value\\\":\\\"devguard_substrate\\\"},{\\\"key\\\":\\\"language\\\",\\\"value\\\":\\\"sql\\\"},{\\\"key\\\":\\\"dbt_unique_id\\\",\\\"value\\\":\\\"model.devguard_substrate.user_order_features\\\"},{\\\"key\\\":\\\"manifest_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/manifest/v12.json\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Model\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":2,\\\"lineageColumns\\\":[\\\"user_id\\\"]},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"stg_users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"name\\\":\\\"dbt\\\"},\\\"properties\\\":{\\\"name\\\":\\\"stg_users\\\",\\\"description\\\":\\\"\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"catalog_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"node_type\\\",\\\"value\\\":\\\"model\\\"},{\\\"key\\\":\\\"materialization\\\",\\\"value\\\":\\\"view\\\"},{\\\"key\\\":\\\"dbt_file_path\\\",\\\"value\\\":\\\"models/staging/stg_users.sql\\\"},{\\\"key\\\":\\\"catalog_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/catalog/v1.json\\\"},{\\\"key\\\":\\\"catalog_type\\\",\\\"value\\\":\\\"VIEW\\\"},{\\\"key\\\":\\\"manifest_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"manifest_adapter\\\",\\\"value\\\":\\\"postgres\\\"},{\\\"key\\\":\\\"dbt_package_name\\\",\\\"value\\\":\\\"devguard_substrate\\\"},{\\\"key\\\":\\\"language\\\",\\\"value\\\":\\\"sql\\\"},{\\\"key\\\":\\\"dbt_unique_id\\\",\\\"value\\\":\\\"model.devguard_substrate.stg_users\\\"},{\\\"key\\\":\\\"manifest_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/manifest/v12.json\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Model\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":2,\\\"lineageColumns\\\":[\\\"user_id\\\"]},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"user_order_features\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"name\\\":\\\"postgres\\\"},\\\"properties\\\":{\\\"name\\\":\\\"user_order_features\\\"},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Table\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":3,\\\"lineageColumns\\\":[\\\"user_id\\\"]},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"stg_users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"name\\\":\\\"postgres\\\"},\\\"properties\\\":{\\\"name\\\":\\\"stg_users\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"view_definition\\\",\\\"value\\\":\\\" SELECT user_id,\\\\n    email,\\\\n    country,\\\\n    signup_ts,\\\\n    is_active\\\\n   FROM raw.users\\\\n  WHERE is_active;\\\"},{\\\"key\\\":\\\"is_view\\\",\\\"value\\\":\\\"True\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"View\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":1,\\\"lineageColumns\\\":[\\\"user_id\\\"]}],\\\"offset\\\":0,\\\"returned\\\":5,\\\"hasMore\\\":false},\\\"metadata\\\":{\\\"queryType\\\":\\\"column-level-lineage\\\",\\\"groupedBy\\\":\\\"dataset\\\",\\\"fields\\\":{\\\"lineageColumns\\\":{\\\"description\\\":\\\"Columns in each dataset that have a lineage relationship with the source column\\\",\\\"semantics\\\":{\\\"downstream\\\":\\\"Columns derived from the source column\\\",\\\"upstream\\\":\\\"Columns that the source column depends on\\\"}}}}}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage_paths_between.json": {
+   "name": "pathfinder/get_lineage_paths_between.json",
+   "bytes": 2543,
+   "note": "Column-level path. The middle element is the real SQL.",
+   "written_at": "2026-08-01T07:13:51.829609+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"source_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n    \"target_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\",\n    \"direction\": \"downstream\",\n    \"source_column\": \"user_id\",\n    \"target_column\": \"user_id\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"metadata\\\":{\\\"queryType\\\":\\\"lineage-path-trace\\\",\\\"direction\\\":\\\"downstream\\\",\\\"pathType\\\":\\\"column-level\\\",\\\"fields\\\":{\\\"paths\\\":{\\\"description\\\":\\\"Array of lineage paths showing transformation chains from source to target\\\",\\\"structure\\\":\\\"Each path contains alternating entities (SCHEMA_FIELD or DATASET) and optional transformation QUERY entities\\\",\\\"queryEntities\\\":\\\"QUERY entities are returned as URNs only. Use get_entities(query_urn) to fetch SQL statement and other query details.\\\"}}},\\\"source\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\\\",\\\"column\\\":\\\"user_id\\\"},\\\"target\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"column\\\":\\\"user_id\\\"},\\\"pathCount\\\":1,\\\"paths\\\":[{\\\"path\\\":[{\\\"urn\\\":\\\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD),user_id)\\\",\\\"type\\\":\\\"SCHEMA_FIELD\\\",\\\"fieldPath\\\":\\\"user_id\\\",\\\"parent\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\"}},{\\\"urn\\\":\\\"urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8\\\",\\\"type\\\":\\\"QUERY\\\"},{\\\"urn\\\":\\\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD),user_id)\\\",\\\"type\\\":\\\"SCHEMA_FIELD\\\",\\\"fieldPath\\\":\\\"user_id\\\",\\\"parent\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\"}},{\\\"urn\\\":\\\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),user_id)\\\",\\\"type\\\":\\\"SCHEMA_FIELD\\\",\\\"fieldPath\\\":\\\"user_id\\\",\\\"parent\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"type\\\":\\\"DATASET\\\"}},{\\\"urn\\\":\\\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),user_id)\\\",\\\"type\\\":\\\"SCHEMA_FIELD\\\",\\\"fieldPath\\\":\\\"user_id\\\",\\\"parent\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"type\\\":\\\"DATASET\\\"}}]}]}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d4-evidence-chain/pathfinder/get_dataset_queries.json": {
+   "name": "pathfinder/get_dataset_queries.json",
+   "bytes": 847,
+   "note": "Real SQL touching the column, ingested rather than authored.",
+   "written_at": "2026-08-01T07:13:51.868588+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n    \"column\": \"user_id\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"start\\\":0,\\\"total\\\":1,\\\"count\\\":10,\\\"queries\\\":[{\\\"urn\\\":\\\"urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8\\\",\\\"properties\\\":{\\\"source\\\":\\\"SYSTEM\\\",\\\"statement\\\":{\\\"value\\\":\\\"SELECT\\\\n  user_id,\\\\n  email,\\\\n  country,\\\\n  signup_ts,\\\\n  is_active\\\\nFROM raw.users\\\\nWHERE\\\\n  is_active\\\",\\\"language\\\":\\\"SQL\\\"},\\\"lastModified\\\":{\\\"actor\\\":\\\"urn:li:corpuser:_ingestion\\\"}},\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"name\\\":\\\"postgres\\\"},\\\"subjects\\\":[\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\\\",\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\"]}]}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d4-evidence-chain/evidence-chain.json": {
+   "name": "evidence-chain.json",
+   "bytes": 5355,
+   "note": "\u00a77's chain. is_sufficient is the D4 gate.",
+   "written_at": "2026-08-01T07:13:51.885716+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"incident_id\": \"D4\",\n  \"digest\": \"a16d2927e4e56487\",\n  \"is_sufficient\": true,\n  \"missing_for_sufficiency\": [],\n  \"items\": [\n    {\n      \"id\": \"EV-D4-001\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T07:13:48.413203Z\",\n      \"claim\": \"`dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)\",\n      \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D4-002\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T07:13:48.413255Z\",\n      \"claim\": \"model stg_users failed to build (models/staging/stg_users.sql)\",\n      \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D4-003\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T07:13:48.413273Z\",\n      \"claim\": \"database reports column \\\"user_id\\\" does not exist\",\n      \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D4-004\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T07:13:48.413280Z\",\n      \"claim\": \"1 downstream model(s) SKIPped \\u2014 not rebuilt, not dropped, therefore stale\",\n      \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/watcher/dbt-run.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D4-005\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T07:13:50.703604Z\",\n      \"claim\": \"MCP server offered 8 tools; document tools present\",\n      \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/archivist/capabilities.json\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D4-006\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T07:13:50.905405Z\",\n      \"claim\": \"'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\",\n      \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/cartographer/search-stg_users.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D4-007\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T07:13:51.016424Z\",\n      \"claim\": \"catalog schema for stg_users has 5 columns: country, email, is_active, signup_ts, user_id\",\n      \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/cartographer/schema-stg_users.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D4-008\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T07:13:51.353790Z\",\n      \"claim\": \"7 downstream entities impacted within 5 hops of devguard.raw.users (dataset-level)\",\n      \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D4-009\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T07:13:51.556492Z\",\n      \"claim\": \"5 entities carry column user_id downstream of devguard.raw.users (column-level)\",\n      \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream-column.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D4-010\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T07:13:51.556525Z\",\n      \"claim\": \"blast radius terminates at registered ML model urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)\",\n      \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream.json\",\n      \"datahub_urn\": \"urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)\"\n    },\n    {\n      \"id\": \"EV-D4-011\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T07:13:51.829702Z\",\n      \"claim\": \"column-level path is 5 hops via column user_id\",\n      \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage_paths_between.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D4-012\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T07:13:51.868672Z\",\n      \"claim\": \"1 catalog query references user_id (source: SYSTEM)\",\n      \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/pathfinder/get_dataset_queries.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    }\n  ]\n}\n"
+  },
+  "evidence/proof-pack/d4-evidence-chain/handoff-rail.json": {
+   "name": "handoff-rail.json",
+   "bytes": 5377,
+   "note": "\u00a76's AgentHandoff envelopes, in order. The UI rail renders these.",
+   "written_at": "2026-08-01T07:13:51.886778+00:00",
+   "truncated_in_bundle": false,
+   "content": "[\n  {\n    \"from_agent\": \"watcher\",\n    \"to_agent\": \"cartographer\",\n    \"incident_id\": \"D4\",\n    \"evidence_ids\": [\n      \"EV-D4-001\",\n      \"EV-D4-002\",\n      \"EV-D4-003\",\n      \"EV-D4-004\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"Observed a real failure in dbt run.\",\n    \"started_at\": \"2026-08-01T07:13:48.412509Z\",\n    \"ended_at\": \"2026-08-01T07:13:48.413295Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [],\n    \"duration_ms\": 0.8\n  },\n  {\n    \"from_agent\": \"archivist\",\n    \"to_agent\": \"cartographer\",\n    \"incident_id\": \"D4\",\n    \"evidence_ids\": [\n      \"EV-D4-005\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"NO PRIOR KNOWLEDGE \\u2014 document retrieval ran and matched nothing.\",\n    \"started_at\": \"2026-08-01T07:13:50.702070Z\",\n    \"ended_at\": \"2026-08-01T07:13:50.759070Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [\n      {\n        \"tool\": \"grep_documents\",\n        \"arguments\": {\n          \"pattern\": \"user_id\"\n        },\n        \"ok\": false,\n        \"duration_ms\": 5.372761999979048,\n        \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/archivist/grep_documents.json\",\n        \"error\": \"1 validation error for call[grep_documents]\\nurns\\n  Missing required argument [type=missing_argument, input_value={'pattern': 'user_id'}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/missing_argument\"\n      },\n      {\n        \"tool\": \"search_documents\",\n        \"arguments\": {\n          \"query\": \"user_id\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 49.0956040000583,\n        \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/archivist/search_documents.json\",\n        \"error\": null\n      }\n    ],\n    \"duration_ms\": 57.0\n  },\n  {\n    \"from_agent\": \"cartographer\",\n    \"to_agent\": \"pathfinder\",\n    \"incident_id\": \"D4\",\n    \"evidence_ids\": [\n      \"EV-D4-006\",\n      \"EV-D4-007\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"Resolved 'stg_users' to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD) and read 5 columns from the catalog.\",\n    \"started_at\": \"2026-08-01T07:13:50.759121Z\",\n    \"ended_at\": \"2026-08-01T07:13:51.016465Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [\n      {\n        \"tool\": \"search\",\n        \"arguments\": {\n          \"query\": \"stg_users\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 144.1484730000866,\n        \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/cartographer/search-stg_users.json\",\n        \"error\": null\n      },\n      {\n        \"tool\": \"list_schema_fields\",\n        \"arguments\": {\n          \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 110.52987099992606,\n        \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/cartographer/schema-stg_users.json\",\n        \"error\": null\n      }\n    ],\n    \"duration_ms\": 257.3\n  },\n  {\n    \"from_agent\": \"pathfinder\",\n    \"to_agent\": \"diagnostician\",\n    \"incident_id\": \"D4\",\n    \"evidence_ids\": [\n      \"EV-D4-008\",\n      \"EV-D4-009\",\n      \"EV-D4-010\",\n      \"EV-D4-011\",\n      \"EV-D4-012\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"7 impacted entities dataset-level, 5 carrying column user_id (terminates at urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)).\",\n    \"started_at\": \"2026-08-01T07:13:51.016524Z\",\n    \"ended_at\": \"2026-08-01T07:13:51.868759Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [\n      {\n        \"tool\": \"get_lineage\",\n        \"arguments\": {\n          \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n          \"upstream\": false,\n          \"max_hops\": 5\n        },\n        \"ok\": true,\n        \"duration_ms\": 335.7097729999623,\n        \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream.json\",\n        \"error\": null\n      },\n      {\n        \"tool\": \"get_lineage\",\n        \"arguments\": {\n          \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n          \"upstream\": false,\n          \"max_hops\": 5,\n          \"column\": \"user_id\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 201.28455799999756,\n        \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage-downstream-column.json\",\n        \"error\": null\n      },\n      {\n        \"tool\": \"get_lineage_paths_between\",\n        \"arguments\": {\n          \"source_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n          \"target_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\",\n          \"direction\": \"downstream\",\n          \"source_column\": \"user_id\",\n          \"target_column\": \"user_id\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 272.43940399989697,\n        \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/pathfinder/get_lineage_paths_between.json\",\n        \"error\": null\n      },\n      {\n        \"tool\": \"get_dataset_queries\",\n        \"arguments\": {\n          \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n          \"column\": \"user_id\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 38.526405000084196,\n        \"raw_ref\": \"evidence/proof-pack/d4-evidence-chain/pathfinder/get_dataset_queries.json\",\n        \"error\": null\n      }\n    ],\n    \"duration_ms\": 852.2\n  }\n]\n"
+  }
+ },
+ "missing": {
+  "incident.severity": "the run stopped before the Magistrate classified risk",
+  "root_cause.statement": "no root-cause artifact in this pack",
+  "policy": "the run stopped before remediation",
+  "write_back": "the run stopped before the Scribe",
+  "metrics.cost_usd": "no model was invoked in this run (every handoff records model=null; the Diagnostician reports REASONER_UNAVAILABLE), so there is no cost to report \u2014 this is not a zero cost, it is an unmeasured one."
+ }
+}

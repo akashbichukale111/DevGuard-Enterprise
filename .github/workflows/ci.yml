@@ -49,6 +49,49 @@ jobs:
       - name: Tests
         run: python -m pytest
 
+      - name: Replay bundles match the committed proof packs
+        # frontend/public/replay/ is committed so the published replay URL can
+        # build on a static host with no Python toolchain. That makes drift
+        # possible, so the bundles are rebuilt here and compared against what
+        # is committed. `built_at` is excluded: it is a per-build provenance
+        # timestamp, so comparing it would fail on every push regardless.
+        run: |
+          set -euo pipefail
+          python scripts/build_replay.py --out /tmp/replay-check
+          python - <<'CHECK'
+          import json, pathlib, sys
+
+          committed = pathlib.Path("frontend/public/replay")
+          rebuilt = pathlib.Path("/tmp/replay-check")
+          problems = []
+
+          def load(path):
+              data = json.loads(path.read_text(encoding="utf-8"))
+              if isinstance(data, dict):
+                  data.pop("built_at", None)
+              return data
+
+          built = {p.name for p in rebuilt.glob("*.json")}
+          have = {p.name for p in committed.glob("*.json")}
+
+          for name in sorted(built - have):
+              problems.append(f"missing from the repository: {name}")
+          for name in sorted(have - built):
+              problems.append(f"committed but no longer produced: {name}")
+          for name in sorted(built & have):
+              if load(committed / name) != load(rebuilt / name):
+                  problems.append(f"differs from its proof pack: {name}")
+
+          if problems:
+              print("::error::Committed replay bundles are out of sync with evidence/proof-pack/")
+              for p in problems:
+                  print(f"  {p}")
+              print("Fix: run 'make replay' and commit frontend/public/replay/")
+              sys.exit(1)
+
+          print(f"Replay bundles in sync with evidence/proof-pack/ ({len(built)} bundles).")
+          CHECK
+
       - name: Verify OTLP export, trace context and log correlation
         # Real OTLP/gRPC receiver, real backend, assertions against decoded
         # protobuf. Exits non-zero on any failed assertion.

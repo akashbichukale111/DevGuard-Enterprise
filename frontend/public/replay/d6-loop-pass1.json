@@ -1,0 +1,1669 @@
+{
+ "schema_version": 1,
+ "run_id": "d6-loop-pass1",
+ "built_at": "2026-08-06T00:57:21.307006+00:00",
+ "source_pack": "evidence/proof-pack/d6-loop-pass1",
+ "pack_written_at": "2026-08-01T10:59:17.238022+00:00",
+ "artifact_count": 31,
+ "banners": {
+  "replay": true,
+  "replay_text": "REPLAY OF RECORDED RUN \u2014 NOT LIVE",
+  "dry_run": false,
+  "seeded_catalog": false
+ },
+ "incident": {
+  "incident_id": "D6105859",
+  "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+  "datahub_link": null,
+  "severity": "LOW",
+  "state": "KNOWLEDGE_WRITTEN",
+  "states": [
+   "DETECTED",
+   "DIAGNOSING",
+   "AWAITING_APPROVAL",
+   "REMEDIATING",
+   "VERIFIED",
+   "KNOWLEDGE_WRITTEN"
+  ],
+  "states_reached": [
+   "DETECTED",
+   "DIAGNOSING",
+   "AWAITING_APPROVAL",
+   "REMEDIATING",
+   "VERIFIED",
+   "KNOWLEDGE_WRITTEN"
+  ],
+  "started_at": "2026-08-01T10:59:03.148008+00:00",
+  "ended_at": "2026-08-01T10:59:17.217251+00:00",
+  "elapsed_ms": 14069.2
+ },
+ "rail": [
+  {
+   "agent": "watcher",
+   "state": "done",
+   "duration_ms": 0.6,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 4,
+   "evidence_ids": [
+    "EV-D6105859-001",
+    "EV-D6105859-002",
+    "EV-D6105859-003",
+    "EV-D6105859-004"
+   ],
+   "records": [
+    {
+     "from_agent": "watcher",
+     "to_agent": "cartographer",
+     "incident_id": "D6105859",
+     "evidence_ids": [
+      "EV-D6105859-001",
+      "EV-D6105859-002",
+      "EV-D6105859-003",
+      "EV-D6105859-004"
+     ],
+     "decision": "OK",
+     "rationale": "Observed a real failure in dbt run.",
+     "started_at": "2026-08-01T10:59:03.148008Z",
+     "ended_at": "2026-08-01T10:59:03.148594Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [],
+     "duration_ms": 0.6
+    }
+   ]
+  },
+  {
+   "agent": "archivist",
+   "state": "done",
+   "duration_ms": 98.0,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 2,
+   "evidence_count": 4,
+   "evidence_ids": [
+    "EV-D6105859-006",
+    "EV-D6105859-007",
+    "EV-D6105859-008",
+    "EV-D6105859-009"
+   ],
+   "records": [
+    {
+     "from_agent": "archivist",
+     "to_agent": "cartographer",
+     "incident_id": "D6105859",
+     "evidence_ids": [
+      "EV-D6105859-006",
+      "EV-D6105859-007",
+      "EV-D6105859-008",
+      "EV-D6105859-009"
+     ],
+     "decision": "OK",
+     "rationale": "PREVIOUS VERIFIED INCIDENT \u2014 3 document(s) retrieved.",
+     "started_at": "2026-08-01T10:59:05.292169Z",
+     "ended_at": "2026-08-01T10:59:05.390172Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [
+      {
+       "tool": "search_documents",
+       "arguments": {
+        "query": "user_id"
+       },
+       "ok": true,
+       "duration_ms": 67.87546999976257,
+       "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/search_documents.json",
+       "error": null
+      },
+      {
+       "tool": "grep_documents",
+       "arguments": {
+        "urns": [
+         "urn:li:document:shared-99088993-9f90-4fa9-b59c-4054251b710f",
+         "urn:li:document:shared-afdb89cb-2e93-4bec-b662-b248764248af",
+         "urn:li:document:shared-b988bac2-7491-496e-9314-5491e0a74f8d"
+        ],
+        "pattern": "user_id"
+       },
+       "ok": true,
+       "duration_ms": 23.64283599990813,
+       "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/grep_documents.json",
+       "error": null
+      }
+     ],
+     "duration_ms": 98.0
+    }
+   ]
+  },
+  {
+   "agent": "cartographer",
+   "state": "done",
+   "duration_ms": 253.3,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 2,
+   "evidence_count": 2,
+   "evidence_ids": [
+    "EV-D6105859-010",
+    "EV-D6105859-011"
+   ],
+   "records": [
+    {
+     "from_agent": "cartographer",
+     "to_agent": "pathfinder",
+     "incident_id": "D6105859",
+     "evidence_ids": [
+      "EV-D6105859-010",
+      "EV-D6105859-011"
+     ],
+     "decision": "OK",
+     "rationale": "Resolved 'stg_users' to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD) and read 5 columns from the catalog.",
+     "started_at": "2026-08-01T10:59:05.390242Z",
+     "ended_at": "2026-08-01T10:59:05.643522Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [
+      {
+       "tool": "search",
+       "arguments": {
+        "query": "stg_users"
+       },
+       "ok": true,
+       "duration_ms": 173.36231499984933,
+       "raw_ref": "evidence/proof-pack/d6-loop-pass1/cartographer/search-stg_users.json",
+       "error": null
+      },
+      {
+       "tool": "list_schema_fields",
+       "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)"
+       },
+       "ok": true,
+       "duration_ms": 78.40934500018193,
+       "raw_ref": "evidence/proof-pack/d6-loop-pass1/cartographer/schema-stg_users.json",
+       "error": null
+      }
+     ],
+     "duration_ms": 253.3
+    }
+   ]
+  },
+  {
+   "agent": "pathfinder",
+   "state": "done",
+   "duration_ms": 938.5,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 4,
+   "evidence_count": 5,
+   "evidence_ids": [
+    "EV-D6105859-012",
+    "EV-D6105859-013",
+    "EV-D6105859-014",
+    "EV-D6105859-015",
+    "EV-D6105859-016"
+   ],
+   "records": [
+    {
+     "from_agent": "pathfinder",
+     "to_agent": "diagnostician",
+     "incident_id": "D6105859",
+     "evidence_ids": [
+      "EV-D6105859-012",
+      "EV-D6105859-013",
+      "EV-D6105859-014",
+      "EV-D6105859-015",
+      "EV-D6105859-016"
+     ],
+     "decision": "OK",
+     "rationale": "7 impacted entities dataset-level, 5 carrying column user_id (terminates at urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)).",
+     "started_at": "2026-08-01T10:59:05.643575Z",
+     "ended_at": "2026-08-01T10:59:06.582066Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [
+      {
+       "tool": "get_lineage",
+       "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "upstream": false,
+        "max_hops": 5
+       },
+       "ok": true,
+       "duration_ms": 419.55519999964963,
+       "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream.json",
+       "error": null
+      },
+      {
+       "tool": "get_lineage",
+       "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "upstream": false,
+        "max_hops": 5,
+        "column": "user_id"
+       },
+       "ok": true,
+       "duration_ms": 205.34534699982032,
+       "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream-column.json",
+       "error": null
+      },
+      {
+       "tool": "get_lineage_paths_between",
+       "arguments": {
+        "source_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+        "direction": "downstream",
+        "source_column": "user_id",
+        "target_column": "user_id"
+       },
+       "ok": true,
+       "duration_ms": 253.51743100009116,
+       "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage_paths_between.json",
+       "error": null
+      },
+      {
+       "tool": "get_dataset_queries",
+       "arguments": {
+        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+        "column": "user_id"
+       },
+       "ok": true,
+       "duration_ms": 55.40636800014909,
+       "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_dataset_queries.json",
+       "error": null
+      }
+     ],
+     "duration_ms": 938.5
+    }
+   ]
+  },
+  {
+   "agent": "sentinel",
+   "state": "ran_no_record",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  },
+  {
+   "agent": "diagnostician",
+   "state": "blocked",
+   "duration_ms": 0.0,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": [
+    {
+     "from_agent": "diagnostician",
+     "to_agent": "scribe",
+     "incident_id": "D6105859",
+     "evidence_ids": [],
+     "decision": "BLOCKED",
+     "rationale": "No reasoner configured. The evidence chain is sufficient, so this is NOT a refusal \u2014 the question was never asked.",
+     "started_at": "2026-08-01T10:59:06.582551Z",
+     "ended_at": "2026-08-01T10:59:06.582578Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [],
+     "duration_ms": 0.0
+    }
+   ]
+  },
+  {
+   "agent": "surgeon",
+   "state": "done",
+   "duration_ms": 20.3,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 1,
+   "evidence_ids": [
+    "EV-D6105859-018"
+   ],
+   "records": [
+    {
+     "from_agent": "surgeon",
+     "to_agent": "sentinel",
+     "incident_id": "D6105859",
+     "evidence_ids": [
+      "EV-D6105859-018"
+     ],
+     "decision": "OK",
+     "rationale": "Minimal fix on devguard/fix-d6105859, working tree untouched.",
+     "started_at": "2026-08-01T10:59:06.583133Z",
+     "ended_at": "2026-08-01T10:59:06.603416Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [],
+     "duration_ms": 20.3
+    }
+   ]
+  },
+  {
+   "agent": "referee",
+   "state": "done",
+   "duration_ms": 8606.1,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 2,
+   "evidence_ids": [
+    "EV-D6105859-020",
+    "EV-D6105859-024"
+   ],
+   "records": [
+    {
+     "from_agent": "referee",
+     "to_agent": "magistrate",
+     "incident_id": "D6105859",
+     "evidence_ids": [
+      "EV-D6105859-020"
+     ],
+     "decision": "OK",
+     "rationale": "Validated against the real database in analytics_devguard_check.",
+     "started_at": "2026-08-01T10:59:06.603971Z",
+     "ended_at": "2026-08-01T10:59:11.738879Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [],
+     "duration_ms": 5134.9
+    },
+    {
+     "from_agent": "referee",
+     "to_agent": "scribe",
+     "incident_id": "D6105859",
+     "evidence_ids": [
+      "EV-D6105859-024"
+     ],
+     "decision": "OK",
+     "rationale": "The exact signal that failed now passes.",
+     "started_at": "2026-08-01T10:59:11.857637Z",
+     "ended_at": "2026-08-01T10:59:15.328798Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [],
+     "duration_ms": 3471.2
+    }
+   ]
+  },
+  {
+   "agent": "magistrate",
+   "state": "done",
+   "duration_ms": 118.3,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 1,
+   "evidence_count": 2,
+   "evidence_ids": [
+    "EV-D6105859-021",
+    "EV-D6105859-022"
+   ],
+   "records": [
+    {
+     "from_agent": "magistrate",
+     "to_agent": "human",
+     "incident_id": "D6105859",
+     "evidence_ids": [
+      "EV-D6105859-021",
+      "EV-D6105859-022"
+     ],
+     "decision": "OK",
+     "rationale": "LOW routed to DataHub.",
+     "started_at": "2026-08-01T10:59:11.738966Z",
+     "ended_at": "2026-08-01T10:59:11.857220Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [
+      {
+       "tool": "get_entities",
+       "arguments": {
+        "urns": [
+         "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)"
+        ]
+       },
+       "ok": true,
+       "duration_ms": 116.94873400028882,
+       "raw_ref": "evidence/proof-pack/d6-loop-pass1/magistrate/get_entities.json",
+       "error": null
+      }
+     ],
+     "duration_ms": 118.3
+    }
+   ]
+  },
+  {
+   "agent": "scribe",
+   "state": "done",
+   "duration_ms": 418.0,
+   "tokens": 0,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 5,
+   "evidence_ids": [
+    "EV-D6105859-025",
+    "EV-D6105859-026",
+    "EV-D6105859-027",
+    "EV-D6105859-028",
+    "EV-D6105859-029"
+   ],
+   "records": [
+    {
+     "from_agent": "scribe",
+     "to_agent": "auditor",
+     "incident_id": "D6105859",
+     "evidence_ids": [
+      "EV-D6105859-025",
+      "EV-D6105859-026",
+      "EV-D6105859-027",
+      "EV-D6105859-028",
+      "EV-D6105859-029"
+     ],
+     "decision": "OK",
+     "rationale": "Write-back: 1 already_present, 4 written.",
+     "started_at": "2026-08-01T10:59:16.799259Z",
+     "ended_at": "2026-08-01T10:59:17.217251Z",
+     "tokens": 0,
+     "model": null,
+     "tool_calls": [],
+     "duration_ms": 418.0
+    }
+   ]
+  },
+  {
+   "agent": "auditor",
+   "state": "idle",
+   "duration_ms": null,
+   "tokens": null,
+   "model": null,
+   "tool_call_count": 0,
+   "evidence_count": 0,
+   "evidence_ids": [],
+   "records": []
+  }
+ ],
+ "evidence": [
+  {
+   "id": "EV-D6105859-001",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "`dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/watcher/dbt-run.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:03.148508Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-002",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "model stg_users failed to build (models/staging/stg_users.sql)",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/watcher/dbt-run.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:03.148565Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-003",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "database reports column \"user_id\" does not exist",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/watcher/dbt-run.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:03.148574Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-004",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "1 downstream model(s) SKIPped \u2014 not rebuilt, not dropped, therefore stale",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/watcher/dbt-run.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:03.148580Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-005",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "raw.users now has columns: customer_id, email, country, signup_ts, is_active",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/watcher/column-probe.json",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:03.172800Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-006",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "MCP server offered 8 tools; document tools present",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/capabilities.json",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:05.293795Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-007",
+   "source": "DATAHUB_DOCUMENT",
+   "trust": "UNTRUSTED_TEXT",
+   "confidence": "OBSERVED",
+   "claim": "retrieved prior document urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f (injection screen: NONE)",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:05.389258Z",
+   "untrusted": true,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-008",
+   "source": "DATAHUB_DOCUMENT",
+   "trust": "UNTRUSTED_TEXT",
+   "confidence": "OBSERVED",
+   "claim": "retrieved prior document urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af (injection screen: NONE)",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:05.389703Z",
+   "untrusted": true,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-009",
+   "source": "DATAHUB_DOCUMENT",
+   "trust": "UNTRUSTED_TEXT",
+   "confidence": "OBSERVED",
+   "claim": "retrieved prior document urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d (injection screen: NONE)",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:05.390120Z",
+   "untrusted": true,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-010",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/cartographer/search-stg_users.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:05.564486Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-011",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "catalog schema for stg_users has 5 columns: country, email, is_active, signup_ts, user_id",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/cartographer/schema-stg_users.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:05.643471Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-012",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "7 downstream entities impacted within 5 hops of devguard.raw.users (dataset-level)",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:06.064713Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-013",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "5 entities carry column user_id downstream of devguard.raw.users (column-level)",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream-column.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:06.271503Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-014",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "blast radius terminates at registered ML model urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream.json",
+   "datahub_urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:06.271541Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-015",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "column-level path is 5 hops via column user_id",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage_paths_between.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:06.525944Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-016",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "1 catalog query references user_id (source: SYSTEM)",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_dataset_queries.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:06.581934Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-017",
+   "source": "DEVGUARD_INFERENCE",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "DERIVED",
+   "claim": "root cause (derived, not model-produced): user_id renamed upstream",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/diagnostician/derived-root-cause.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:06.583084Z",
+   "untrusted": false,
+   "distinct": true
+  },
+  {
+   "id": "EV-D6105859-018",
+   "source": "DEVGUARD_INFERENCE",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "DERIVED",
+   "claim": "proposed user_id -> customer_id in substrate/dbt/models/staging/stg_users.sql (2 lines) on devguard/fix-d6105859",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/surgeon/proposed.patch",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:06.603369Z",
+   "untrusted": false,
+   "distinct": true
+  },
+  {
+   "id": "EV-D6105859-019",
+   "source": "DEVGUARD_INFERENCE",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "DERIVED",
+   "claim": "patch risk LOW across 1 file(s)",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/sentinel/patch-scan.json",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:06.603901Z",
+   "untrusted": false,
+   "distinct": true
+  },
+  {
+   "id": "EV-D6105859-020",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "proposed fix BUILDS in isolated schema analytics_devguard_check (exit 0)",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/referee/validation.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:11.738784Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-021",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "1 owner(s) on devguard.raw.users: DataHub",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/magistrate/get_entities.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:11.856928Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-022",
+   "source": "DEVGUARD_INFERENCE",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "DERIVED",
+   "claim": "risk LOW -> NAMED_OWNER: propose + validate; apply only after owner approval",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/magistrate/autonomy-decision.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:11.857199Z",
+   "untrusted": false,
+   "distinct": true
+  },
+  {
+   "id": "EV-D6105859-023",
+   "source": "REPO_STATIC",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "approved by DataHub Admin (local operator) at 2026-08-01T10:59:11.857281+00:00",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/magistrate/approval.json",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:11.857447Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-024",
+   "source": "RUNTIME",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "RECOVERY VERIFIED: `dbt run` exited 0 (PASS=3 ERROR=0); previously dbt run exited 1; stg_users failed on column user_id",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/referee/recovery.txt",
+   "datahub_urn": null,
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:15.328731Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-025",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "artifact 3 (column-level annotation): written",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact3-update_description.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)#user_id",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:17.217128Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-026",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "artifact 2 (verified post-mortem runbook (type: Analysis)): written",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact2-save_document.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:17.217190Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-027",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "artifact 4 (structured incident facts): written",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact4-add_structured_properties.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:17.217200Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-028",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "artifact 5 (ownership signal): already_present",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/write-back-summary.json",
+   "datahub_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:17.217207Z",
+   "untrusted": false,
+   "distinct": false
+  },
+  {
+   "id": "EV-D6105859-029",
+   "source": "DATAHUB_GRAPH",
+   "trust": "TRUSTED_SYSTEM",
+   "confidence": "OBSERVED",
+   "claim": "artifact 1 (incident resolved): written",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact1-updateIncidentStatus.json",
+   "datahub_urn": "urn:li:incident:c2226569-9b88-4754-9a29-eef7b57c9b9c",
+   "datahub_link": null,
+   "collected_at": "2026-08-01T10:59:17.217214Z",
+   "untrusted": false,
+   "distinct": false
+  }
+ ],
+ "chain": {
+  "digest": "3e29b49ad89e0d77",
+  "is_sufficient": true,
+  "missing_for_sufficiency": [],
+  "datahub_error": null
+ },
+ "prior_knowledge": {
+  "state": "PRIOR",
+  "rationale": "PREVIOUS VERIFIED INCIDENT \u2014 3 document(s) retrieved.",
+  "documents": [
+   {
+    "urn": "urn:li:document:shared-99088993-9f90-4fa9-b59c-4054251b710f",
+    "title": "DevGuard runbook \u2014 user_id drift on devguard.raw.users",
+    "sub_type": "Analysis"
+   },
+   {
+    "urn": "urn:li:document:shared-afdb89cb-2e93-4bec-b662-b248764248af",
+    "title": "DevGuard runbook \u2014 user_id drift on devguard.raw.users",
+    "sub_type": "Analysis"
+   },
+   {
+    "urn": "urn:li:document:shared-b988bac2-7491-496e-9314-5491e0a74f8d",
+    "title": "DevGuard runbook \u2014 user_id drift on devguard.raw.users",
+    "sub_type": "Analysis"
+   }
+  ],
+  "document_count": 3,
+  "time_to_root_cause_s": null,
+  "capabilities_ref": "evidence/proof-pack/d6-loop-pass1/archivist/capabilities.json"
+ },
+ "blast_radius": {
+  "root_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+  "column": "user_id",
+  "dataset_level": [
+   {
+    "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard_ml,substrate_ml,PROD),train_churn_model)",
+    "entity_type": "DATA_JOB",
+    "hops": 4,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)",
+    "entity_type": "DATASET",
+    "hops": 1,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+    "entity_type": "MLMODEL",
+    "hops": 5,
+    "is_ml_model": true
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+    "entity_type": "DATASET",
+    "hops": 2,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)",
+    "entity_type": "DATASET",
+    "hops": 2,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+    "entity_type": "DATASET",
+    "hops": 3,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+    "entity_type": "DATASET",
+    "hops": 1,
+    "is_ml_model": false
+   }
+  ],
+  "column_level": [
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)",
+    "entity_type": "DATASET",
+    "hops": 1,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+    "entity_type": "DATASET",
+    "hops": 2,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)",
+    "entity_type": "DATASET",
+    "hops": 2,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+    "entity_type": "DATASET",
+    "hops": 3,
+    "is_ml_model": false
+   },
+   {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+    "entity_type": "DATASET",
+    "hops": 1,
+    "is_ml_model": false
+   }
+  ],
+  "column_path": [
+   "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD),user_id)",
+   "urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8",
+   "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD),user_id)",
+   "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),user_id)",
+   "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),user_id)"
+  ],
+  "terminal_ml_models": [
+   {
+    "urn": "urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)",
+    "entity_type": "MLMODEL",
+    "hops": 5,
+    "is_ml_model": true
+   }
+  ],
+  "max_hops": 3,
+  "queries": [
+   {
+    "urn": "urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8",
+    "statement": "SELECT\n  user_id,\n  email,\n  country,\n  signup_ts,\n  is_active\nFROM raw.users\nWHERE\n  is_active",
+    "source": "SYSTEM"
+   }
+  ],
+  "queries_raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_dataset_queries.json"
+ },
+ "root_cause": {
+  "refused": false,
+  "decision": "BLOCKED",
+  "rationale": "No reasoner configured. The evidence chain is sufficient, so this is NOT a refusal \u2014 the question was never asked.",
+  "missing_evidence_classes": [],
+  "datahub_error": null,
+  "statement": "raw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence \u2014 NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).",
+  "by_model": false,
+  "chain_ids": [
+   "EV-D6105859-001",
+   "EV-D6105859-002",
+   "EV-D6105859-003",
+   "EV-D6105859-004",
+   "EV-D6105859-005",
+   "EV-D6105859-006",
+   "EV-D6105859-007",
+   "EV-D6105859-008",
+   "EV-D6105859-009",
+   "EV-D6105859-010",
+   "EV-D6105859-011",
+   "EV-D6105859-012",
+   "EV-D6105859-013",
+   "EV-D6105859-014",
+   "EV-D6105859-015",
+   "EV-D6105859-016",
+   "EV-D6105859-017",
+   "EV-D6105859-018",
+   "EV-D6105859-019",
+   "EV-D6105859-020",
+   "EV-D6105859-021",
+   "EV-D6105859-022",
+   "EV-D6105859-023",
+   "EV-D6105859-024",
+   "EV-D6105859-025",
+   "EV-D6105859-026",
+   "EV-D6105859-027",
+   "EV-D6105859-028",
+   "EV-D6105859-029"
+  ],
+  "raw_ref": "evidence/proof-pack/d6-loop-pass1/diagnostician/derived-root-cause.txt"
+ },
+ "policy": {
+  "risk": "LOW",
+  "mode": "NAMED_OWNER",
+  "allowed_action": "propose + validate; apply only after owner approval",
+  "rationale": "Even a one-line fix changes a production model. DevGuard proposes and proves; a human decides.",
+  "owners": [
+   {
+    "urn": "urn:li:corpuser:datahub",
+    "display_name": "DataHub",
+    "ownership_type": "NONE"
+   }
+  ],
+  "owner_fallback": null,
+  "approver_urn": "urn:li:corpuser:datahub",
+  "approver_name": "DataHub Admin (local operator)",
+  "decided_at": "2026-08-01T10:59:11.857281+00:00",
+  "approval_note": "Reviewed the diff on devguard/fix-d6105859; validated in analytics_devguard_check before approval.",
+  "branch_reviewed": "devguard/fix-d6105859",
+  "proposed_diff": "--- a/substrate/dbt/models/staging/stg_users.sql\n+++ b/substrate/dbt/models/staging/stg_users.sql\n@@ -4,7 +4,7 @@\n -- column to customer_id, this model fails to compile \u2014 a real dbt failure with a\n -- real error message, which is the runtime evidence the Watcher picks up.\n select\n-    user_id,\n+    customer_id as user_id,\n     email,\n     country,\n     signup_ts,\n",
+  "proposed_diff_ref": "evidence/proof-pack/d6-loop-pass1/surgeon/proposed.patch",
+  "sentinel_scan": {
+   "files_touched": [
+    "substrate/dbt/models/staging/stg_users.sql"
+   ],
+   "added": 1,
+   "removed": 1,
+   "risk": "LOW",
+   "blocked": false,
+   "findings": []
+  },
+  "validation": "$ dbt run   (proposed fix, isolated schema analytics_devguard_check)\nexit code: 0\n\n10:59:08  Running with dbt=1.12.0\n10:59:09  Registered adapter: postgres=1.11.0\n10:59:09  Unable to do partial parsing because saved manifest not found. Starting full parse.\n10:59:10  Found 3 models, 2 sources, 477 macros\n10:59:10  \n10:59:10  Concurrency: 4 threads (target='dev')\n10:59:10  \n10:59:10  1 of 3 START sql view model analytics_devguard_check_staging.stg_orders ........ [RUN]\n10:59:10  2 of 3 START sql view model analytics_devguard_check_staging.stg_users ......... [RUN]\n10:59:10  2 of 3 OK created sql view model analytics_devguard_check_staging.stg_users .... [CREATE VIEW in 0.13s]\n10:59:10  1 of 3 OK created sql view model analytics_devguard_check_staging.stg_orders ... [CREATE VIEW in 0.14s]\n10:59:10  3 of 3 START sql table model analytics_devguard_check_marts.user_order_features  [RUN]\n10:59:11  3 of 3 OK created sql table model analytics_devguard_check_marts.user_order_features  [SELECT 1715 in 0.08s]\n10:59:11  \n10:59:11  Finished running 1 table model, 2 view models in 0 hours 0 minutes and 0.38 seconds (0.38s).\n10:59:11  \n10:59:11  Completed successfully\n10:59:11  \n10:59:11  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=3\n",
+  "validation_ref": "evidence/proof-pack/d6-loop-pass1/referee/validation.txt"
+ },
+ "write_back": {
+  "performed": true,
+  "reason": null,
+  "incident_resolved": true,
+  "all_landed": true,
+  "artifacts": [
+   {
+    "number": 1,
+    "name": "incident resolved",
+    "target_urn": "urn:li:incident:c2226569-9b88-4754-9a29-eef7b57c9b9c",
+    "outcome": "written",
+    "idempotency_key": "*|incident_resolved|urn:li:incident:c2226569-9b88-4754-9a29-eef7b57c9b9c",
+    "detail": "{\"data\": {\"updateIncidentStatus\": true}, \"extensions\": {}}",
+    "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact1-updateIncidentStatus.json",
+    "created_urn": null,
+    "datahub_link": null
+   },
+   {
+    "number": 2,
+    "name": "verified post-mortem runbook (type: Analysis)",
+    "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+    "outcome": "written",
+    "idempotency_key": "D6105859|runbook|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+    "detail": "urn:li:document:shared-7cb47d8f-d08c-4297-81cc-3b823f5d018c",
+    "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact2-save_document.json",
+    "created_urn": "urn:li:document:shared-7cb47d8f-d08c-4297-81cc-3b823f5d018c",
+    "datahub_link": null
+   },
+   {
+    "number": 3,
+    "name": "column-level annotation",
+    "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)#user_id",
+    "outcome": "written",
+    "idempotency_key": "D6105859|column_annotation|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)#user_id",
+    "detail": "tag + description applied to the schema field",
+    "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact3-update_description.json",
+    "created_urn": null,
+    "datahub_link": null
+   },
+   {
+    "number": 4,
+    "name": "structured incident facts",
+    "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+    "outcome": "written",
+    "idempotency_key": "D6105859|structured_properties|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+    "detail": "{\"success\":true,\"message\":\"Successfully added 2 structured propert(ies) to 1 entit(ies)\"}",
+    "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact4-add_structured_properties.json",
+    "created_urn": null,
+    "datahub_link": null
+   },
+   {
+    "number": 5,
+    "name": "ownership signal",
+    "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+    "outcome": "already_present",
+    "idempotency_key": "D6105859|ownership|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+    "detail": "owned by DataHub; approval was routed to the existing owner",
+    "raw_ref": "",
+    "created_urn": null,
+    "datahub_link": null
+   }
+  ],
+  "guard": "Nothing is written until recovery is verified."
+ },
+ "security": {
+  "is_demo": false,
+  "sources_scanned": 3,
+  "attempts_detected": 0,
+  "detections": [],
+  "action_taken": "All catalog free-text was fenced as UNTRUSTED_TEXT before entering any prompt. No injection pattern matched in this run.",
+  "untrusted_sources": [
+   "document-urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f.txt",
+   "document-urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af.txt",
+   "document-urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d.txt"
+  ]
+ },
+ "metrics": {
+  "time_to_root_cause_ms": 3434.6,
+  "total_loop_ms": 14069.2,
+  "mcp_calls": 9,
+  "tokens": null,
+  "tokens_note": "0 recorded \u2014 no model was invoked in this run",
+  "cost_usd": null,
+  "models": [],
+  "evidence_count": 29,
+  "handoff_count": 10,
+  "source": "summed from handoff-rail.json in this proof pack"
+ },
+ "artifacts": [
+  {
+   "name": "watcher/dbt-run.txt",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/watcher/dbt-run.txt",
+   "bytes": 1427,
+   "truncated": false,
+   "note": "Raw output of the command the Watcher observed.",
+   "written_at": "2026-08-01T10:59:03.148476+00:00"
+  },
+  {
+   "name": "watcher/column-probe.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/watcher/column-probe.json",
+   "bytes": 181,
+   "truncated": false,
+   "note": "information_schema, read live. The catalog is stale during drift; this is the ground truth.",
+   "written_at": "2026-08-01T10:59:03.172782+00:00"
+  },
+  {
+   "name": "archivist/capabilities.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/capabilities.json",
+   "bytes": 8371,
+   "truncated": false,
+   "note": "The negotiated capability set for THIS run. Not a constant.",
+   "written_at": "2026-08-01T10:59:05.293760+00:00"
+  },
+  {
+   "name": "archivist/search_documents.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/search_documents.json",
+   "bytes": 2397,
+   "truncated": false,
+   "note": "Stage 1 \u2014 document discovery. Returns URNs and titles, not bodies.",
+   "written_at": "2026-08-01T10:59:05.362375+00:00"
+  },
+  {
+   "name": "archivist/grep_documents.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/grep_documents.json",
+   "bytes": 6968,
+   "truncated": false,
+   "note": "Stage 2 \u2014 content for the URNs stage 1 found.",
+   "written_at": "2026-08-01T10:59:05.387518+00:00"
+  },
+  {
+   "name": "archivist/document-urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f.txt",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f.txt",
+   "bytes": 1969,
+   "truncated": false,
+   "note": "UNTRUSTED. Fenced before entering any prompt.",
+   "written_at": "2026-08-01T10:59:05.389239+00:00"
+  },
+  {
+   "name": "archivist/document-urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af.txt",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af.txt",
+   "bytes": 1969,
+   "truncated": false,
+   "note": "UNTRUSTED. Fenced before entering any prompt.",
+   "written_at": "2026-08-01T10:59:05.389693+00:00"
+  },
+  {
+   "name": "archivist/document-urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d.txt",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d.txt",
+   "bytes": 1969,
+   "truncated": false,
+   "note": "UNTRUSTED. Fenced before entering any prompt.",
+   "written_at": "2026-08-01T10:59:05.390113+00:00"
+  },
+  {
+   "name": "cartographer/search-stg_users.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/cartographer/search-stg_users.json",
+   "bytes": 3192,
+   "truncated": false,
+   "note": "Name -> URN resolution. The seam where analysis can go to the wrong asset.",
+   "written_at": "2026-08-01T10:59:05.564316+00:00"
+  },
+  {
+   "name": "cartographer/schema-stg_users.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/cartographer/schema-stg_users.json",
+   "bytes": 771,
+   "truncated": false,
+   "note": "The CATALOG's schema. During drift this deliberately disagrees with the database, and that gap is the incident.",
+   "written_at": "2026-08-01T10:59:05.643359+00:00"
+  },
+  {
+   "name": "pathfinder/get_lineage-downstream.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream.json",
+   "bytes": 8332,
+   "truncated": false,
+   "note": "Dataset-level blast radius. Reaches the dataJob and the mlModel.",
+   "written_at": "2026-08-01T10:59:06.064503+00:00"
+  },
+  {
+   "name": "pathfinder/get_lineage-downstream-column.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream-column.json",
+   "bytes": 7157,
+   "truncated": false,
+   "note": "Column-level blast radius. Every hit carries lineageColumns. Does NOT reach the mlModel \u2014 that edge is dataset-level (integration finding 14).",
+   "written_at": "2026-08-01T10:59:06.271308+00:00"
+  },
+  {
+   "name": "pathfinder/get_lineage_paths_between.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage_paths_between.json",
+   "bytes": 2543,
+   "truncated": false,
+   "note": "Column-level path. The middle element is the real SQL.",
+   "written_at": "2026-08-01T10:59:06.525825+00:00"
+  },
+  {
+   "name": "pathfinder/get_dataset_queries.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/pathfinder/get_dataset_queries.json",
+   "bytes": 847,
+   "truncated": false,
+   "note": "Real SQL touching the column, ingested rather than authored.",
+   "written_at": "2026-08-01T10:59:06.581807+00:00"
+  },
+  {
+   "name": "diagnostician/derived-root-cause.txt",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/diagnostician/derived-root-cause.txt",
+   "bytes": 334,
+   "truncated": false,
+   "note": "DERIVED from runtime evidence. The Diagnostician could not run \u2014 see its handoff.",
+   "written_at": "2026-08-01T10:59:06.583072+00:00"
+  },
+  {
+   "name": "surgeon/proposed.patch",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/surgeon/proposed.patch",
+   "bytes": 368,
+   "truncated": false,
+   "note": "Proposed diff, committed to devguard/fix-d6105859. Working tree untouched.",
+   "written_at": "2026-08-01T10:59:06.603267+00:00"
+  },
+  {
+   "name": "sentinel/patch-scan.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/sentinel/patch-scan.json",
+   "bytes": 162,
+   "truncated": false,
+   "note": "\u00a74 step 12 \u2014 the proposed diff, classified.",
+   "written_at": "2026-08-01T10:59:06.603882+00:00"
+  },
+  {
+   "name": "referee/validation.txt",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/referee/validation.txt",
+   "bytes": 1252,
+   "truncated": false,
+   "note": "The proposed fix built in a throwaway schema. Working tree untouched.",
+   "written_at": "2026-08-01T10:59:11.738721+00:00"
+  },
+  {
+   "name": "magistrate/get_entities.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/magistrate/get_entities.json",
+   "bytes": 3341,
+   "truncated": false,
+   "note": "Owner lookup \u2014 read-only, from the graph.",
+   "written_at": "2026-08-01T10:59:11.856758+00:00"
+  },
+  {
+   "name": "magistrate/autonomy-decision.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/magistrate/autonomy-decision.json",
+   "bytes": 508,
+   "truncated": false,
+   "note": "\u00a711.5's policy table, as applied to this change.",
+   "written_at": "2026-08-01T10:59:11.857191+00:00"
+  },
+  {
+   "name": "magistrate/approval.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/magistrate/approval.json",
+   "bytes": 385,
+   "truncated": false,
+   "note": "\u00a74 step 15 \u2014 explicit, logged, identity recorded.",
+   "written_at": "2026-08-01T10:59:11.857438+00:00"
+  },
+  {
+   "name": "referee/recovery.txt",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/referee/recovery.txt",
+   "bytes": 1116,
+   "truncated": false,
+   "note": "The exact signal that failed, re-run after the fix was applied.",
+   "written_at": "2026-08-01T10:59:15.328661+00:00"
+  },
+  {
+   "name": "scribe/artifact1-raiseIncident.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact1-raiseIncident.json",
+   "bytes": 115,
+   "truncated": false,
+   "note": "\u00a78 artifact 1, raise half.",
+   "written_at": "2026-08-01T10:59:15.391446+00:00"
+  },
+  {
+   "name": "scribe/artifact3-add_tags.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact3-add_tags.json",
+   "bytes": 390,
+   "truncated": false,
+   "note": "Raw write-back response.",
+   "written_at": "2026-08-01T10:59:16.856849+00:00"
+  },
+  {
+   "name": "scribe/artifact3-update_description.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact3-update_description.json",
+   "bytes": 1409,
+   "truncated": false,
+   "note": "Raw write-back response.",
+   "written_at": "2026-08-01T10:59:16.924857+00:00"
+  },
+  {
+   "name": "scribe/artifact2-save_document.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact2-save_document.json",
+   "bytes": 3802,
+   "truncated": false,
+   "note": "Raw write-back response.",
+   "written_at": "2026-08-01T10:59:17.034763+00:00"
+  },
+  {
+   "name": "scribe/artifact4-add_structured_properties.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact4-add_structured_properties.json",
+   "bytes": 568,
+   "truncated": false,
+   "note": "Raw write-back response.",
+   "written_at": "2026-08-01T10:59:17.166322+00:00"
+  },
+  {
+   "name": "scribe/artifact1-updateIncidentStatus.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/artifact1-updateIncidentStatus.json",
+   "bytes": 72,
+   "truncated": false,
+   "note": "Incident resolved \u2014 written LAST.",
+   "written_at": "2026-08-01T10:59:17.216249+00:00"
+  },
+  {
+   "name": "scribe/write-back-summary.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/scribe/write-back-summary.json",
+   "bytes": 2508,
+   "truncated": false,
+   "note": "\u00a78's per-artifact outcomes.",
+   "written_at": "2026-08-01T10:59:17.217096+00:00"
+  },
+  {
+   "name": "evidence-chain.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/evidence-chain.json",
+   "bytes": 12748,
+   "truncated": false,
+   "note": "\u00a77's chain for the full loop.",
+   "written_at": "2026-08-01T10:59:17.236246+00:00"
+  },
+  {
+   "name": "handoff-rail.json",
+   "raw_ref": "evidence/proof-pack/d6-loop-pass1/handoff-rail.json",
+   "bytes": 8576,
+   "truncated": false,
+   "note": "\u00a76's envelopes, in order.",
+   "written_at": "2026-08-01T10:59:17.237951+00:00"
+  }
+ ],
+ "raw": {
+  "evidence/proof-pack/d6-loop-pass1/watcher/dbt-run.txt": {
+   "name": "watcher/dbt-run.txt",
+   "bytes": 1427,
+   "note": "Raw output of the command the Watcher observed.",
+   "written_at": "2026-08-01T10:59:03.148476+00:00",
+   "truncated_in_bundle": false,
+   "content": "$ dbt run\nexit code: 1\n\n10:59:01  Running with dbt=1.12.0\n10:59:01  Registered adapter: postgres=1.11.0\n10:59:02  Found 3 models, 2 sources, 477 macros\n10:59:02  \n10:59:02  Concurrency: 4 threads (target='dev')\n10:59:02  \n10:59:02  1 of 3 START sql view model analytics_staging.stg_orders ....................... [RUN]\n10:59:02  2 of 3 START sql view model analytics_staging.stg_users ........................ [RUN]\n10:59:02  2 of 3 ERROR creating sql view model analytics_staging.stg_users ............... [ERROR in 0.12s]\n10:59:02  1 of 3 OK created sql view model analytics_staging.stg_orders .................. [CREATE VIEW in 0.15s]\n10:59:02  3 of 3 SKIP relation analytics_marts.user_order_features ....................... [SKIP]\n10:59:02  \n10:59:02  Finished running 1 table model, 2 view models in 0 hours 0 minutes and 0.29 seconds (0.29s).\n10:59:02  \n10:59:02  Completed with 1 error, 0 partial successes, and 0 warnings:\n10:59:02  \n10:59:02  [ERROR]: in model stg_users (models/staging/stg_users.sql)\n10:59:02    Database Error in model stg_users (models/staging/stg_users.sql)\n  column \"user_id\" does not exist\n  LINE 13:     user_id,\n               ^\n  compiled code at target/run/devguard_substrate/models/staging/stg_users.sql\n10:59:02  \n10:59:02    compiled code at target/compiled/devguard_substrate/models/staging/stg_users.sql\n10:59:02  \n10:59:02  Done. PASS=1 WARN=0 ERROR=1 SKIP=1 NO-OP=0 REUSED=0 TOTAL=3\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/watcher/column-probe.json": {
+   "name": "watcher/column-probe.json",
+   "bytes": 181,
+   "note": "information_schema, read live. The catalog is stale during drift; this is the ground truth.",
+   "written_at": "2026-08-01T10:59:03.172782+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"table\": \"raw.users\",\n  \"columns\": [\n    \"customer_id\",\n    \"email\",\n    \"country\",\n    \"signup_ts\",\n    \"is_active\"\n  ],\n  \"probed_at_utc\": \"2026-08-01T10:59:03.172434+00:00\"\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/archivist/capabilities.json": {
+   "name": "archivist/capabilities.json",
+   "bytes": 8371,
+   "note": "The negotiated capability set for THIS run. Not a constant.",
+   "written_at": "2026-08-01T10:59:05.293760+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"serverInfo\": {\n    \"name\": \"datahub\",\n    \"version\": \"3.4.5\"\n  },\n  \"protocolVersion\": \"2024-11-05\",\n  \"tool_count\": 8,\n  \"tools\": [\n    \"get_dataset_queries\",\n    \"get_entities\",\n    \"get_lineage\",\n    \"get_lineage_paths_between\",\n    \"grep_documents\",\n    \"list_schema_fields\",\n    \"search\",\n    \"search_documents\"\n  ],\n  \"input_schemas\": {\n    \"get_dataset_queries\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"urn\": {\n          \"type\": \"string\"\n        },\n        \"column\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"source\": {\n          \"anyOf\": [\n            {\n              \"enum\": [\n                \"MANUAL\",\n                \"SYSTEM\"\n              ],\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"start\": {\n          \"default\": 0,\n          \"type\": \"integer\"\n        },\n        \"count\": {\n          \"default\": 10,\n          \"type\": \"integer\"\n        }\n      },\n      \"required\": [\n        \"urn\"\n      ],\n      \"type\": \"object\"\n    },\n    \"get_entities\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"urns\": {\n          \"anyOf\": [\n            {\n              \"items\": {\n                \"type\": \"string\"\n              },\n              \"type\": \"array\"\n            },\n            {\n              \"type\": \"string\"\n            }\n          ]\n        }\n      },\n      \"required\": [\n        \"urns\"\n      ],\n      \"type\": \"object\"\n    },\n    \"get_lineage\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"urn\": {\n          \"type\": \"string\"\n        },\n        \"column\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"query\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"filter\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"upstream\": {\n          \"default\": true,\n          \"type\": \"boolean\"\n        },\n        \"max_hops\": {\n          \"default\": 1,\n          \"type\": \"integer\"\n        },\n        \"max_results\": {\n          \"default\": 30,\n          \"type\": \"integer\"\n        },\n        \"offset\": {\n          \"default\": 0,\n          \"type\": \"integer\"\n        }\n      },\n      \"required\": [\n        \"urn\"\n      ],\n      \"type\": \"object\"\n    },\n    \"get_lineage_paths_between\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"source_urn\": {\n          \"type\": \"string\",\n          \"description\": \"URN of the source dataset\"\n        },\n        \"target_urn\": {\n          \"type\": \"string\",\n          \"description\": \"URN of the target dataset\"\n        },\n        \"source_column\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null,\n          \"description\": \"Optional column name in source dataset\"\n        },\n        \"target_column\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null,\n          \"description\": \"Optional column name in target dataset (required if source_column provided)\"\n        },\n        \"direction\": {\n          \"anyOf\": [\n            {\n              \"enum\": [\n                \"upstream\",\n                \"downstream\"\n              ],\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null,\n          \"description\": \"Optional direction to search. If None (default), automatically discovers\\n      the path by trying downstream first, then upstream. Specify \\\"downstream\\\" or\\n      \\\"upstream\\\" explicitly for better performance if you know the direction.\"\n        }\n      },\n      \"required\": [\n        \"source_urn\",\n        \"target_urn\"\n      ],\n      \"type\": \"object\"\n    },\n    \"grep_documents\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"urns\": {\n          \"items\": {\n            \"type\": \"string\"\n          },\n          \"type\": \"array\"\n        },\n        \"pattern\": {\n          \"type\": \"string\"\n        },\n        \"context_chars\": {\n          \"default\": 200,\n          \"type\": \"integer\"\n        },\n        \"max_matches_per_doc\": {\n          \"default\": 5,\n          \"type\": \"integer\"\n        },\n        \"start_offset\": {\n          \"default\": 0,\n          \"type\": \"integer\"\n        }\n      },\n      \"required\": [\n        \"urns\",\n        \"pattern\"\n      ],\n      \"type\": \"object\"\n    },\n    \"list_schema_fields\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"urn\": {\n          \"type\": \"string\",\n          \"description\": \"Dataset URN\"\n        },\n        \"keywords\": {\n          \"anyOf\": [\n            {\n              \"items\": {\n                \"type\": \"string\"\n              },\n              \"type\": \"array\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null,\n          \"description\": \"Optional list of keywords to filter schema fields (OR matching).\\n     - Single keyword: Treated as one keyword (NOT split on whitespace). Use for field names or exact phrases.\\n     - Multiple keywords: Multiple keywords, matches any (OR logic).\\n     - None or empty list: Returns all fields in priority order (same as get_entities).\\n     Matches against fieldPath, description, label, tags, and glossary terms.\\n     Matching fields are returned first, sorted by match count.\"\n        },\n        \"limit\": {\n          \"default\": 100,\n          \"type\": \"integer\",\n          \"description\": \"Maximum number of fields to return (default: 100)\"\n        },\n        \"offset\": {\n          \"default\": 0,\n          \"type\": \"integer\",\n          \"description\": \"Number of fields to skip for pagination (default: 0)\"\n        }\n      },\n      \"required\": [\n        \"urn\"\n      ],\n      \"type\": \"object\"\n    },\n    \"search\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"query\": {\n          \"default\": \"*\",\n          \"type\": \"string\"\n        },\n        \"filter\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"num_results\": {\n          \"default\": 10,\n          \"type\": \"integer\"\n        },\n        \"sort_by\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"sort_order\": {\n          \"anyOf\": [\n            {\n              \"enum\": [\n                \"asc\",\n                \"desc\"\n              ],\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": \"desc\"\n        },\n        \"offset\": {\n          \"default\": 0,\n          \"type\": \"integer\"\n        }\n      },\n      \"type\": \"object\"\n    },\n    \"search_documents\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"query\": {\n          \"default\": \"*\",\n          \"type\": \"string\"\n        },\n        \"semantic_query\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"filter\": {\n          \"anyOf\": [\n            {\n              \"type\": \"string\"\n            },\n            {\n              \"type\": \"null\"\n            }\n          ],\n          \"default\": null\n        },\n        \"num_results\": {\n          \"default\": 10,\n          \"type\": \"integer\"\n        },\n        \"offset\": {\n          \"default\": 0,\n          \"type\": \"integer\"\n        }\n      },\n      \"type\": \"object\"\n    }\n  }\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/archivist/search_documents.json": {
+   "name": "archivist/search_documents.json",
+   "bytes": 2397,
+   "note": "Stage 1 \u2014 document discovery. Returns URNs and titles, not bodies.",
+   "written_at": "2026-08-01T10:59:05.362375+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"query\": \"user_id\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"start\\\":0,\\\"count\\\":10,\\\"total\\\":3,\\\"searchResults\\\":[{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:document:shared-99088993-9f90-4fa9-b59c-4054251b710f\\\",\\\"subType\\\":\\\"Analysis\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:datahub\\\",\\\"name\\\":\\\"datahub\\\"},\\\"info\\\":{\\\"title\\\":\\\"DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\",\\\"source\\\":{\\\"sourceType\\\":\\\"NATIVE\\\"},\\\"lastModified\\\":{\\\"time\\\":1785579539754,\\\"actor\\\":{\\\"urn\\\":\\\"urn:li:corpuser:__ingestion\\\"}},\\\"created\\\":{\\\"time\\\":1785579539754,\\\"actor\\\":{\\\"urn\\\":\\\"urn:li:corpuser:__ingestion\\\"}}}}},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:document:shared-afdb89cb-2e93-4bec-b662-b248764248af\\\",\\\"subType\\\":\\\"Analysis\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:datahub\\\",\\\"name\\\":\\\"datahub\\\"},\\\"info\\\":{\\\"title\\\":\\\"DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\",\\\"source\\\":{\\\"sourceType\\\":\\\"NATIVE\\\"},\\\"lastModified\\\":{\\\"time\\\":1785580619980,\\\"actor\\\":{\\\"urn\\\":\\\"urn:li:corpuser:__ingestion\\\"}},\\\"created\\\":{\\\"time\\\":1785580619980,\\\"actor\\\":{\\\"urn\\\":\\\"urn:li:corpuser:__ingestion\\\"}}}}},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:document:shared-b988bac2-7491-496e-9314-5491e0a74f8d\\\",\\\"subType\\\":\\\"Analysis\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:datahub\\\",\\\"name\\\":\\\"datahub\\\"},\\\"info\\\":{\\\"title\\\":\\\"DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\",\\\"source\\\":{\\\"sourceType\\\":\\\"NATIVE\\\"},\\\"lastModified\\\":{\\\"time\\\":1785581229002,\\\"actor\\\":{\\\"urn\\\":\\\"urn:li:corpuser:__ingestion\\\"}},\\\"created\\\":{\\\"time\\\":1785581229002,\\\"actor\\\":{\\\"urn\\\":\\\"urn:li:corpuser:__ingestion\\\"}}}}}],\\\"facets\\\":[{\\\"field\\\":\\\"_entityType\\u241etypeNames\\\",\\\"displayName\\\":\\\"Type\\u241eSub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DOCUMENT\\u241eAnalysis\\\",\\\"count\\\":3},{\\\"value\\\":\\\"DOCUMENT\\\",\\\"count\\\":3}]},{\\\"field\\\":\\\"typeNames\\\",\\\"displayName\\\":\\\"Sub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"Analysis\\\",\\\"count\\\":3}]},{\\\"field\\\":\\\"_entityType\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DOCUMENT\\\",\\\"count\\\":3}]},{\\\"field\\\":\\\"owners\\\",\\\"displayName\\\":\\\"Owned By\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:corpuser:__datahub_system\\\",\\\"count\\\":3}]},{\\\"field\\\":\\\"removed\\\",\\\"displayName\\\":\\\"removed\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"entity\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DOCUMENT\\\",\\\"count\\\":3}]}]}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/archivist/grep_documents.json": {
+   "name": "archivist/grep_documents.json",
+   "bytes": 6968,
+   "note": "Stage 2 \u2014 content for the URNs stage 1 found.",
+   "written_at": "2026-08-01T10:59:05.387518+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"urns\": [\n      \"urn:li:document:shared-99088993-9f90-4fa9-b59c-4054251b710f\",\n      \"urn:li:document:shared-afdb89cb-2e93-4bec-b662-b248764248af\",\n      \"urn:li:document:shared-b988bac2-7491-496e-9314-5491e0a74f8d\"\n    ],\n    \"pattern\": \"user_id\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"results\\\":[{\\\"urn\\\":\\\"urn:li:document:shared-99088993-9f90-4fa9-b59c-4054251b710f\\\",\\\"title\\\":\\\"DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\",\\\"matches\\\":[{\\\"excerpt\\\":\\\"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\\n\\\\n## Root cause\\\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects us...\\\",\\\"position\\\":21},{\\\"excerpt\\\":\\\"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\\n\\\\n## Root cause\\\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived determi...\\\",\\\"position\\\":82},{\\\"excerpt\\\":\\\"...id drift on devguard.raw.users\\\\n\\\\n## Root cause\\\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence \\u2014 NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).\\\\n\\\\n## How it was detected\\\\n- [EV...\\\",\\\"position\\\":226},{\\\"excerpt\\\":\\\"...detected\\\\n- [EV-D6101840-001] `dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)\\\\n- [EV-D6101840-002] model stg_users failed to build (models/staging/stg_users.sql)\\\\n- [EV-D6101840-003] database reports column \\\\\\\"user_id\\\\\\\" does not exist\\\\n- [EV-D6101840-004] 1 downstream model(s) SKIPped \\u2014 not rebuilt, not dropped, therefore stale\\\\n- [EV-D6101840-005] raw.users now has columns: customer_id, email, country, signup_ts, is...\\\",\\\"position\\\":619},{\\\"excerpt\\\":\\\"...sed fix BUILDS in isolated schema analytics_devguard_check (exit 0)\\\\n- [EV-D6101840-021] RECOVERY VERIFIED: `dbt run` exited 0 (PASS=3 ERROR=0); previously dbt run exited 1; stg_users failed on column user_id\\\\n\\\\n## Blast radius\\\\n- [EV-D6101840-007] 'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\\n- [EV-D6101840-008] catalog schema for stg_users h...\\\",\\\"position\\\":1130}],\\\"total_matches\\\":12},{\\\"urn\\\":\\\"urn:li:document:shared-afdb89cb-2e93-4bec-b662-b248764248af\\\",\\\"title\\\":\\\"DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\",\\\"matches\\\":[{\\\"excerpt\\\":\\\"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\\n\\\\n## Root cause\\\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects us...\\\",\\\"position\\\":21},{\\\"excerpt\\\":\\\"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\\n\\\\n## Root cause\\\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived determi...\\\",\\\"position\\\":82},{\\\"excerpt\\\":\\\"...id drift on devguard.raw.users\\\\n\\\\n## Root cause\\\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence \\u2014 NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).\\\\n\\\\n## How it was detected\\\\n- [EV...\\\",\\\"position\\\":226},{\\\"excerpt\\\":\\\"...detected\\\\n- [EV-D6103629-001] `dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)\\\\n- [EV-D6103629-002] model stg_users failed to build (models/staging/stg_users.sql)\\\\n- [EV-D6103629-003] database reports column \\\\\\\"user_id\\\\\\\" does not exist\\\\n- [EV-D6103629-004] 1 downstream model(s) SKIPped \\u2014 not rebuilt, not dropped, therefore stale\\\\n- [EV-D6103629-005] raw.users now has columns: customer_id, email, country, signup_ts, is...\\\",\\\"position\\\":619},{\\\"excerpt\\\":\\\"...sed fix BUILDS in isolated schema analytics_devguard_check (exit 0)\\\\n- [EV-D6103629-021] RECOVERY VERIFIED: `dbt run` exited 0 (PASS=3 ERROR=0); previously dbt run exited 1; stg_users failed on column user_id\\\\n\\\\n## Blast radius\\\\n- [EV-D6103629-007] 'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\\n- [EV-D6103629-008] catalog schema for stg_users h...\\\",\\\"position\\\":1130}],\\\"total_matches\\\":12},{\\\"urn\\\":\\\"urn:li:document:shared-b988bac2-7491-496e-9314-5491e0a74f8d\\\",\\\"title\\\":\\\"DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\",\\\"matches\\\":[{\\\"excerpt\\\":\\\"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\\n\\\\n## Root cause\\\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects us...\\\",\\\"position\\\":21},{\\\"excerpt\\\":\\\"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\\n\\\\n## Root cause\\\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived determi...\\\",\\\"position\\\":82},{\\\"excerpt\\\":\\\"...id drift on devguard.raw.users\\\\n\\\\n## Root cause\\\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence \\u2014 NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).\\\\n\\\\n## How it was detected\\\\n- [EV...\\\",\\\"position\\\":226},{\\\"excerpt\\\":\\\"...detected\\\\n- [EV-D6104650-001] `dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)\\\\n- [EV-D6104650-002] model stg_users failed to build (models/staging/stg_users.sql)\\\\n- [EV-D6104650-003] database reports column \\\\\\\"user_id\\\\\\\" does not exist\\\\n- [EV-D6104650-004] 1 downstream model(s) SKIPped \\u2014 not rebuilt, not dropped, therefore stale\\\\n- [EV-D6104650-005] raw.users now has columns: customer_id, email, country, signup_ts, is...\\\",\\\"position\\\":619},{\\\"excerpt\\\":\\\"...sed fix BUILDS in isolated schema analytics_devguard_check (exit 0)\\\\n- [EV-D6104650-021] RECOVERY VERIFIED: `dbt run` exited 0 (PASS=3 ERROR=0); previously dbt run exited 1; stg_users failed on column user_id\\\\n\\\\n## Blast radius\\\\n- [EV-D6104650-007] 'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\\n- [EV-D6104650-008] catalog schema for stg_users h...\\\",\\\"position\\\":1130}],\\\"total_matches\\\":12}],\\\"total_matches\\\":36,\\\"documents_with_matches\\\":3}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f.txt": {
+   "name": "archivist/document-urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f.txt",
+   "bytes": 1969,
+   "note": "UNTRUSTED. Fenced before entering any prompt.",
+   "written_at": "2026-08-01T10:59:05.389239+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\"excerpt\": \"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\n\\n## Root cause\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects us...\", \"position\": 21}\n{\"excerpt\": \"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\n\\n## Root cause\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived determi...\", \"position\": 82}\n{\"excerpt\": \"...id drift on devguard.raw.users\\n\\n## Root cause\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence \\u2014 NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).\\n\\n## How it was detected\\n- [EV...\", \"position\": 226}\n{\"excerpt\": \"...detected\\n- [EV-D6101840-001] `dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)\\n- [EV-D6101840-002] model stg_users failed to build (models/staging/stg_users.sql)\\n- [EV-D6101840-003] database reports column \\\"user_id\\\" does not exist\\n- [EV-D6101840-004] 1 downstream model(s) SKIPped \\u2014 not rebuilt, not dropped, therefore stale\\n- [EV-D6101840-005] raw.users now has columns: customer_id, email, country, signup_ts, is...\", \"position\": 619}\n{\"excerpt\": \"...sed fix BUILDS in isolated schema analytics_devguard_check (exit 0)\\n- [EV-D6101840-021] RECOVERY VERIFIED: `dbt run` exited 0 (PASS=3 ERROR=0); previously dbt run exited 1; stg_users failed on column user_id\\n\\n## Blast radius\\n- [EV-D6101840-007] 'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\n- [EV-D6101840-008] catalog schema for stg_users h...\", \"position\": 1130}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af.txt": {
+   "name": "archivist/document-urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af.txt",
+   "bytes": 1969,
+   "note": "UNTRUSTED. Fenced before entering any prompt.",
+   "written_at": "2026-08-01T10:59:05.389693+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\"excerpt\": \"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\n\\n## Root cause\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects us...\", \"position\": 21}\n{\"excerpt\": \"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\n\\n## Root cause\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived determi...\", \"position\": 82}\n{\"excerpt\": \"...id drift on devguard.raw.users\\n\\n## Root cause\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence \\u2014 NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).\\n\\n## How it was detected\\n- [EV...\", \"position\": 226}\n{\"excerpt\": \"...detected\\n- [EV-D6103629-001] `dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)\\n- [EV-D6103629-002] model stg_users failed to build (models/staging/stg_users.sql)\\n- [EV-D6103629-003] database reports column \\\"user_id\\\" does not exist\\n- [EV-D6103629-004] 1 downstream model(s) SKIPped \\u2014 not rebuilt, not dropped, therefore stale\\n- [EV-D6103629-005] raw.users now has columns: customer_id, email, country, signup_ts, is...\", \"position\": 619}\n{\"excerpt\": \"...sed fix BUILDS in isolated schema analytics_devguard_check (exit 0)\\n- [EV-D6103629-021] RECOVERY VERIFIED: `dbt run` exited 0 (PASS=3 ERROR=0); previously dbt run exited 1; stg_users failed on column user_id\\n\\n## Blast radius\\n- [EV-D6103629-007] 'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\n- [EV-D6103629-008] catalog schema for stg_users h...\", \"position\": 1130}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d.txt": {
+   "name": "archivist/document-urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d.txt",
+   "bytes": 1969,
+   "note": "UNTRUSTED. Fenced before entering any prompt.",
+   "written_at": "2026-08-01T10:59:05.390113+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\"excerpt\": \"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\n\\n## Root cause\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects us...\", \"position\": 21}\n{\"excerpt\": \"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\n\\n## Root cause\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived determi...\", \"position\": 82}\n{\"excerpt\": \"...id drift on devguard.raw.users\\n\\n## Root cause\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence \\u2014 NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).\\n\\n## How it was detected\\n- [EV...\", \"position\": 226}\n{\"excerpt\": \"...detected\\n- [EV-D6104650-001] `dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)\\n- [EV-D6104650-002] model stg_users failed to build (models/staging/stg_users.sql)\\n- [EV-D6104650-003] database reports column \\\"user_id\\\" does not exist\\n- [EV-D6104650-004] 1 downstream model(s) SKIPped \\u2014 not rebuilt, not dropped, therefore stale\\n- [EV-D6104650-005] raw.users now has columns: customer_id, email, country, signup_ts, is...\", \"position\": 619}\n{\"excerpt\": \"...sed fix BUILDS in isolated schema analytics_devguard_check (exit 0)\\n- [EV-D6104650-021] RECOVERY VERIFIED: `dbt run` exited 0 (PASS=3 ERROR=0); previously dbt run exited 1; stg_users failed on column user_id\\n\\n## Blast radius\\n- [EV-D6104650-007] 'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\n- [EV-D6104650-008] catalog schema for stg_users h...\", \"position\": 1130}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/cartographer/search-stg_users.json": {
+   "name": "cartographer/search-stg_users.json",
+   "bytes": 3192,
+   "note": "Name -> URN resolution. The seam where analysis can go to the wrong asset.",
+   "written_at": "2026-08-01T10:59:05.564316+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"query\": \"stg_users\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"start\\\":0,\\\"count\\\":10,\\\"total\\\":6,\\\"searchResults\\\":[{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)\\\",\\\"properties\\\":{\\\"name\\\":\\\"stg_users\\\"}}},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\",\\\"properties\\\":{\\\"name\\\":\\\"stg_users\\\"}}},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:document:shared-99088993-9f90-4fa9-b59c-4054251b710f\\\"}},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:document:shared-afdb89cb-2e93-4bec-b662-b248764248af\\\"}},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:document:shared-b988bac2-7491-496e-9314-5491e0a74f8d\\\"}},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\\\",\\\"properties\\\":{\\\"name\\\":\\\"users\\\"}}}],\\\"facets\\\":[{\\\"field\\\":\\\"container\\\",\\\"displayName\\\":\\\"Container\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\\\",\\\"count\\\":1,\\\"entity\\\":{\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Schema\\\"]},\\\"properties\\\":{\\\"name\\\":\\\"analytics_staging\\\"}}},{\\\"value\\\":\\\"urn:li:container:0f40c4f798ed2fe1f304eafa2896e685\\\",\\\"count\\\":1,\\\"entity\\\":{\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Schema\\\"]},\\\"properties\\\":{\\\"name\\\":\\\"raw\\\"}}}]},{\\\"field\\\":\\\"_entityType\\u241etypeNames\\\",\\\"displayName\\\":\\\"Type\\u241eSub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DOCUMENT\\u241eAnalysis\\\",\\\"count\\\":3},{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":3},{\\\"value\\\":\\\"DOCUMENT\\\",\\\"count\\\":3},{\\\"value\\\":\\\"DATASET\\u241eTable\\\",\\\"count\\\":1},{\\\"value\\\":\\\"DATASET\\u241eView\\\",\\\"count\\\":1},{\\\"value\\\":\\\"DATASET\\u241eModel\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"hasSiblings\\\",\\\"displayName\\\":\\\"hasSiblings\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":3}]},{\\\"field\\\":\\\"_entityType\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":3},{\\\"value\\\":\\\"DOCUMENT\\\",\\\"count\\\":3},{\\\"value\\\":\\\"DATA_FLOW\\\",\\\"count\\\":0},{\\\"value\\\":\\\"CORP_USER\\\",\\\"count\\\":0},{\\\"value\\\":\\\"CONTAINER\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"origin\\\",\\\"displayName\\\":\\\"Environment\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"PROD\\\",\\\"count\\\":3}]},{\\\"field\\\":\\\"owners\\\",\\\"displayName\\\":\\\"Owned By\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:corpuser:__datahub_system\\\",\\\"count\\\":3},{\\\"value\\\":\\\"urn:li:corpuser:datahub\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"hasActiveIncidents\\\",\\\"displayName\\\":\\\"hasActiveIncidents\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"platform\\\",\\\"displayName\\\":\\\"Platform\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"count\\\":2},{\\\"value\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"typeNames\\\",\\\"displayName\\\":\\\"Sub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"Analysis\\\",\\\"count\\\":3},{\\\"value\\\":\\\"Table\\\",\\\"count\\\":1},{\\\"value\\\":\\\"Model\\\",\\\"count\\\":1},{\\\"value\\\":\\\"View\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"removed\\\",\\\"displayName\\\":\\\"removed\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"entity\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":3},{\\\"value\\\":\\\"DOCUMENT\\\",\\\"count\\\":3},{\\\"value\\\":\\\"CONTAINER\\\",\\\"count\\\":0},{\\\"value\\\":\\\"DATA_FLOW\\\",\\\"count\\\":0},{\\\"value\\\":\\\"CORP_USER\\\",\\\"count\\\":0}]}]}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/cartographer/schema-stg_users.json": {
+   "name": "cartographer/schema-stg_users.json",
+   "bytes": 771,
+   "note": "The CATALOG's schema. During drift this deliberately disagrees with the database, and that gap is the incident.",
+   "written_at": "2026-08-01T10:59:05.643359+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\",\\\"fields\\\":[{\\\"fieldPath\\\":\\\"country\\\",\\\"nativeDataType\\\":\\\"TEXT\\\",\\\"nullable\\\":true},{\\\"fieldPath\\\":\\\"email\\\",\\\"nativeDataType\\\":\\\"TEXT\\\",\\\"nullable\\\":true},{\\\"fieldPath\\\":\\\"is_active\\\",\\\"nativeDataType\\\":\\\"BOOLEAN\\\",\\\"nullable\\\":true},{\\\"fieldPath\\\":\\\"signup_ts\\\",\\\"nativeDataType\\\":\\\"TIMESTAMP WITH TIME ZONE\\\",\\\"nullable\\\":true},{\\\"fieldPath\\\":\\\"user_id\\\",\\\"nativeDataType\\\":\\\"BIGINT\\\",\\\"nullable\\\":true}],\\\"totalFields\\\":5,\\\"returned\\\":5,\\\"remainingCount\\\":0,\\\"matchingCount\\\":null,\\\"offset\\\":0}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream.json": {
+   "name": "pathfinder/get_lineage-downstream.json",
+   "bytes": 8332,
+   "note": "Dataset-level blast radius. Reaches the dataJob and the mlModel.",
+   "written_at": "2026-08-01T10:59:06.064503+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n    \"upstream\": false,\n    \"max_hops\": 5\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"downstreams\\\":{\\\"total\\\":7,\\\"facets\\\":[{\\\"field\\\":\\\"degree\\\",\\\"displayName\\\":\\\"Degree of Dependencies\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"1\\\",\\\"count\\\":0},{\\\"value\\\":\\\"2\\\",\\\"count\\\":0},{\\\"value\\\":\\\"3+\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"_entityType\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":5},{\\\"value\\\":\\\"DATA_JOB\\\",\\\"count\\\":1},{\\\"value\\\":\\\"MLMODEL\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"typeNames\\\",\\\"displayName\\\":\\\"Sub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"Model\\\",\\\"count\\\":2},{\\\"value\\\":\\\"Table\\\",\\\"count\\\":1},{\\\"value\\\":\\\"Source\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"platform\\\",\\\"displayName\\\":\\\"Platform\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"count\\\":3,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\"}},{\\\"value\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"count\\\":2,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\"}},{\\\"value\\\":\\\"urn:li:dataPlatform:devguard_ml\\\",\\\"count\\\":2,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:devguard_ml\\\"}}]},{\\\"field\\\":\\\"container\\\",\\\"displayName\\\":\\\"Container\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:container:f9adf01d7f1f656e17d2728821a5273d\\\",\\\"count\\\":1,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:container:f9adf01d7f1f656e17d2728821a5273d\\\"}},{\\\"value\\\":\\\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\\\",\\\"count\\\":1,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\\\"}}]},{\\\"field\\\":\\\"origin\\\",\\\"displayName\\\":\\\"Environment\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"PROD\\\",\\\"count\\\":6}]},{\\\"field\\\":\\\"_entityType\\u241etypeNames\\\",\\\"displayName\\\":\\\"Type\\u241eSub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":5},{\\\"value\\\":\\\"DATASET\\u241eModel\\\",\\\"count\\\":2},{\\\"value\\\":\\\"DATASET\\u241eTable\\\",\\\"count\\\":1},{\\\"value\\\":\\\"DATA_JOB\\\",\\\"count\\\":1},{\\\"value\\\":\\\"DATASET\\u241eSource\\\",\\\"count\\\":1},{\\\"value\\\":\\\"MLMODEL\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"hasSiblings\\\",\\\"displayName\\\":\\\"hasSiblings\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":5}]},{\\\"field\\\":\\\"removed\\\",\\\"displayName\\\":\\\"removed\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"entity\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":5},{\\\"value\\\":\\\"MLMODEL\\\",\\\"count\\\":1},{\\\"value\\\":\\\"DATA_JOB\\\",\\\"count\\\":1}]}],\\\"searchResults\\\":[{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataJob:(urn:li:dataFlow:(devguard_ml,substrate_ml,PROD),train_churn_model)\\\",\\\"type\\\":\\\"DATA_JOB\\\",\\\"dataFlow\\\":{\\\"urn\\\":\\\"urn:li:dataFlow:(devguard_ml,substrate_ml,PROD)\\\",\\\"orchestrator\\\":\\\"devguard_ml\\\",\\\"flowId\\\":\\\"substrate_ml\\\",\\\"cluster\\\":\\\"PROD\\\",\\\"properties\\\":{\\\"name\\\":\\\"substrate_ml\\\",\\\"description\\\":\\\"DevGuard substrate ML pipeline. Invoked directly (no orchestrator); source of truth is substrate/ml/train_churn_model.py.\\\",\\\"project\\\":\\\"devguard-ai\\\"},\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:devguard_ml\\\",\\\"name\\\":\\\"devguard_ml\\\"}},\\\"jobId\\\":\\\"train_churn_model\\\",\\\"properties\\\":{\\\"name\\\":\\\"train_churn_model\\\",\\\"description\\\":\\\"Reads analytics_marts.user_order_features and fits a scikit-learn LogisticRegression churn-risk classifier.\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"script\\\",\\\"value\\\":\\\"substrate/ml/train_churn_model.py\\\"}]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":4},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"name\\\":\\\"dbt\\\"},\\\"properties\\\":{\\\"name\\\":\\\"users\\\",\\\"description\\\":\\\"Raw user records.\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"catalog_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"node_type\\\",\\\"value\\\":\\\"source\\\"},{\\\"key\\\":\\\"dbt_file_path\\\",\\\"value\\\":\\\"models/staging/sources.yml\\\"},{\\\"key\\\":\\\"catalog_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/catalog/v1.json\\\"},{\\\"key\\\":\\\"catalog_type\\\",\\\"value\\\":\\\"BASE TABLE\\\"},{\\\"key\\\":\\\"manifest_adapter\\\",\\\"value\\\":\\\"postgres\\\"},{\\\"key\\\":\\\"manifest_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"dbt_package_name\\\",\\\"value\\\":\\\"devguard_substrate\\\"},{\\\"key\\\":\\\"language\\\",\\\"value\\\":\\\"sql\\\"},{\\\"key\\\":\\\"dbt_unique_id\\\",\\\"value\\\":\\\"source.devguard_substrate.raw.users\\\"},{\\\"key\\\":\\\"manifest_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/manifest/v12.json\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Source\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":1},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)\\\",\\\"type\\\":\\\"MLMODEL\\\",\\\"name\\\":\\\"devguard_churn_risk\\\",\\\"description\\\":\\\"DevGuard churn-risk model. Real scikit-learn LogisticRegression trained on 1715 rows from analytics_marts.user_order_features.\\\",\\\"origin\\\":\\\"PROD\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:devguard_ml\\\",\\\"name\\\":\\\"devguard_ml\\\"}},\\\"degree\\\":5},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"user_order_features\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"name\\\":\\\"dbt\\\"},\\\"properties\\\":{\\\"name\\\":\\\"user_order_features\\\",\\\"description\\\":\\\"\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"catalog_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"node_type\\\",\\\"value\\\":\\\"model\\\"},{\\\"key\\\":\\\"materialization\\\",\\\"value\\\":\\\"table\\\"},{\\\"key\\\":\\\"dbt_file_path\\\",\\\"value\\\":\\\"models/marts/user_order_features.sql\\\"},{\\\"key\\\":\\\"catalog_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/catalog/v1.json\\\"},{\\\"key\\\":\\\"catalog_type\\\",\\\"value\\\":\\\"BASE TABLE\\\"},{\\\"key\\\":\\\"manifest_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"manifest_adapter\\\",\\\"value\\\":\\\"postgres\\\"},{\\\"key\\\":\\\"dbt_package_name\\\",\\\"value\\\":\\\"devguard_substrate\\\"},{\\\"key\\\":\\\"language\\\",\\\"value\\\":\\\"sql\\\"},{\\\"key\\\":\\\"dbt_unique_id\\\",\\\"value\\\":\\\"model.devguard_substrate.user_order_features\\\"},{\\\"key\\\":\\\"manifest_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/manifest/v12.json\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Model\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":2},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"stg_users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"name\\\":\\\"dbt\\\"},\\\"properties\\\":{\\\"name\\\":\\\"stg_users\\\",\\\"description\\\":\\\"\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"catalog_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"node_type\\\",\\\"value\\\":\\\"model\\\"},{\\\"key\\\":\\\"materialization\\\",\\\"value\\\":\\\"view\\\"},{\\\"key\\\":\\\"dbt_file_path\\\",\\\"value\\\":\\\"models/staging/stg_users.sql\\\"},{\\\"key\\\":\\\"catalog_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/catalog/v1.json\\\"},{\\\"key\\\":\\\"catalog_type\\\",\\\"value\\\":\\\"VIEW\\\"},{\\\"key\\\":\\\"manifest_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"manifest_adapter\\\",\\\"value\\\":\\\"postgres\\\"},{\\\"key\\\":\\\"dbt_package_name\\\",\\\"value\\\":\\\"devguard_substrate\\\"},{\\\"key\\\":\\\"language\\\",\\\"value\\\":\\\"sql\\\"},{\\\"key\\\":\\\"dbt_unique_id\\\",\\\"value\\\":\\\"model.devguard_substrate.stg_users\\\"},{\\\"key\\\":\\\"manifest_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/manifest/v12.json\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Model\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":2},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"user_order_features\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"name\\\":\\\"postgres\\\"},\\\"properties\\\":{\\\"name\\\":\\\"user_order_features\\\"},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Table\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":3},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"stg_users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"name\\\":\\\"postgres\\\"},\\\"properties\\\":{\\\"name\\\":\\\"stg_users\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"view_definition\\\",\\\"value\\\":\\\" SELECT user_id,\\\\n    email,\\\\n    country,\\\\n    signup_ts,\\\\n    is_active\\\\n   FROM raw.users\\\\n  WHERE is_active;\\\"},{\\\"key\\\":\\\"is_view\\\",\\\"value\\\":\\\"True\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"View\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":1}],\\\"offset\\\":0,\\\"returned\\\":7,\\\"hasMore\\\":false}}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream-column.json": {
+   "name": "pathfinder/get_lineage-downstream-column.json",
+   "bytes": 7157,
+   "note": "Column-level blast radius. Every hit carries lineageColumns. Does NOT reach the mlModel \u2014 that edge is dataset-level (integration finding 14).",
+   "written_at": "2026-08-01T10:59:06.271308+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n    \"upstream\": false,\n    \"max_hops\": 5,\n    \"column\": \"user_id\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"downstreams\\\":{\\\"total\\\":5,\\\"facets\\\":[{\\\"field\\\":\\\"degree\\\",\\\"displayName\\\":\\\"Degree of Dependencies\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"1\\\",\\\"count\\\":0},{\\\"value\\\":\\\"2\\\",\\\"count\\\":0},{\\\"value\\\":\\\"3+\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"_entityType\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":5}]},{\\\"field\\\":\\\"typeNames\\\",\\\"displayName\\\":\\\"Sub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"Model\\\",\\\"count\\\":2},{\\\"value\\\":\\\"Table\\\",\\\"count\\\":1},{\\\"value\\\":\\\"Source\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"platform\\\",\\\"displayName\\\":\\\"Platform\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"count\\\":3,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\"}},{\\\"value\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"count\\\":2,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\"}}]},{\\\"field\\\":\\\"container\\\",\\\"displayName\\\":\\\"Container\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"urn:li:container:f9adf01d7f1f656e17d2728821a5273d\\\",\\\"count\\\":1,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:container:f9adf01d7f1f656e17d2728821a5273d\\\"}},{\\\"value\\\":\\\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\\\",\\\"count\\\":1,\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:container:49c362e5df64433c720f8cb5b50cbd29\\\"}}]},{\\\"field\\\":\\\"origin\\\",\\\"displayName\\\":\\\"Environment\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"PROD\\\",\\\"count\\\":5}]},{\\\"field\\\":\\\"_entityType\\u241etypeNames\\\",\\\"displayName\\\":\\\"Type\\u241eSub Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":5},{\\\"value\\\":\\\"DATASET\\u241eModel\\\",\\\"count\\\":2},{\\\"value\\\":\\\"DATASET\\u241eTable\\\",\\\"count\\\":1},{\\\"value\\\":\\\"DATASET\\u241eSource\\\",\\\"count\\\":1}]},{\\\"field\\\":\\\"hasSiblings\\\",\\\"displayName\\\":\\\"hasSiblings\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":5}]},{\\\"field\\\":\\\"removed\\\",\\\"displayName\\\":\\\"removed\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"true\\\",\\\"count\\\":0}]},{\\\"field\\\":\\\"entity\\\",\\\"displayName\\\":\\\"Type\\\",\\\"aggregations\\\":[{\\\"value\\\":\\\"DATASET\\\",\\\"count\\\":5}]}],\\\"searchResults\\\":[{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"name\\\":\\\"dbt\\\"},\\\"properties\\\":{\\\"name\\\":\\\"users\\\",\\\"description\\\":\\\"Raw user records.\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"catalog_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"node_type\\\",\\\"value\\\":\\\"source\\\"},{\\\"key\\\":\\\"dbt_file_path\\\",\\\"value\\\":\\\"models/staging/sources.yml\\\"},{\\\"key\\\":\\\"catalog_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/catalog/v1.json\\\"},{\\\"key\\\":\\\"catalog_type\\\",\\\"value\\\":\\\"BASE TABLE\\\"},{\\\"key\\\":\\\"manifest_adapter\\\",\\\"value\\\":\\\"postgres\\\"},{\\\"key\\\":\\\"manifest_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"dbt_package_name\\\",\\\"value\\\":\\\"devguard_substrate\\\"},{\\\"key\\\":\\\"language\\\",\\\"value\\\":\\\"sql\\\"},{\\\"key\\\":\\\"dbt_unique_id\\\",\\\"value\\\":\\\"source.devguard_substrate.raw.users\\\"},{\\\"key\\\":\\\"manifest_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/manifest/v12.json\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Source\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":1,\\\"lineageColumns\\\":[\\\"user_id\\\"]},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"user_order_features\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"name\\\":\\\"dbt\\\"},\\\"properties\\\":{\\\"name\\\":\\\"user_order_features\\\",\\\"description\\\":\\\"\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"catalog_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"node_type\\\",\\\"value\\\":\\\"model\\\"},{\\\"key\\\":\\\"materialization\\\",\\\"value\\\":\\\"table\\\"},{\\\"key\\\":\\\"dbt_file_path\\\",\\\"value\\\":\\\"models/marts/user_order_features.sql\\\"},{\\\"key\\\":\\\"catalog_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/catalog/v1.json\\\"},{\\\"key\\\":\\\"catalog_type\\\",\\\"value\\\":\\\"BASE TABLE\\\"},{\\\"key\\\":\\\"manifest_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"manifest_adapter\\\",\\\"value\\\":\\\"postgres\\\"},{\\\"key\\\":\\\"dbt_package_name\\\",\\\"value\\\":\\\"devguard_substrate\\\"},{\\\"key\\\":\\\"language\\\",\\\"value\\\":\\\"sql\\\"},{\\\"key\\\":\\\"dbt_unique_id\\\",\\\"value\\\":\\\"model.devguard_substrate.user_order_features\\\"},{\\\"key\\\":\\\"manifest_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/manifest/v12.json\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Model\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":2,\\\"lineageColumns\\\":[\\\"user_id\\\"]},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"stg_users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:dbt\\\",\\\"name\\\":\\\"dbt\\\"},\\\"properties\\\":{\\\"name\\\":\\\"stg_users\\\",\\\"description\\\":\\\"\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"catalog_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"node_type\\\",\\\"value\\\":\\\"model\\\"},{\\\"key\\\":\\\"materialization\\\",\\\"value\\\":\\\"view\\\"},{\\\"key\\\":\\\"dbt_file_path\\\",\\\"value\\\":\\\"models/staging/stg_users.sql\\\"},{\\\"key\\\":\\\"catalog_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/catalog/v1.json\\\"},{\\\"key\\\":\\\"catalog_type\\\",\\\"value\\\":\\\"VIEW\\\"},{\\\"key\\\":\\\"manifest_version\\\",\\\"value\\\":\\\"1.12.0\\\"},{\\\"key\\\":\\\"manifest_adapter\\\",\\\"value\\\":\\\"postgres\\\"},{\\\"key\\\":\\\"dbt_package_name\\\",\\\"value\\\":\\\"devguard_substrate\\\"},{\\\"key\\\":\\\"language\\\",\\\"value\\\":\\\"sql\\\"},{\\\"key\\\":\\\"dbt_unique_id\\\",\\\"value\\\":\\\"model.devguard_substrate.stg_users\\\"},{\\\"key\\\":\\\"manifest_schema\\\",\\\"value\\\":\\\"https://schemas.getdbt.com/dbt/manifest/v12.json\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Model\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":2,\\\"lineageColumns\\\":[\\\"user_id\\\"]},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"user_order_features\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"name\\\":\\\"postgres\\\"},\\\"properties\\\":{\\\"name\\\":\\\"user_order_features\\\"},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Table\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":3,\\\"lineageColumns\\\":[\\\"user_id\\\"]},{\\\"entity\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\",\\\"name\\\":\\\"stg_users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"name\\\":\\\"postgres\\\"},\\\"properties\\\":{\\\"name\\\":\\\"stg_users\\\",\\\"customProperties\\\":[{\\\"key\\\":\\\"view_definition\\\",\\\"value\\\":\\\" SELECT user_id,\\\\n    email,\\\\n    country,\\\\n    signup_ts,\\\\n    is_active\\\\n   FROM raw.users\\\\n  WHERE is_active;\\\"},{\\\"key\\\":\\\"is_view\\\",\\\"value\\\":\\\"True\\\"}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"View\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"PASS\\\"}]},\\\"degree\\\":1,\\\"lineageColumns\\\":[\\\"user_id\\\"]}],\\\"offset\\\":0,\\\"returned\\\":5,\\\"hasMore\\\":false},\\\"metadata\\\":{\\\"queryType\\\":\\\"column-level-lineage\\\",\\\"groupedBy\\\":\\\"dataset\\\",\\\"fields\\\":{\\\"lineageColumns\\\":{\\\"description\\\":\\\"Columns in each dataset that have a lineage relationship with the source column\\\",\\\"semantics\\\":{\\\"downstream\\\":\\\"Columns derived from the source column\\\",\\\"upstream\\\":\\\"Columns that the source column depends on\\\"}}}}}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage_paths_between.json": {
+   "name": "pathfinder/get_lineage_paths_between.json",
+   "bytes": 2543,
+   "note": "Column-level path. The middle element is the real SQL.",
+   "written_at": "2026-08-01T10:59:06.525825+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"source_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n    \"target_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\",\n    \"direction\": \"downstream\",\n    \"source_column\": \"user_id\",\n    \"target_column\": \"user_id\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"metadata\\\":{\\\"queryType\\\":\\\"lineage-path-trace\\\",\\\"direction\\\":\\\"downstream\\\",\\\"pathType\\\":\\\"column-level\\\",\\\"fields\\\":{\\\"paths\\\":{\\\"description\\\":\\\"Array of lineage paths showing transformation chains from source to target\\\",\\\"structure\\\":\\\"Each path contains alternating entities (SCHEMA_FIELD or DATASET) and optional transformation QUERY entities\\\",\\\"queryEntities\\\":\\\"QUERY entities are returned as URNs only. Use get_entities(query_urn) to fetch SQL statement and other query details.\\\"}}},\\\"source\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\\\",\\\"column\\\":\\\"user_id\\\"},\\\"target\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"column\\\":\\\"user_id\\\"},\\\"pathCount\\\":1,\\\"paths\\\":[{\\\"path\\\":[{\\\"urn\\\":\\\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD),user_id)\\\",\\\"type\\\":\\\"SCHEMA_FIELD\\\",\\\"fieldPath\\\":\\\"user_id\\\",\\\"parent\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\"}},{\\\"urn\\\":\\\"urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8\\\",\\\"type\\\":\\\"QUERY\\\"},{\\\"urn\\\":\\\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD),user_id)\\\",\\\"type\\\":\\\"SCHEMA_FIELD\\\",\\\"fieldPath\\\":\\\"user_id\\\",\\\"parent\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\",\\\"type\\\":\\\"DATASET\\\"}},{\\\"urn\\\":\\\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),user_id)\\\",\\\"type\\\":\\\"SCHEMA_FIELD\\\",\\\"fieldPath\\\":\\\"user_id\\\",\\\"parent\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"type\\\":\\\"DATASET\\\"}},{\\\"urn\\\":\\\"urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD),user_id)\\\",\\\"type\\\":\\\"SCHEMA_FIELD\\\",\\\"fieldPath\\\":\\\"user_id\\\",\\\"parent\\\":{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\\\",\\\"type\\\":\\\"DATASET\\\"}}]}]}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/pathfinder/get_dataset_queries.json": {
+   "name": "pathfinder/get_dataset_queries.json",
+   "bytes": 847,
+   "note": "Real SQL touching the column, ingested rather than authored.",
+   "written_at": "2026-08-01T10:59:06.581807+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n    \"column\": \"user_id\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"start\\\":0,\\\"total\\\":1,\\\"count\\\":10,\\\"queries\\\":[{\\\"urn\\\":\\\"urn:li:query:view_5ba31a4e6865c40d527a49f38530cab135d382789d48bed978fab93a556c94d8\\\",\\\"properties\\\":{\\\"source\\\":\\\"SYSTEM\\\",\\\"statement\\\":{\\\"value\\\":\\\"SELECT\\\\n  user_id,\\\\n  email,\\\\n  country,\\\\n  signup_ts,\\\\n  is_active\\\\nFROM raw.users\\\\nWHERE\\\\n  is_active\\\",\\\"language\\\":\\\"SQL\\\"},\\\"lastModified\\\":{\\\"actor\\\":\\\"urn:li:corpuser:_ingestion\\\"}},\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"name\\\":\\\"postgres\\\"},\\\"subjects\\\":[\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\\\",\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\\"]}]}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/diagnostician/derived-root-cause.txt": {
+   "name": "diagnostician/derived-root-cause.txt",
+   "bytes": 334,
+   "note": "DERIVED from runtime evidence. The Diagnostician could not run \u2014 see its handoff.",
+   "written_at": "2026-08-01T10:59:06.583072+00:00",
+   "truncated_in_bundle": false,
+   "content": "raw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence \u2014 NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/surgeon/proposed.patch": {
+   "name": "surgeon/proposed.patch",
+   "bytes": 368,
+   "note": "Proposed diff, committed to devguard/fix-d6105859. Working tree untouched.",
+   "written_at": "2026-08-01T10:59:06.603267+00:00",
+   "truncated_in_bundle": false,
+   "content": "--- a/substrate/dbt/models/staging/stg_users.sql\n+++ b/substrate/dbt/models/staging/stg_users.sql\n@@ -4,7 +4,7 @@\n -- column to customer_id, this model fails to compile \u2014 a real dbt failure with a\n -- real error message, which is the runtime evidence the Watcher picks up.\n select\n-    user_id,\n+    customer_id as user_id,\n     email,\n     country,\n     signup_ts,\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/sentinel/patch-scan.json": {
+   "name": "sentinel/patch-scan.json",
+   "bytes": 162,
+   "note": "\u00a74 step 12 \u2014 the proposed diff, classified.",
+   "written_at": "2026-08-01T10:59:06.603882+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"files_touched\": [\n    \"substrate/dbt/models/staging/stg_users.sql\"\n  ],\n  \"added\": 1,\n  \"removed\": 1,\n  \"risk\": \"LOW\",\n  \"blocked\": false,\n  \"findings\": []\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/referee/validation.txt": {
+   "name": "referee/validation.txt",
+   "bytes": 1252,
+   "note": "The proposed fix built in a throwaway schema. Working tree untouched.",
+   "written_at": "2026-08-01T10:59:11.738721+00:00",
+   "truncated_in_bundle": false,
+   "content": "$ dbt run   (proposed fix, isolated schema analytics_devguard_check)\nexit code: 0\n\n10:59:08  Running with dbt=1.12.0\n10:59:09  Registered adapter: postgres=1.11.0\n10:59:09  Unable to do partial parsing because saved manifest not found. Starting full parse.\n10:59:10  Found 3 models, 2 sources, 477 macros\n10:59:10  \n10:59:10  Concurrency: 4 threads (target='dev')\n10:59:10  \n10:59:10  1 of 3 START sql view model analytics_devguard_check_staging.stg_orders ........ [RUN]\n10:59:10  2 of 3 START sql view model analytics_devguard_check_staging.stg_users ......... [RUN]\n10:59:10  2 of 3 OK created sql view model analytics_devguard_check_staging.stg_users .... [CREATE VIEW in 0.13s]\n10:59:10  1 of 3 OK created sql view model analytics_devguard_check_staging.stg_orders ... [CREATE VIEW in 0.14s]\n10:59:10  3 of 3 START sql table model analytics_devguard_check_marts.user_order_features  [RUN]\n10:59:11  3 of 3 OK created sql table model analytics_devguard_check_marts.user_order_features  [SELECT 1715 in 0.08s]\n10:59:11  \n10:59:11  Finished running 1 table model, 2 view models in 0 hours 0 minutes and 0.38 seconds (0.38s).\n10:59:11  \n10:59:11  Completed successfully\n10:59:11  \n10:59:11  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=3\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/magistrate/get_entities.json": {
+   "name": "magistrate/get_entities.json",
+   "bytes": 3341,
+   "note": "Owner lookup \u2014 read-only, from the graph.",
+   "written_at": "2026-08-01T10:59:11.856758+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"arguments\": {\n    \"urns\": [\n      \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    ]\n  },\n  \"ok\": true,\n  \"text\": \"[{\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\\\",\\\"name\\\":\\\"users\\\",\\\"platform\\\":{\\\"urn\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"name\\\":\\\"postgres\\\"},\\\"properties\\\":{\\\"name\\\":\\\"users\\\",\\\"description\\\":\\\"Raw user records ingested from the application database.\\\"},\\\"ownership\\\":{\\\"owners\\\":[{\\\"owner\\\":{\\\"urn\\\":\\\"urn:li:corpuser:datahub\\\",\\\"properties\\\":{\\\"active\\\":true,\\\"displayName\\\":\\\"DataHub\\\",\\\"title\\\":\\\"DataHub\\\"}},\\\"type\\\":\\\"NONE\\\",\\\"ownershipType\\\":{\\\"urn\\\":\\\"urn:li:ownershipType:__system__technical_owner\\\",\\\"type\\\":\\\"CUSTOM_OWNERSHIP_TYPE\\\",\\\"info\\\":{\\\"name\\\":\\\"Technical Owner\\\",\\\"description\\\":\\\"Involved in the production, maintenance, or distribution of the asset(s).\\\"}}}]},\\\"structuredProperties\\\":{\\\"properties\\\":[{\\\"structuredProperty\\\":{\\\"urn\\\":\\\"urn:li:structuredProperty:devguard.last_incident_id\\\",\\\"definition\\\":{\\\"displayName\\\":\\\"DevGuard last incident id\\\",\\\"qualifiedName\\\":\\\"devguard.last_incident_id\\\"}},\\\"values\\\":[{\\\"stringValue\\\":\\\"0f10f9f2-0891-4517-b79c-8c4e03c986ba\\\"}]},{\\\"structuredProperty\\\":{\\\"urn\\\":\\\"urn:li:structuredProperty:devguard.verified_at\\\",\\\"definition\\\":{\\\"displayName\\\":\\\"DevGuard verified at\\\",\\\"qualifiedName\\\":\\\"devguard.verified_at\\\"}},\\\"values\\\":[{\\\"stringValue\\\":\\\"2026-08-01T10:47:09.089430+00:00\\\"}]}]},\\\"subTypes\\\":{\\\"typeNames\\\":[\\\"Table\\\"]},\\\"health\\\":[{\\\"type\\\":\\\"INCIDENTS\\\",\\\"status\\\":\\\"FAIL\\\",\\\"message\\\":\\\"2 active incidents\\\",\\\"causes\\\":[\\\"ACTIVE_INCIDENTS\\\"]}],\\\"schemaMetadata\\\":{\\\"name\\\":\\\"devguard.raw.users\\\",\\\"platformUrn\\\":\\\"urn:li:dataPlatform:postgres\\\",\\\"fields\\\":[{\\\"fieldPath\\\":\\\"user_id\\\",\\\"nativeDataType\\\":\\\"BIGINT\\\",\\\"description\\\":\\\"Primary identifier for a user. Referenced by orders and by the ML feature build.\\\",\\\"nullable\\\":false,\\\"isPartOfKey\\\":true,\\\"editedDescription\\\":\\\"raw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the \\\",\\\"editedTags\\\":[\\\"devguard_incident_impacted\\\"]},{\\\"fieldPath\\\":\\\"country\\\",\\\"nativeDataType\\\":\\\"TEXT\\\",\\\"description\\\":\\\"ISO-3166 alpha-2 country code.\\\",\\\"nullable\\\":false},{\\\"fieldPath\\\":\\\"email\\\",\\\"nativeDataType\\\":\\\"TEXT\\\",\\\"description\\\":\\\"Contact email. Treated as PII.\\\",\\\"nullable\\\":false},{\\\"fieldPath\\\":\\\"is_active\\\",\\\"nativeDataType\\\":\\\"BOOLEAN\\\",\\\"nullable\\\":false},{\\\"fieldPath\\\":\\\"signup_ts\\\",\\\"nativeDataType\\\":\\\"TIMESTAMP WITH TIME ZONE\\\",\\\"nullable\\\":false}]},\\\"relatedDocuments\\\":{\\\"start\\\":0,\\\"count\\\":10,\\\"total\\\":4,\\\"documents\\\":[{\\\"urn\\\":\\\"urn:li:document:shared-b988bac2-7491-496e-9314-5491e0a74f8d\\\",\\\"type\\\":\\\"DOCUMENT\\\",\\\"info\\\":{\\\"title\\\":\\\"DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\"}},{\\\"urn\\\":\\\"urn:li:document:shared-afdb89cb-2e93-4bec-b662-b248764248af\\\",\\\"type\\\":\\\"DOCUMENT\\\",\\\"info\\\":{\\\"title\\\":\\\"DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\"}},{\\\"urn\\\":\\\"urn:li:document:shared-99088993-9f90-4fa9-b59c-4054251b710f\\\",\\\"type\\\":\\\"DOCUMENT\\\",\\\"info\\\":{\\\"title\\\":\\\"DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\"}},{\\\"urn\\\":\\\"urn:li:document:shared-7f391065-b01a-425f-ae96-2f76b91b575f\\\",\\\"type\\\":\\\"DOCUMENT\\\",\\\"info\\\":{\\\"title\\\":\\\"DevGuard D1 write-path smoke test\\\"}}]}}]\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/magistrate/autonomy-decision.json": {
+   "name": "magistrate/autonomy-decision.json",
+   "bytes": 508,
+   "note": "\u00a711.5's policy table, as applied to this change.",
+   "written_at": "2026-08-01T10:59:11.857191+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"risk\": \"LOW\",\n  \"mode\": \"NAMED_OWNER\",\n  \"allowed_action\": \"propose + validate; apply only after owner approval\",\n  \"approver\": \"asset owner from the DataHub graph\",\n  \"rationale\": \"Even a one-line fix changes a production model. DevGuard proposes and proves; a human decides.\",\n  \"owners\": [\n    {\n      \"urn\": \"urn:li:corpuser:datahub\",\n      \"display_name\": \"DataHub\",\n      \"ownership_type\": \"NONE\"\n    }\n  ],\n  \"target_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/magistrate/approval.json": {
+   "name": "magistrate/approval.json",
+   "bytes": 385,
+   "note": "\u00a74 step 15 \u2014 explicit, logged, identity recorded.",
+   "written_at": "2026-08-01T10:59:11.857438+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"incident_id\": \"D6105859\",\n  \"risk\": \"LOW\",\n  \"mode\": \"NAMED_OWNER\",\n  \"approver_urn\": \"urn:li:corpuser:datahub\",\n  \"approver_name\": \"DataHub Admin (local operator)\",\n  \"decided_at_utc\": \"2026-08-01T10:59:11.857281+00:00\",\n  \"note\": \"Reviewed the diff on devguard/fix-d6105859; validated in analytics_devguard_check before approval.\",\n  \"branch_reviewed\": \"devguard/fix-d6105859\"\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/referee/recovery.txt": {
+   "name": "referee/recovery.txt",
+   "bytes": 1116,
+   "note": "The exact signal that failed, re-run after the fix was applied.",
+   "written_at": "2026-08-01T10:59:15.328661+00:00",
+   "truncated_in_bundle": false,
+   "content": "$ dbt run   (AFTER remediation)\nexit code: 0\n\n10:59:13  Running with dbt=1.12.0\n10:59:13  Registered adapter: postgres=1.11.0\n10:59:14  Found 3 models, 2 sources, 477 macros\n10:59:14  \n10:59:14  Concurrency: 4 threads (target='dev')\n10:59:14  \n10:59:14  1 of 3 START sql view model analytics_staging.stg_orders ....................... [RUN]\n10:59:14  2 of 3 START sql view model analytics_staging.stg_users ........................ [RUN]\n10:59:14  2 of 3 OK created sql view model analytics_staging.stg_users ................... [CREATE VIEW in 0.17s]\n10:59:14  1 of 3 OK created sql view model analytics_staging.stg_orders .................. [CREATE VIEW in 0.17s]\n10:59:14  3 of 3 START sql table model analytics_marts.user_order_features ............... [RUN]\n10:59:14  3 of 3 OK created sql table model analytics_marts.user_order_features .......... [SELECT 1715 in 0.08s]\n10:59:14  \n10:59:14  Finished running 1 table model, 2 view models in 0 hours 0 minutes and 0.41 seconds (0.41s).\n10:59:14  \n10:59:14  Completed successfully\n10:59:14  \n10:59:14  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=3\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/scribe/artifact1-raiseIncident.json": {
+   "name": "scribe/artifact1-raiseIncident.json",
+   "bytes": 115,
+   "note": "\u00a78 artifact 1, raise half.",
+   "written_at": "2026-08-01T10:59:15.391446+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"data\": {\n    \"raiseIncident\": \"urn:li:incident:c2226569-9b88-4754-9a29-eef7b57c9b9c\"\n  },\n  \"extensions\": {}\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/scribe/artifact3-add_tags.json": {
+   "name": "scribe/artifact3-add_tags.json",
+   "bytes": 390,
+   "note": "Raw write-back response.",
+   "written_at": "2026-08-01T10:59:16.856849+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"tool\": \"add_tags\",\n  \"arguments\": {\n    \"tag_urns\": [\n      \"urn:li:tag:devguard_incident_impacted\"\n    ],\n    \"entity_urns\": [\n      \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    ],\n    \"column_paths\": [\n      \"user_id\"\n    ]\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"success\\\":true,\\\"message\\\":\\\"Successfully added 1 tag(s) to 1 entit(ies)\\\"}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/scribe/artifact3-update_description.json": {
+   "name": "scribe/artifact3-update_description.json",
+   "bytes": 1409,
+   "note": "Raw write-back response.",
+   "written_at": "2026-08-01T10:59:16.924857+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"tool\": \"update_description\",\n  \"arguments\": {\n    \"entity_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n    \"column_path\": \"user_id\",\n    \"description\": \"raw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence \\u2014 NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).\\n\\nRESOLVED. The exact signal that failed now passes.\\n\\nVERIFIED INCIDENT KNOWLEDGE \\u2014 WRITTEN BACK BY DEVGUARD\\nevidence: EV-D6105859-001, EV-D6105859-002, EV-D6105859-003, EV-D6105859-004, EV-D6105859-005, EV-D6105859-006, EV-D6105859-007, EV-D6105859-008, EV-D6105859-009, EV-D6105859-010, EV-D6105859-011, EV-D6105859-012, EV-D6105859-013, EV-D6105859-014, EV-D6105859-015, EV-D6105859-016, EV-D6105859-017, EV-D6105859-018, EV-D6105859-019, EV-D6105859-020, EV-D6105859-021, EV-D6105859-022, EV-D6105859-023, EV-D6105859-024\\nevidence-chain-digest: 860bf9725401cd1b\\nwritten_at_utc: 2026-08-01T10:59:16.799517+00:00\\ndevguard_version: 2.0-d6\"\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"success\\\":true,\\\"urn\\\":\\\"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\\\",\\\"column_path\\\":\\\"user_id\\\",\\\"message\\\":\\\"Description updated successfully\\\"}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/scribe/artifact2-save_document.json": {
+   "name": "scribe/artifact2-save_document.json",
+   "bytes": 3802,
+   "note": "Raw write-back response.",
+   "written_at": "2026-08-01T10:59:17.034763+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"tool\": \"save_document\",\n  \"arguments\": {\n    \"title\": \"DevGuard runbook \\u2014 user_id drift on devguard.raw.users\",\n    \"content\": \"# DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\n\\n## Root cause\\nraw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence \\u2014 NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).\\n\\n## How it was detected\\n- [EV-D6105859-001] `dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)\\n- [EV-D6105859-002] model stg_users failed to build (models/staging/stg_users.sql)\\n- [EV-D6105859-003] database reports column \\\"user_id\\\" does not exist\\n- [EV-D6105859-004] 1 downstream model(s) SKIPped \\u2014 not rebuilt, not dropped, therefore stale\\n- [EV-D6105859-005] raw.users now has columns: customer_id, email, country, signup_ts, is_active\\n- [EV-D6105859-006] MCP server offered 8 tools; document tools present\\n- [EV-D6105859-020] proposed fix BUILDS in isolated schema analytics_devguard_check (exit 0)\\n- [EV-D6105859-024] RECOVERY VERIFIED: `dbt run` exited 0 (PASS=3 ERROR=0); previously dbt run exited 1; stg_users failed on column user_id\\n\\n## Blast radius\\n- [EV-D6105859-010] 'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\\n- [EV-D6105859-011] catalog schema for stg_users has 5 columns: country, email, is_active, signup_ts, user_id\\n- [EV-D6105859-012] 7 downstream entities impacted within 5 hops of devguard.raw.users (dataset-level)\\n- [EV-D6105859-013] 5 entities carry column user_id downstream of devguard.raw.users (column-level)\\n- [EV-D6105859-014] blast radius terminates at registered ML model urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)\\n- [EV-D6105859-015] column-level path is 5 hops via column user_id\\n- [EV-D6105859-016] 1 catalog query references user_id (source: SYSTEM)\\n- [EV-D6105859-021] 1 owner(s) on devguard.raw.users: DataHub\\n\\n## Fix\\n- [EV-D6105859-017] root cause (derived, not model-produced): user_id renamed upstream\\n- [EV-D6105859-018] proposed user_id -> customer_id in substrate/dbt/models/staging/stg_users.sql (2 lines) on devguard/fix-d6105859\\n- [EV-D6105859-019] patch risk LOW across 1 file(s)\\n- [EV-D6105859-022] risk LOW -> NAMED_OWNER: propose + validate; apply only after owner approval\\n\\n## Recovery, verified\\n- `dbt run` exited 0 (PASS=3 ERROR=0)\\n- previously: dbt run exited 1; stg_users failed on column user_id\\n\\n## Approval\\n- approved by DataHub Admin (local operator) (urn:li:corpuser:datahub) at 2026-08-01T10:59:11.857281+00:00\\n- risk class: LOW\\n\\n---\\nVERIFIED INCIDENT KNOWLEDGE \\u2014 WRITTEN BACK BY DEVGUARD\\nevidence: EV-D6105859-001, EV-D6105859-002, EV-D6105859-003, EV-D6105859-004, EV-D6105859-005, EV-D6105859-006, EV-D6105859-007, EV-D6105859-008, EV-D6105859-009, EV-D6105859-010, EV-D6105859-011, EV-D6105859-012, EV-D6105859-013, EV-D6105859-014, EV-D6105859-015, EV-D6105859-016, EV-D6105859-017, EV-D6105859-018, EV-D6105859-019, EV-D6105859-020, EV-D6105859-021, EV-D6105859-022, EV-D6105859-023, EV-D6105859-024\\nevidence-chain-digest: 860bf9725401cd1b\\nwritten_at_utc: 2026-08-01T10:59:16.799517+00:00\\ndevguard_version: 2.0-d6\",\n    \"document_type\": \"Analysis\",\n    \"related_assets\": [\n      \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    ]\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"success\\\":true,\\\"urn\\\":\\\"urn:li:document:shared-7cb47d8f-d08c-4297-81cc-3b823f5d018c\\\",\\\"message\\\":\\\"Successfully created document: DevGuard runbook \\u2014 user_id drift on devguard.raw.users\\\",\\\"author\\\":\\\"__datahub_system\\\"}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/scribe/artifact4-add_structured_properties.json": {
+   "name": "scribe/artifact4-add_structured_properties.json",
+   "bytes": 568,
+   "note": "Raw write-back response.",
+   "written_at": "2026-08-01T10:59:17.166322+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"tool\": \"add_structured_properties\",\n  \"arguments\": {\n    \"entity_urns\": [\n      \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    ],\n    \"property_values\": {\n      \"urn:li:structuredProperty:devguard.verified_at\": [\n        \"2026-08-01T10:59:17.034861+00:00\"\n      ],\n      \"urn:li:structuredProperty:devguard.last_incident_id\": [\n        \"c2226569-9b88-4754-9a29-eef7b57c9b9c\"\n      ]\n    }\n  },\n  \"ok\": true,\n  \"text\": \"{\\\"success\\\":true,\\\"message\\\":\\\"Successfully added 2 structured propert(ies) to 1 entit(ies)\\\"}\",\n  \"error\": null\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/scribe/artifact1-updateIncidentStatus.json": {
+   "name": "scribe/artifact1-updateIncidentStatus.json",
+   "bytes": 72,
+   "note": "Incident resolved \u2014 written LAST.",
+   "written_at": "2026-08-01T10:59:17.216249+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"data\": {\n    \"updateIncidentStatus\": true\n  },\n  \"extensions\": {}\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/scribe/write-back-summary.json": {
+   "name": "scribe/write-back-summary.json",
+   "bytes": 2508,
+   "note": "\u00a78's per-artifact outcomes.",
+   "written_at": "2026-08-01T10:59:17.217096+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"performed\": true,\n  \"reason\": \"\",\n  \"incident_resolved\": true,\n  \"all_landed\": true,\n  \"artifacts\": [\n    {\n      \"number\": 3,\n      \"name\": \"column-level annotation\",\n      \"target_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)#user_id\",\n      \"outcome\": \"written\",\n      \"idempotency_key\": \"D6105859|column_annotation|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)#user_id\",\n      \"detail\": \"tag + description applied to the schema field\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/scribe/artifact3-update_description.json\"\n    },\n    {\n      \"number\": 2,\n      \"name\": \"verified post-mortem runbook (type: Analysis)\",\n      \"target_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n      \"outcome\": \"written\",\n      \"idempotency_key\": \"D6105859|runbook|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n      \"detail\": \"urn:li:document:shared-7cb47d8f-d08c-4297-81cc-3b823f5d018c\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/scribe/artifact2-save_document.json\"\n    },\n    {\n      \"number\": 4,\n      \"name\": \"structured incident facts\",\n      \"target_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n      \"outcome\": \"written\",\n      \"idempotency_key\": \"D6105859|structured_properties|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n      \"detail\": \"{\\\"success\\\":true,\\\"message\\\":\\\"Successfully added 2 structured propert(ies) to 1 entit(ies)\\\"}\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/scribe/artifact4-add_structured_properties.json\"\n    },\n    {\n      \"number\": 5,\n      \"name\": \"ownership signal\",\n      \"target_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n      \"outcome\": \"already_present\",\n      \"idempotency_key\": \"D6105859|ownership|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n      \"detail\": \"owned by DataHub; approval was routed to the existing owner\",\n      \"raw_ref\": \"\"\n    },\n    {\n      \"number\": 1,\n      \"name\": \"incident resolved\",\n      \"target_urn\": \"urn:li:incident:c2226569-9b88-4754-9a29-eef7b57c9b9c\",\n      \"outcome\": \"written\",\n      \"idempotency_key\": \"*|incident_resolved|urn:li:incident:c2226569-9b88-4754-9a29-eef7b57c9b9c\",\n      \"detail\": \"{\\\"data\\\": {\\\"updateIncidentStatus\\\": true}, \\\"extensions\\\": {}}\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/scribe/artifact1-updateIncidentStatus.json\"\n    }\n  ]\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/evidence-chain.json": {
+   "name": "evidence-chain.json",
+   "bytes": 12748,
+   "note": "\u00a77's chain for the full loop.",
+   "written_at": "2026-08-01T10:59:17.236246+00:00",
+   "truncated_in_bundle": false,
+   "content": "{\n  \"incident_id\": \"D6105859\",\n  \"digest\": \"3e29b49ad89e0d77\",\n  \"is_sufficient\": true,\n  \"items\": [\n    {\n      \"id\": \"EV-D6105859-001\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:03.148508Z\",\n      \"claim\": \"`dbt run` exited 1 (PASS=1 ERROR=1 SKIP=1)\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/watcher/dbt-run.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-002\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:03.148565Z\",\n      \"claim\": \"model stg_users failed to build (models/staging/stg_users.sql)\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/watcher/dbt-run.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-003\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:03.148574Z\",\n      \"claim\": \"database reports column \\\"user_id\\\" does not exist\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/watcher/dbt-run.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-004\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:03.148580Z\",\n      \"claim\": \"1 downstream model(s) SKIPped \\u2014 not rebuilt, not dropped, therefore stale\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/watcher/dbt-run.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-005\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:03.172800Z\",\n      \"claim\": \"raw.users now has columns: customer_id, email, country, signup_ts, is_active\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/watcher/column-probe.json\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-006\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:05.293795Z\",\n      \"claim\": \"MCP server offered 8 tools; document tools present\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/archivist/capabilities.json\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-007\",\n      \"source\": \"DATAHUB_DOCUMENT\",\n      \"trust\": \"UNTRUSTED_TEXT\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:05.389258Z\",\n      \"claim\": \"retrieved prior document urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f (injection screen: NONE)\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-99088993-9f90-4fa9-b59c-4054251b710f.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-008\",\n      \"source\": \"DATAHUB_DOCUMENT\",\n      \"trust\": \"UNTRUSTED_TEXT\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:05.389703Z\",\n      \"claim\": \"retrieved prior document urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af (injection screen: NONE)\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-afdb89cb-2e93-4bec-b662-b248764248af.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-009\",\n      \"source\": \"DATAHUB_DOCUMENT\",\n      \"trust\": \"UNTRUSTED_TEXT\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:05.390120Z\",\n      \"claim\": \"retrieved prior document urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d (injection screen: NONE)\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/archivist/document-urn_li_document_shared-b988bac2-7491-496e-9314-5491e0a74f8d.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-010\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:05.564486Z\",\n      \"claim\": \"'stg_users' resolves to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/cartographer/search-stg_users.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D6105859-011\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:05.643471Z\",\n      \"claim\": \"catalog schema for stg_users has 5 columns: country, email, is_active, signup_ts, user_id\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/cartographer/schema-stg_users.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D6105859-012\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:06.064713Z\",\n      \"claim\": \"7 downstream entities impacted within 5 hops of devguard.raw.users (dataset-level)\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D6105859-013\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:06.271503Z\",\n      \"claim\": \"5 entities carry column user_id downstream of devguard.raw.users (column-level)\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream-column.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D6105859-014\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:06.271541Z\",\n      \"claim\": \"blast radius terminates at registered ML model urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream.json\",\n      \"datahub_urn\": \"urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)\"\n    },\n    {\n      \"id\": \"EV-D6105859-015\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:06.525944Z\",\n      \"claim\": \"column-level path is 5 hops via column user_id\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage_paths_between.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D6105859-016\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:06.581934Z\",\n      \"claim\": \"1 catalog query references user_id (source: SYSTEM)\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/pathfinder/get_dataset_queries.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D6105859-017\",\n      \"source\": \"DEVGUARD_INFERENCE\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"DERIVED\",\n      \"collected_at\": \"2026-08-01T10:59:06.583084Z\",\n      \"claim\": \"root cause (derived, not model-produced): user_id renamed upstream\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/diagnostician/derived-root-cause.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-018\",\n      \"source\": \"DEVGUARD_INFERENCE\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"DERIVED\",\n      \"collected_at\": \"2026-08-01T10:59:06.603369Z\",\n      \"claim\": \"proposed user_id -> customer_id in substrate/dbt/models/staging/stg_users.sql (2 lines) on devguard/fix-d6105859\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/surgeon/proposed.patch\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-019\",\n      \"source\": \"DEVGUARD_INFERENCE\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"DERIVED\",\n      \"collected_at\": \"2026-08-01T10:59:06.603901Z\",\n      \"claim\": \"patch risk LOW across 1 file(s)\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/sentinel/patch-scan.json\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-020\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:11.738784Z\",\n      \"claim\": \"proposed fix BUILDS in isolated schema analytics_devguard_check (exit 0)\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/referee/validation.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-021\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:11.856928Z\",\n      \"claim\": \"1 owner(s) on devguard.raw.users: DataHub\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/magistrate/get_entities.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D6105859-022\",\n      \"source\": \"DEVGUARD_INFERENCE\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"DERIVED\",\n      \"collected_at\": \"2026-08-01T10:59:11.857199Z\",\n      \"claim\": \"risk LOW -> NAMED_OWNER: propose + validate; apply only after owner approval\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/magistrate/autonomy-decision.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D6105859-023\",\n      \"source\": \"REPO_STATIC\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:11.857447Z\",\n      \"claim\": \"approved by DataHub Admin (local operator) at 2026-08-01T10:59:11.857281+00:00\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/magistrate/approval.json\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-024\",\n      \"source\": \"RUNTIME\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:15.328731Z\",\n      \"claim\": \"RECOVERY VERIFIED: `dbt run` exited 0 (PASS=3 ERROR=0); previously dbt run exited 1; stg_users failed on column user_id\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/referee/recovery.txt\",\n      \"datahub_urn\": null\n    },\n    {\n      \"id\": \"EV-D6105859-025\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:17.217128Z\",\n      \"claim\": \"artifact 3 (column-level annotation): written\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/scribe/artifact3-update_description.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)#user_id\"\n    },\n    {\n      \"id\": \"EV-D6105859-026\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:17.217190Z\",\n      \"claim\": \"artifact 2 (verified post-mortem runbook (type: Analysis)): written\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/scribe/artifact2-save_document.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D6105859-027\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:17.217200Z\",\n      \"claim\": \"artifact 4 (structured incident facts): written\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/scribe/artifact4-add_structured_properties.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D6105859-028\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:17.217207Z\",\n      \"claim\": \"artifact 5 (ownership signal): already_present\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/scribe/write-back-summary.json\",\n      \"datahub_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n    },\n    {\n      \"id\": \"EV-D6105859-029\",\n      \"source\": \"DATAHUB_GRAPH\",\n      \"trust\": \"TRUSTED_SYSTEM\",\n      \"confidence\": \"OBSERVED\",\n      \"collected_at\": \"2026-08-01T10:59:17.217214Z\",\n      \"claim\": \"artifact 1 (incident resolved): written\",\n      \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/scribe/artifact1-updateIncidentStatus.json\",\n      \"datahub_urn\": \"urn:li:incident:c2226569-9b88-4754-9a29-eef7b57c9b9c\"\n    }\n  ]\n}\n"
+  },
+  "evidence/proof-pack/d6-loop-pass1/handoff-rail.json": {
+   "name": "handoff-rail.json",
+   "bytes": 8576,
+   "note": "\u00a76's envelopes, in order.",
+   "written_at": "2026-08-01T10:59:17.237951+00:00",
+   "truncated_in_bundle": false,
+   "content": "[\n  {\n    \"from_agent\": \"watcher\",\n    \"to_agent\": \"cartographer\",\n    \"incident_id\": \"D6105859\",\n    \"evidence_ids\": [\n      \"EV-D6105859-001\",\n      \"EV-D6105859-002\",\n      \"EV-D6105859-003\",\n      \"EV-D6105859-004\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"Observed a real failure in dbt run.\",\n    \"started_at\": \"2026-08-01T10:59:03.148008Z\",\n    \"ended_at\": \"2026-08-01T10:59:03.148594Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [],\n    \"duration_ms\": 0.6\n  },\n  {\n    \"from_agent\": \"archivist\",\n    \"to_agent\": \"cartographer\",\n    \"incident_id\": \"D6105859\",\n    \"evidence_ids\": [\n      \"EV-D6105859-006\",\n      \"EV-D6105859-007\",\n      \"EV-D6105859-008\",\n      \"EV-D6105859-009\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"PREVIOUS VERIFIED INCIDENT \\u2014 3 document(s) retrieved.\",\n    \"started_at\": \"2026-08-01T10:59:05.292169Z\",\n    \"ended_at\": \"2026-08-01T10:59:05.390172Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [\n      {\n        \"tool\": \"search_documents\",\n        \"arguments\": {\n          \"query\": \"user_id\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 67.87546999976257,\n        \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/archivist/search_documents.json\",\n        \"error\": null\n      },\n      {\n        \"tool\": \"grep_documents\",\n        \"arguments\": {\n          \"urns\": [\n            \"urn:li:document:shared-99088993-9f90-4fa9-b59c-4054251b710f\",\n            \"urn:li:document:shared-afdb89cb-2e93-4bec-b662-b248764248af\",\n            \"urn:li:document:shared-b988bac2-7491-496e-9314-5491e0a74f8d\"\n          ],\n          \"pattern\": \"user_id\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 23.64283599990813,\n        \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/archivist/grep_documents.json\",\n        \"error\": null\n      }\n    ],\n    \"duration_ms\": 98.0\n  },\n  {\n    \"from_agent\": \"cartographer\",\n    \"to_agent\": \"pathfinder\",\n    \"incident_id\": \"D6105859\",\n    \"evidence_ids\": [\n      \"EV-D6105859-010\",\n      \"EV-D6105859-011\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"Resolved 'stg_users' to urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD) and read 5 columns from the catalog.\",\n    \"started_at\": \"2026-08-01T10:59:05.390242Z\",\n    \"ended_at\": \"2026-08-01T10:59:05.643522Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [\n      {\n        \"tool\": \"search\",\n        \"arguments\": {\n          \"query\": \"stg_users\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 173.36231499984933,\n        \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/cartographer/search-stg_users.json\",\n        \"error\": null\n      },\n      {\n        \"tool\": \"list_schema_fields\",\n        \"arguments\": {\n          \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 78.40934500018193,\n        \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/cartographer/schema-stg_users.json\",\n        \"error\": null\n      }\n    ],\n    \"duration_ms\": 253.3\n  },\n  {\n    \"from_agent\": \"pathfinder\",\n    \"to_agent\": \"diagnostician\",\n    \"incident_id\": \"D6105859\",\n    \"evidence_ids\": [\n      \"EV-D6105859-012\",\n      \"EV-D6105859-013\",\n      \"EV-D6105859-014\",\n      \"EV-D6105859-015\",\n      \"EV-D6105859-016\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"7 impacted entities dataset-level, 5 carrying column user_id (terminates at urn:li:mlModel:(urn:li:dataPlatform:devguard_ml,devguard_churn_risk,PROD)).\",\n    \"started_at\": \"2026-08-01T10:59:05.643575Z\",\n    \"ended_at\": \"2026-08-01T10:59:06.582066Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [\n      {\n        \"tool\": \"get_lineage\",\n        \"arguments\": {\n          \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n          \"upstream\": false,\n          \"max_hops\": 5\n        },\n        \"ok\": true,\n        \"duration_ms\": 419.55519999964963,\n        \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream.json\",\n        \"error\": null\n      },\n      {\n        \"tool\": \"get_lineage\",\n        \"arguments\": {\n          \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n          \"upstream\": false,\n          \"max_hops\": 5,\n          \"column\": \"user_id\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 205.34534699982032,\n        \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage-downstream-column.json\",\n        \"error\": null\n      },\n      {\n        \"tool\": \"get_lineage_paths_between\",\n        \"arguments\": {\n          \"source_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n          \"target_urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)\",\n          \"direction\": \"downstream\",\n          \"source_column\": \"user_id\",\n          \"target_column\": \"user_id\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 253.51743100009116,\n        \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/pathfinder/get_lineage_paths_between.json\",\n        \"error\": null\n      },\n      {\n        \"tool\": \"get_dataset_queries\",\n        \"arguments\": {\n          \"urn\": \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\",\n          \"column\": \"user_id\"\n        },\n        \"ok\": true,\n        \"duration_ms\": 55.40636800014909,\n        \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/pathfinder/get_dataset_queries.json\",\n        \"error\": null\n      }\n    ],\n    \"duration_ms\": 938.5\n  },\n  {\n    \"from_agent\": \"diagnostician\",\n    \"to_agent\": \"scribe\",\n    \"incident_id\": \"D6105859\",\n    \"evidence_ids\": [],\n    \"decision\": \"BLOCKED\",\n    \"rationale\": \"No reasoner configured. The evidence chain is sufficient, so this is NOT a refusal \\u2014 the question was never asked.\",\n    \"started_at\": \"2026-08-01T10:59:06.582551Z\",\n    \"ended_at\": \"2026-08-01T10:59:06.582578Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [],\n    \"duration_ms\": 0.0\n  },\n  {\n    \"from_agent\": \"surgeon\",\n    \"to_agent\": \"sentinel\",\n    \"incident_id\": \"D6105859\",\n    \"evidence_ids\": [\n      \"EV-D6105859-018\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"Minimal fix on devguard/fix-d6105859, working tree untouched.\",\n    \"started_at\": \"2026-08-01T10:59:06.583133Z\",\n    \"ended_at\": \"2026-08-01T10:59:06.603416Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [],\n    \"duration_ms\": 20.3\n  },\n  {\n    \"from_agent\": \"referee\",\n    \"to_agent\": \"magistrate\",\n    \"incident_id\": \"D6105859\",\n    \"evidence_ids\": [\n      \"EV-D6105859-020\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"Validated against the real database in analytics_devguard_check.\",\n    \"started_at\": \"2026-08-01T10:59:06.603971Z\",\n    \"ended_at\": \"2026-08-01T10:59:11.738879Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [],\n    \"duration_ms\": 5134.9\n  },\n  {\n    \"from_agent\": \"magistrate\",\n    \"to_agent\": \"human\",\n    \"incident_id\": \"D6105859\",\n    \"evidence_ids\": [\n      \"EV-D6105859-021\",\n      \"EV-D6105859-022\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"LOW routed to DataHub.\",\n    \"started_at\": \"2026-08-01T10:59:11.738966Z\",\n    \"ended_at\": \"2026-08-01T10:59:11.857220Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [\n      {\n        \"tool\": \"get_entities\",\n        \"arguments\": {\n          \"urns\": [\n            \"urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)\"\n          ]\n        },\n        \"ok\": true,\n        \"duration_ms\": 116.94873400028882,\n        \"raw_ref\": \"evidence/proof-pack/d6-loop-pass1/magistrate/get_entities.json\",\n        \"error\": null\n      }\n    ],\n    \"duration_ms\": 118.3\n  },\n  {\n    \"from_agent\": \"referee\",\n    \"to_agent\": \"scribe\",\n    \"incident_id\": \"D6105859\",\n    \"evidence_ids\": [\n      \"EV-D6105859-024\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"The exact signal that failed now passes.\",\n    \"started_at\": \"2026-08-01T10:59:11.857637Z\",\n    \"ended_at\": \"2026-08-01T10:59:15.328798Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [],\n    \"duration_ms\": 3471.2\n  },\n  {\n    \"from_agent\": \"scribe\",\n    \"to_agent\": \"auditor\",\n    \"incident_id\": \"D6105859\",\n    \"evidence_ids\": [\n      \"EV-D6105859-025\",\n      \"EV-D6105859-026\",\n      \"EV-D6105859-027\",\n      \"EV-D6105859-028\",\n      \"EV-D6105859-029\"\n    ],\n    \"decision\": \"OK\",\n    \"rationale\": \"Write-back: 1 already_present, 4 written.\",\n    \"started_at\": \"2026-08-01T10:59:16.799259Z\",\n    \"ended_at\": \"2026-08-01T10:59:17.217251Z\",\n    \"tokens\": 0,\n    \"model\": null,\n    \"tool_calls\": [],\n    \"duration_ms\": 418.0\n  }\n]\n"
+  }
+ },
+ "missing": {
+  "prior_knowledge.time_to_root_cause_s": "the retrieved runbook does not record a time-to-root-cause \u2014 the Scribe's document template has no such section",
+  "metrics.cost_usd": "no model was invoked in this run (every handoff records model=null; the Diagnostician reports REASONER_UNAVAILABLE), so there is no cost to report \u2014 this is not a zero cost, it is an unmeasured one."
+ }
+}
