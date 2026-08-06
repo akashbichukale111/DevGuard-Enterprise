@@ -13,16 +13,19 @@ live infrastructure is a demonstration that can fail in front of an audience.
 
 ```bash
 git clone https://github.com/akashbichukale111/DevGuard-Enterprise.git
-cd DevGuard-Enterprise
+cd DevGuard-Enterprise/frontend
 
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-cd frontend && npm ci && cd ..
-
-make replay-serve      # builds bundles + static export, then serves
+npm ci && npm run dev
 ```
 
-Open <http://localhost:8000/command/>. Leave it running.
+Open <http://localhost:3000/command>. Leave it running.
+
+No Python, no backend, no catalog — the replay bundles are committed. If you would
+rather present from the static export (what the hosted demo serves):
+
+```bash
+cd frontend && NEXT_OUTPUT=export npm run build && npx --yes serve out
+```
 
 ---
 

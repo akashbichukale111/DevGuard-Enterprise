@@ -32,15 +32,22 @@ related asset starts from more knowledge than the last one.
 ## See it in 60 seconds
 
 The Command Center replays **real recorded runs** from committed proof packs —
-no DataHub, no database, no API key, no backend:
+no DataHub, no database, no API key, no backend, and no Python:
 
 ```bash
 git clone https://github.com/akashbichukale111/DevGuard-Enterprise.git
-cd DevGuard-Enterprise && pip install -r requirements.txt
-cd frontend && npm ci && cd .. && make replay-serve
+cd DevGuard-Enterprise/frontend
+npm ci && npm run dev
 ```
 
-Then open <http://localhost:8000/command/>.
+Then open <http://localhost:3000/command>.
+
+The replay bundles are committed, so nothing has to be generated first. To build
+the same thing as a static site instead — the form the hosted demo is deployed in:
+
+```bash
+cd frontend && NEXT_OUTPUT=export npm run build   # → frontend/out/
+```
 
 ![The Command Center replaying a completed remediation loop — nine agents, the evidence ledger, and the five write-back artifacts that landed in DataHub](evidence/d10/screenshots/d6-loop-pass2.png)
 
