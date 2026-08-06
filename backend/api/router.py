@@ -37,7 +37,7 @@ from opentelemetry import trace
 from opentelemetry.trace import format_trace_id
 from pydantic import BaseModel, ValidationError
 
-from backend.core import audit, cache, telemetry
+from backend.core import audit, cache, languages, telemetry
 from backend.core.ai_agent import AgentExecutionError
 from backend.core.mcp_client import get_mcp_client
 from backend.core.resilience import (
@@ -863,6 +863,33 @@ async def reject(scan_id: str, reason: Optional[str] = None):
     )
     _pending_approvals.pop(scan_id, None)
     return {"scan_id": scan_id, "status": "rejected", "reason": reason}
+
+
+# ===========================================================================
+# Supported languages
+# ===========================================================================
+@router.get("/languages")
+async def supported_languages():
+    """
+    The languages the Scanner pipeline actually supports.
+
+    Served from `backend.core.languages.LANGUAGES` — the same registry the
+    agent prompts and the upload extension mapping read — so the picker in the
+    UI cannot advertise a language the pipeline does not handle. Adding a
+    language is a one-line change to that registry, and this endpoint plus the
+    frontend follow automatically.
+    """
+    return {
+        "default": languages.DEFAULT_LANGUAGE,
+        "languages": [
+            {
+                "id": lang.id,
+                "label": lang.label,
+                "extensions": list(lang.extensions),
+            }
+            for lang in languages.LANGUAGES
+        ],
+    }
 
 
 # ===========================================================================

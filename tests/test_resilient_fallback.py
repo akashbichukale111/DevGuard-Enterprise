@@ -114,7 +114,7 @@ def spy_pipeline(monkeypatch):
     """Record the model override `run_pipeline` is asked for on each attempt."""
     calls: list = []
 
-    async def fake_pipeline(code, override_model=None):
+    async def fake_pipeline(code, override_model=None, language=None):
         calls.append(override_model)
         # The first attempt fails; the fallback attempt succeeds.
         if len(calls) == 1:
@@ -160,7 +160,7 @@ def test_the_primary_attempt_does_not_force_a_model(spy_pipeline):
 def test_an_open_breaker_skips_straight_to_the_fallback_model(monkeypatch):
     calls: list = []
 
-    async def fake_pipeline(code, override_model=None):
+    async def fake_pipeline(code, override_model=None, language=None):
         calls.append(override_model)
         return _result("m", "m")
 
@@ -230,7 +230,7 @@ def test_a_successful_primary_reports_the_model_the_pipeline_actually_used(
     Fixer, so PRIMARY_MODEL is an assumption. Reporting the Scanner's real
     `model_used` makes the attribute a measurement.
     """
-    async def fake_pipeline(code, override_model=None):
+    async def fake_pipeline(code, override_model=None, language=None):
         return _result("llama-3.3-70b-versatile", "llama-3.3-70b-versatile")
 
     monkeypatch.setattr(resilience, "run_pipeline", fake_pipeline)
@@ -249,7 +249,7 @@ def test_the_fallback_reports_the_model_that_really_served_it(span, monkeypatch)
     """
     calls: list = []
 
-    async def fake_pipeline(code, override_model=None):
+    async def fake_pipeline(code, override_model=None, language=None):
         calls.append(override_model)
         if len(calls) == 1:
             raise AgentExecutionError("scanner", "upstream 503")
@@ -269,7 +269,7 @@ def test_the_fallback_reports_the_model_that_really_served_it(span, monkeypatch)
 
 
 def test_total_failure_reports_served_by_none_and_reraises(span, monkeypatch):
-    async def always_fails(code, override_model=None):
+    async def always_fails(code, override_model=None, language=None):
         raise AgentExecutionError("scanner", "everything is down")
 
     monkeypatch.setattr(resilience, "run_pipeline", always_fails)
@@ -293,11 +293,11 @@ def test_run_pipeline_threads_the_override_into_the_fixer(monkeypatch):
     """
     seen: dict = {}
 
-    async def fake_scanner(code, k_context=4, override_model=None):
+    async def fake_scanner(code, k_context=4, override_model=None, language=None):
         seen["scanner"] = override_model
         return _result("recorded-by-scanner", "x").scan
 
-    async def fake_fixer(code, vulns, prior_feedback=None, override_model=None):
+    async def fake_fixer(code, vulns, prior_feedback=None, override_model=None, language=None):
         seen["fixer"] = override_model
         return FixResult(
             patched_code="fixed",
@@ -306,7 +306,7 @@ def test_run_pipeline_threads_the_override_into_the_fixer(monkeypatch):
             model_used=override_model or "unspecified",
         )
 
-    async def fake_validator(original_code, vulns, fix):
+    async def fake_validator(original_code, vulns, fix, language=None):
         return ValidationResult(
             eval_score=95,
             verdict=Verdict.PASS,
@@ -331,11 +331,11 @@ def test_no_override_leaves_severity_routing_alone(monkeypatch):
     """The default path must be unchanged — the override is opt-in only."""
     seen: dict = {}
 
-    async def fake_scanner(code, k_context=4, override_model=None):
+    async def fake_scanner(code, k_context=4, override_model=None, language=None):
         seen["scanner"] = override_model
         return _result("m", "m").scan
 
-    async def fake_fixer(code, vulns, prior_feedback=None, override_model=None):
+    async def fake_fixer(code, vulns, prior_feedback=None, override_model=None, language=None):
         seen["fixer"] = override_model
         return FixResult(
             patched_code="fixed",
@@ -344,7 +344,7 @@ def test_no_override_leaves_severity_routing_alone(monkeypatch):
             model_used="m",
         )
 
-    async def fake_validator(original_code, vulns, fix):
+    async def fake_validator(original_code, vulns, fix, language=None):
         return ValidationResult(
             eval_score=95, verdict=Verdict.PASS,
             reasoning="The patch parameterises the query and resolves the finding.",
@@ -371,11 +371,11 @@ def test_the_scanner_override_is_still_recorded_in_routing_decisions(monkeypatch
     `routing_decisions` is documented as "agent_name -> model_used, so routing is
     fully auditable". A silent degradation would make that record wrong.
     """
-    async def fake_scanner(code, k_context=4, override_model=None):
+    async def fake_scanner(code, k_context=4, override_model=None, language=None):
         r = _result(override_model or "default", "x")
         return r.scan
 
-    async def fake_fixer(code, vulns, prior_feedback=None, override_model=None):
+    async def fake_fixer(code, vulns, prior_feedback=None, override_model=None, language=None):
         return FixResult(
             patched_code="fixed",
             diff_summary="Parameterised the query.",
@@ -383,7 +383,7 @@ def test_the_scanner_override_is_still_recorded_in_routing_decisions(monkeypatch
             model_used=override_model or "default",
         )
 
-    async def fake_validator(original_code, vulns, fix):
+    async def fake_validator(original_code, vulns, fix, language=None):
         return ValidationResult(
             eval_score=95, verdict=Verdict.PASS,
             reasoning="The patch parameterises the query and resolves the finding.",

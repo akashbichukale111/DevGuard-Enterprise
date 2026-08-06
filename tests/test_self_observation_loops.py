@@ -122,7 +122,7 @@ def test_the_scan_pipeline_does_not_call_suggest_context_k():
 def test_the_pipeline_reports_context_k_as_unadjusted(monkeypatch):
     """`self_observation.context_k_adjusted` must not claim an adaptation that
     did not happen (the no-fabrication rule)."""
-    async def fake_scanner(code, k_context=4, override_model=None):
+    async def fake_scanner(code, k_context=4, override_model=None, language=None):
         return ScanResult(
             vulnerabilities=[
                 Vulnerability(
@@ -136,7 +136,7 @@ def test_the_pipeline_reports_context_k_as_unadjusted(monkeypatch):
             model_used="llama-3.3-70b-versatile",
         )
 
-    async def fake_fixer(code, vulns, prior_feedback=None, override_model=None):
+    async def fake_fixer(code, vulns, prior_feedback=None, override_model=None, language=None):
         return FixResult(
             patched_code="ok",
             diff_summary="Parameterised the query.",
@@ -144,7 +144,7 @@ def test_the_pipeline_reports_context_k_as_unadjusted(monkeypatch):
             model_used="llama-3.3-70b-versatile",
         )
 
-    async def fake_validator(original_code, vulns, fix):
+    async def fake_validator(original_code, vulns, fix, language=None):
         return ValidationResult(
             eval_score=95,
             verdict=Verdict.PASS,
@@ -260,7 +260,7 @@ def test_conservation_mode_is_reported_from_the_real_flag(monkeypatch):
     """`conservation_mode_active` must reflect the guardian, not a constant."""
     monkeypatch.setattr(ai_agent, "_safe_is_conservation_mode", lambda: True)
 
-    async def fake_scanner(code, k_context=4, override_model=None):
+    async def fake_scanner(code, k_context=4, override_model=None, language=None):
         return ScanResult(vulnerabilities=[], model_used="m")
 
     monkeypatch.setattr(ai_agent, "run_scanner", fake_scanner)

@@ -484,4 +484,11 @@ async def _invoke(
     telemetry.trace.get_current_span().set_attribute(
         "llm.model_id", override_model or "pipeline-routed"
     )
-    return await run_pipeline(request.code, override_model=override_model)
+    telemetry.trace.get_current_span().set_attribute("scan.language", request.language)
+    # `request.language` has always existed on ScanRequest and has always been
+    # part of the cache key, but it stopped here — run_pipeline had no language
+    # parameter, so every scan was prompted identically regardless of what the
+    # caller asked for. Forwarding it is what makes the field mean something.
+    return await run_pipeline(
+        request.code, override_model=override_model, language=request.language
+    )

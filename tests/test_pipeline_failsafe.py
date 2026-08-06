@@ -98,15 +98,15 @@ def agents(monkeypatch):
     calls = {"scanner": 0, "fixer": 0, "validator": 0}
     verdicts = [_validation(92, Verdict.PASS)]
 
-    async def fake_scanner(code, k_context=4, override_model=None):
+    async def fake_scanner(code, k_context=4, override_model=None, language=None):
         calls["scanner"] += 1
         return _scan()
 
-    async def fake_fixer(code, vulns, prior_feedback=None, override_model=None):
+    async def fake_fixer(code, vulns, prior_feedback=None, override_model=None, language=None):
         calls["fixer"] += 1
         return _fix()
 
-    async def fake_validator(original_code, vulns, fix):
+    async def fake_validator(original_code, vulns, fix, language=None):
         calls["validator"] += 1
         i = min(calls["validator"] - 1, len(verdicts) - 1)
         return verdicts[i]

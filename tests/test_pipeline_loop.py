@@ -80,17 +80,17 @@ def spy(monkeypatch):
     # Signature mirrors the real `run_scanner`, including `override_model` — the
     # resilience layer's degraded path forces a model through the whole pipeline,
     # so a mock without it would pass while the real call site raised TypeError.
-    async def fake_scanner(code, k_context=4, override_model=None):
+    async def fake_scanner(code, k_context=4, override_model=None, language=None):
         calls["scanner"] += 1
         calls.setdefault("scanner_override", []).append(override_model)
         return state["scan"]
 
-    async def fake_fixer(code, vulns, prior_feedback=None, override_model=None):
+    async def fake_fixer(code, vulns, prior_feedback=None, override_model=None, language=None):
         calls["fixer"] += 1
         fixer_feedback.append(prior_feedback)
         return _fix()
 
-    async def fake_validator(original_code, vulns, fix):
+    async def fake_validator(original_code, vulns, fix, language=None):
         calls["validator"] += 1
         i = min(calls["validator"] - 1, len(state["validations"]) - 1)
         return state["validations"][i]
