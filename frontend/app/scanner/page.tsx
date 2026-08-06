@@ -1,10 +1,11 @@
 // frontend/app/page.tsx
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import Editor, { type OnMount } from "@monaco-editor/react";
+import { Upload } from "lucide-react";
 
 // Side-effect import: points the Monaco loader at the self-hosted bundle in
 // public/monaco/vs instead of the jsdelivr CDN. Must precede the first mount.
@@ -35,6 +36,36 @@ const LANGUAGE_EXT: Record<LanguageId, string> = {
   typescript: "ts",
   java: "java",
 };
+
+// Mirrors the extension table in backend.core.languages. Used to infer the
+// language of an uploaded file so the picker follows the file rather than the
+// user having to set it twice.
+const EXT_TO_LANGUAGE: Record<string, LanguageId> = {
+  py: "python",
+  pyw: "python",
+  js: "javascript",
+  jsx: "javascript",
+  mjs: "javascript",
+  cjs: "javascript",
+  ts: "typescript",
+  tsx: "typescript",
+  mts: "typescript",
+  cts: "typescript",
+  java: "java",
+};
+
+const UPLOAD_ACCEPT = Object.keys(EXT_TO_LANGUAGE)
+  .map((e) => `.${e}`)
+  .join(",");
+
+// Matches ScanRequest.code's max_length. Rejecting here gives an instant, clear
+// message instead of a 422 from the API after an upload round trip.
+const MAX_CODE_BYTES = 50_000;
+
+function languageForFilename(name: string): LanguageId | null {
+  const ext = name.slice(name.lastIndexOf(".") + 1).toLowerCase();
+  return EXT_TO_LANGUAGE[ext] ?? null;
+}
 
 // Realistic vulnerable snippet shown as a hint — SQLi (CWE-89) + XSS (CWE-79),
 // which lines up with the live status copy so the demo tells one coherent story.
@@ -126,8 +157,51 @@ export default function AgentWorkspace() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [exiting, setExiting] = useState(false);
+  // Name of the uploaded file, so the editor tab shows what is being scanned
+  // instead of a generic "untitled".
+  const [filename, setFilename] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isScanning = scan.phase === "scanning" || submitting;
+
+  // Read a source file into the editor and follow its extension for the
+  // language. Everything happens in the browser — the file is never uploaded
+  // as a file; its text becomes the same `code` the editor already posts, so
+  // this rides the existing /scan contract rather than adding an endpoint.
+  const handleFile = useCallback(async (file: File) => {
+    setSubmitError(null);
+
+    const inferred = languageForFilename(file.name);
+    if (!inferred) {
+      setSubmitError(
+        `Unsupported file type. DevGuard scans ${Object.values(LANGUAGES)
+          .map((l) => l.label)
+          .join(", ")} sources.`
+      );
+      return;
+    }
+    if (file.size > MAX_CODE_BYTES) {
+      setSubmitError(
+        `That file is ${(file.size / 1024).toFixed(0)} KB. The scanner accepts up to ${
+          MAX_CODE_BYTES / 1000
+        } KB of source at a time.`
+      );
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      if (text.trim().length === 0) {
+        setSubmitError("That file is empty — there is nothing to scan.");
+        return;
+      }
+      setCode(text);
+      setLanguage(inferred);
+      setFilename(file.name);
+    } catch {
+      setSubmitError("Could not read that file.");
+    }
+  }, []);
 
   // Effective source: what the user typed, else the sample snippet (so hitting
   // "Run" on an empty editor still gives judges a working demo).
@@ -239,15 +313,44 @@ export default function AgentWorkspace() {
                       <span className="h-2.5 w-2.5 rounded-full bg-rose-400/70" />
                       <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
                       <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
-                      <span className="ml-3 text-xs font-medium text-slate-400">
-                        untitled.{LANGUAGE_EXT[language]}
+                      <span className="ml-3 truncate text-xs font-medium text-slate-400">
+                        {filename ?? `untitled.${LANGUAGE_EXT[language]}`}
                       </span>
                     </div>
-                    <LanguagePicker
-                      value={language}
-                      onChange={setLanguage}
-                      disabled={isScanning}
-                    />
+                    <div className="flex items-center gap-2">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept={UPLOAD_ACCEPT}
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) void handleFile(f);
+                          // Reset so re-picking the same file fires onChange.
+                          e.target.value = "";
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isScanning}
+                        title="Load a source file into the editor"
+                        className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs font-medium text-slate-300 transition-colors hover:bg-white/[0.09] disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        <Upload className="h-3.5 w-3.5" />
+                        Upload file
+                      </button>
+                      <LanguagePicker
+                        value={language}
+                        onChange={(l) => {
+                          setLanguage(l);
+                          // The filename no longer describes the buffer once
+                          // the language is changed by hand.
+                          setFilename(null);
+                        }}
+                        disabled={isScanning}
+                      />
+                    </div>
                   </div>
 
                   {/* Editor + laser overlay */}
