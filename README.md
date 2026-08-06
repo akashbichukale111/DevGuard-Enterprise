@@ -18,7 +18,7 @@ related asset starts from more knowledge than the last one.
 
 [![CI](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-676%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-766%20passing-brightgreen.svg)](tests/)
 [![DataHub](https://img.shields.io/badge/DataHub-v1.6.0-1890FF.svg)](https://datahubproject.io/)
 [![MCP](https://img.shields.io/badge/MCP-mcp--server--datahub%400.6.0-6E56CF.svg)](https://modelcontextprotocol.io/)
 [![SigNoz](https://img.shields.io/badge/SigNoz-v0.135.0-E75536.svg)](https://signoz.io/)
@@ -26,6 +26,20 @@ related asset starts from more knowledge than the last one.
 [![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org/)
 
 </div>
+
+---
+
+<details>
+<summary><b>Contents</b></summary>
+
+**Start here** &nbsp; [See it in 60 seconds](#see-it-in-60-seconds) &nbsp;·&nbsp; [The platform](#the-platform--three-modules-one-evidence-model) &nbsp;·&nbsp; [Quick start](#quick-start) &nbsp;·&nbsp; [Installation](#installation)  
+**What it does** &nbsp; [Overview](#overview) &nbsp;·&nbsp; [The problem](#the-problem) &nbsp;·&nbsp; [How it works](#how-it-works) &nbsp;·&nbsp; [What it writes back to DataHub](#what-it-writes-back-to-datahub) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Architecture](#architecture)  
+**The modules** &nbsp; [Code Scanner](#code-scanner) &nbsp;·&nbsp; [Nexus Commander](#nexus-commander) &nbsp;·&nbsp; [Demo](#demo--replay-a-real-recorded-run)  
+**Proof** &nbsp; [Evidence](#evidence) &nbsp;·&nbsp; [Evaluation](#evaluation) &nbsp;·&nbsp; [Benchmarks](#benchmarks) &nbsp;·&nbsp; [Examples](#examples) &nbsp;·&nbsp; [Reproducibility](#reproducibility) &nbsp;·&nbsp; [Screenshots](#screenshots)  
+**Operating it** &nbsp; [Deployment](#deployment) &nbsp;·&nbsp; [Security model](#security-model) &nbsp;·&nbsp; [Troubleshooting](#troubleshooting) &nbsp;·&nbsp; [FAQ](#faq)  
+**Project** &nbsp; [Technology stack](#technology-stack) &nbsp;·&nbsp; [Project structure](#project-structure) &nbsp;·&nbsp; [Limitations](#limitations) &nbsp;·&nbsp; [Roadmap](#roadmap) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [AI-assisted development](#ai-assisted-development) &nbsp;·&nbsp; [License](#license)  
+
+</details>
 
 ---
 
@@ -72,12 +86,46 @@ first pass wrote — four documents, straight out of the catalog.
 
 ---
 
-<details>
-<summary><b>Contents</b></summary>
+---
 
-[Overview](#overview) · [Problem](#the-problem) · [How it works](#how-it-works) · [Architecture](#architecture) · [Screenshots](#screenshots) · [Demo](#demo--replay-a-real-recorded-run) · [Quick start](#quick-start) · [Installation](#installation) · [Features](#features) · [Technology stack](#technology-stack) · [Evidence](#evidence) · [Evaluation](#evaluation) · [Benchmarks](#benchmarks) · [Reproducibility](#reproducibility) · [Project structure](#project-structure) · [Deployment](#deployment) · [Security model](#security-model) · [Limitations](#limitations) · [Roadmap](#roadmap) · [Acknowledgements](#acknowledgements) · [License](#license)
+## The platform — three modules, one evidence model
 
-</details>
+DevGuard ships as one application with three entry points. They share a design
+rule rather than a codebase: **nothing appears on screen that was not produced
+by a real execution**, and anything unmeasured renders `N/A` with the reason
+attached rather than a plausible-looking zero.
+
+| Module | Route | What it does | Needs |
+|---|---|---|---|
+| **Enterprise** *(flagship)* | `/command` | The governed incident loop against a real DataHub catalog — detect, prove, fix under an owner-routed gate, verify, write back. Replays committed proof packs with **zero infrastructure**. | Nothing to replay. Full stack to run live. |
+| **Code Scanner** | `/scanner` | Scanner → Fixer → Validator over a snippet, an uploaded file, a ZIP archive or a public repository. | Backend + a Groq API key |
+| **Nexus Commander** | `/nexus` | Five self-observation modules over the platform's own telemetry, runnable concurrently. | Backend only |
+
+```mermaid
+flowchart LR
+    U((Operator)) --> LP[Platform entry]
+
+    LP --> ENT["Enterprise · /command<br/>governed incident loop"]
+    LP --> SCN["Code Scanner · /scanner<br/>scan → fix → validate"]
+    LP --> NEX["Nexus · /nexus<br/>5 self-observation modules"]
+
+    ENT --> DH[(DataHub catalog)]
+    ENT --> PP[[Proof packs]]
+    PP --> RP["Replay bundles<br/>zero infrastructure"]
+
+    SCN --> API["FastAPI backend"]
+    NEX --> API
+    API --> OTEL[[OpenTelemetry]]
+    OTEL --> SZ[(SigNoz)]
+
+    style ENT stroke:#a78bfa
+    style SCN stroke:#06b6d4
+    style NEX stroke:#f43f5e
+```
+
+The Enterprise module is the one this project is built around, and the rest of
+this README is mostly about it. The other two are documented in
+[Code Scanner](#code-scanner) and [Nexus Commander](#nexus-commander).
 
 ---
 
@@ -315,7 +363,7 @@ pip install -r requirements.txt
 cd frontend && npm ci && cd ..
 
 make doctor    # reports exactly what is present and what is missing
-make test      # 676 tests — no key, no collector, no network
+make test      # 766 tests — no key, no collector, no network
 make replay    # build replay bundles from the committed proof packs
 ```
 
@@ -374,10 +422,112 @@ Each path is documented step by step in **[docs/INSTALLATION.md](docs/INSTALLATI
 - Hash-chained, tamper-evident audit trail
 
 **Engineering**
-- 676 tests running in CI on every push with no key, no collector and no network
+- 766 tests running in CI on every push with no key, no collector and no network
 - Secret scanning over the working tree *and* the full git history
 - Dependency advisory reporting on every push
 - `make doctor` preflight that names every missing prerequisite and how to satisfy it
+
+---
+
+## Code Scanner
+
+`/scanner` — a three-agent reflection loop over source code. It is a separate
+pipeline from the Enterprise agents and has its own Validator, which reviews a
+proposed patch; the Enterprise `Referee` verifies a recovery. Different scope,
+different component.
+
+```
+Scanner Agent  ──▶  Fixer Agent  ──▶  Validator Agent  ──┐
+   detect              patch            adversarial       │  verdict = fail
+   CWE + severity      minimal diff     review            │  and attempts left
+       ▲                                                  │
+       └──────────────  reflection, max 3 attempts  ◀──────┘
+```
+
+The Validator is skeptical by default and returns a verdict, an eval score, the
+CWE ids it considers unresolved, and feedback the Fixer must address on the next
+attempt. The loop converges or stops at three attempts — it never silently
+accepts a patch.
+
+**Four ways to get code in**
+
+| Input | Endpoint | Notes |
+|---|---|---|
+| Paste into the editor | `POST /scan` | Monaco editor, served from this origin — no CDN |
+| Upload a source file | `POST /scan` | Read in the browser; the extension selects the language |
+| Upload a ZIP archive | `POST /scan/zip` | Read in memory, never extracted to disk |
+| Public repository | `POST /scan/repository` | Shallow clone, scanned, then deleted |
+
+**Languages** — Python, JavaScript, TypeScript and Java. The language is not
+cosmetic: it reaches the Scanner, Fixer and Validator prompts, and it is part of
+the cache key, so the same bytes scanned as Java and as Python are two different
+scans. The registry in [`backend/core/languages.py`](backend/core/languages.py)
+is the single source of truth, served at `GET /languages` so the UI cannot
+advertise a language the pipeline does not handle.
+
+**Retrieval** — 16 CWE classes are held in a knowledge base and retrieved as
+prompt context ([`backend/core/rag_store.py`](backend/core/rag_store.py)). The
+model is not limited to those 16; they are the grounding context, not an
+allowlist.
+
+**Project scans are bounded on purpose.** Every collected file is a full
+Scanner → Fixer → Validator run, so an unbounded repository walk is both a cost
+incident and a denial-of-service vector. Collection caps at 25 files after
+pruning dependency, build and minified paths, and whatever the cap leaves out is
+reported as `source_files_found` and `truncated` rather than dropped quietly.
+
+**Both inputs are treated as hostile**, because both are:
+
+| Vector | Handling |
+|---|---|
+| Zip slip | Entries with absolute paths or `..` are rejected, not sanitised |
+| Zip bombs | Uncompressed sizes checked from archive metadata *before* decompressing, and re-checked against real bytes |
+| Archived symlinks | Skipped, so a link at `/etc/shadow` cannot make a scan read host files |
+| SSRF | `https://` only, on a host allowlist; `file://`, `git://`, `ssh://`, localhost, RFC1918 and the cloud metadata endpoint are all unreachable |
+| Credential leakage | Credentials and ports in a repository URL are refused; the clone URL is rebuilt from parsed components so a query string cannot smuggle a git option |
+| Argument injection | `git` runs through an argument list, never a shell, with credential prompts disabled |
+
+A run where every file failed reports `failed` — not `complete` with zero
+findings, which would read as a clean bill of health for code that never
+reached the model. Partial failures report `complete_with_errors`, and finding
+totals count only files that were actually analysed.
+
+Covered by [`tests/test_project_scan.py`](tests/test_project_scan.py) and
+[`tests/test_project_scan_api.py`](tests/test_project_scan_api.py).
+
+---
+
+## Nexus Commander
+
+`/nexus` — five modules that observe the platform's own behaviour, runnable
+individually or concurrently.
+
+| Module | Role | What it does |
+|---|---|---|
+| **Omni-Heal** | Autonomous Code Remediation | Runs the Scanner → Fixer → Validator reflection loop and streams the resulting diff back |
+| **FinOps Agent** | Autonomous Cost Controller | Reads LLM spend trends and recommends OTel sampling-ratio adjustments before budget pressure forces a model downgrade |
+| **Pre-Cog Ops** | Future-State Predictor | Extrapolates error-rate and memory drift across a rolling horizon to forecast circuit-breaker trips and OOM risk |
+| **Truth Serum Agent** | LLM Hallucination Judge | Cross-examines the Scanner's own findings, flagging low-confidence or fabricated vulnerabilities before they reach the Fixer |
+| **Executive SRE Commander** | Mobile Sync & Incident Digest | Aggregates the other four into one incident brief |
+
+Every panel carries a **data-source badge**, computed from the `data_source`
+field the backend actually returned rather than chosen by the UI:
+
+| Badge | Meaning |
+|---|---|
+| **Live** | Retrieved from SigNoz |
+| **Local** | Really measured in this process, but by an in-process heuristic rather than retrieved from SigNoz — deliberately *not* badged Live |
+| **Partial** | Some fields real, some synthetic; the panel names which |
+| **Simulated** | Synthetic |
+| **Unlabelled** | The response carried no `data_source` — shown rather than assumed |
+
+That `Local` / `Live` distinction is the point of the label, not a hedge:
+several of these modules are simulators, and they say so on screen instead of
+presenting themselves as live measurements.
+
+Panels render **"No run yet"** until a run returns real data. They never show
+sample or placeholder figures to fill space, which is why the page looks empty
+before you press anything — that is the honest state, not a loading bug.
 
 ---
 
@@ -463,13 +613,40 @@ Full results and per-run raw data: **[examples/ablation/](examples/ablation/)**.
 
 ---
 
+## Examples
+
+Everything a reviewer needs to judge output quality **without running anything**
+is committed.
+
+| Path | What is in it |
+|---|---|
+| [`evidence/proof-pack/`](evidence/proof-pack/) | 10 recorded runs. Each holds every MCP request and response, evidence items, agent handoffs, write-back payloads and the returned URNs. |
+| [`frontend/public/replay/`](frontend/public/replay/) | 8 replay bundles built from those packs — what the Command Center reads. CI fails if they drift from their source. |
+| [`examples/eval/`](examples/eval/) | Fault-injection suite results, per-fault, including the negative control. |
+| [`examples/ablation/`](examples/ablation/) | Retrieval on/off study, N=5 per arm, with raw per-run data. |
+| [`evidence/d10/screenshots/`](evidence/d10/screenshots/) | Command Center captures of a completed loop and a refusal. |
+
+The recorded runs are chosen to show the failure modes, not just the happy path:
+
+| Run | What it demonstrates |
+|---|---|
+| `d6-loop-pass2` | A complete remediation with all five write-back artifacts landing |
+| `d5-refusal` | The Diagnostician declining on the control fault and naming the missing evidence class |
+| `d6-fail-the-fix` | A deliberately bad patch — **nothing is written back**, which is the point |
+| `d6-dry-run` | The exact payloads that *would* be sent, sent nowhere |
+| `d4-evidence-chain` | The evidence chain in isolation |
+
+Open any of them in the Command Center with the run picker in the top right.
+
+---
+
 ## Reproducibility
 
 Everything below runs on a clean clone with **no API key, no catalog, no collector and no network**:
 
 ```bash
 make doctor              # what is present, what is missing, what to do about it
-make test                # 676 tests
+make test                # 766 tests
 make replay              # replay bundles from the committed proof packs
 make replay-build        # static export of the Command Center
 make verify-replay-ui    # drive the built site in a real browser and assert
@@ -515,7 +692,7 @@ DevGuard-Enterprise/
 │   └── components/
 ├── evidence/                proof packs and captured artifacts
 ├── examples/                ablation study, evaluation results
-├── tests/                   676 tests
+├── tests/                   766 tests
 ├── scripts/                 verification, reproduction and demo scripts
 ├── substrate/               PostgreSQL seed, dbt project, ML model
 ├── recipes/                 DataHub ingestion recipes
@@ -591,6 +768,81 @@ Stated plainly, because a claim a reviewer can disprove costs more than the feat
 - **The scanner's accuracy benchmark has never been run to an artifact**, so no accuracy figure is published anywhere. The UI shows "accuracy not measured" until one exists, and that artifact is the only route by which a number can reach the API or the UI.
 - **Container images are defined but not built end to end** in the capture environment, whose egress policy blocks the Debian and PyPI mirrors the builds need. Run the backend and frontend directly if you hit the same.
 - **The RAG store falls back to lexical overlap.** The pinned `chromadb` and `sentence-transformers` backends are not importable in this environment; retrieval remains deterministic and relevant but is not semantic.
+
+---
+
+## FAQ
+
+**Do I need a DataHub instance to try this?**
+No. The Command Center replays committed proof packs with no catalog, no
+database, no backend and no API key — `cd frontend && npm ci && npm run dev`,
+then open `/command`. A live catalog is only needed to run the loop yourself.
+
+**Do I need an API key?**
+Only for `POST /scan` and the ZIP/repository scans, which call a model. Every
+other surface — the Command Center, Nexus, the whole test suite, `make doctor`,
+`make replay` — runs without one. CI runs with no key on purpose, because that
+is the state a reviewer's machine is in on a clean clone.
+
+**Is the Command Center showing live data?**
+No, and it says so: a persistent `REPLAY OF RECORDED RUN — NOT LIVE` banner sits
+above the incident header. The numbers are read out of proof packs committed to
+this repository.
+
+**Why does the Diagnostician say `REASONER_UNAVAILABLE` in the recorded runs?**
+Because no model was reachable when they were recorded. All 49 handoff records
+carry `model=null, tokens=0`. Those root causes were derived deterministically
+from runtime evidence, and each artifact says so. The refusal path and the
+evidence rule are proven; the quality of model reasoning is not.
+
+**Why do costs and tokens show `N/A` instead of `0`?**
+Because nothing was measured, and an unmeasured value is not a zero. A zero cost
+would be a claim that inference was free.
+
+**Is this multi-agent system just one prompt with nine names?**
+Eight of the nine agents make no model call at all. Each has a tool allowlist
+enforced in code before a request reaches the wire, and asserted in tests. The
+Diagnostician — the only one that reasons — holds zero tools, so text injected
+into a catalog description cannot cause a tool call.
+
+**Why is 3D lineage / a chat interface / autonomous remediation not here?**
+Deliberate. 2D lineage is more legible at video resolution and under
+compression; a chatbot front door is an explicit anti-goal; and remediation
+always passes through an owner-routed human gate. See [Limitations](#limitations).
+
+**Can it scan my private repository?**
+Not currently. Repository scanning accepts public `https://` URLs on a host
+allowlist, and credentials in a URL are refused outright.
+
+**Why does Nexus look empty when I open it?**
+Panels render "No run yet" until a run returns real data — they never fill space
+with sample figures. Press **Initiate God Mode** to run all five concurrently.
+
+**Is the ablation a positive result?**
+No. With retrieval on, the median time-to-root-cause was *slower*
+(5.14 s vs 4.87 s over N=5 per arm). Both arms reached the root cause the same
+way, so that delta is the **cost** of retrieval and says nothing about its
+benefit. It is published because it was measured, not because it flatters.
+
+---
+
+## Troubleshooting
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `Network error reaching the pipeline.` on Scanner | Nothing is listening on the API base | Start the backend: `python -m uvicorn backend.main:app --port 8000`. This message means the fetch itself threw, not that an endpoint is missing. |
+| `DevGuard pipeline is unreachable. Retry in a moment.` | Backend is up, but the scan returned 5xx — usually a missing or rejected `GROQ_API_KEY` | Set `GROQ_API_KEY` in `.env`. Check the backend log for the underlying error. |
+| Editor stuck on "Loading editor…" | Monaco failed to load | Monaco is served from this origin, staged into `public/monaco/` by the `prebuild` hook. If the folder is missing, run `npm ci` then `npm run build` — never `playwright install`-style CDN fetches. |
+| `ModuleNotFoundError: No module named 'backend'` | Running pytest from the wrong directory or interpreter | Run from the repository root with the interpreter that installed `requirements.txt`: `python -m pytest`. |
+| `AttributeError: '_IncludedRouter' object has no attribute 'path'` | `fastapi` was bumped past `0.136.0` without upgrading the OTel instrumentation | Keep the pin. The reasoning is written out at the top of [`requirements.txt`](requirements.txt). |
+| Nexus panels stay on "No run yet" after pressing a button | Backend unreachable, or CORS blocked | Confirm `GET /slo-status` answers on the API base. These modules need no API key. |
+| Repository scan rejected with "Host … is not allowed" | The SSRF allowlist | Only `https://` on github.com, gitlab.com, bitbucket.org or codeberg.org. This is a security boundary, not a config gap. |
+| Replay bundles missing or stale | `frontend/public/replay/` not built | `make replay`. CI enforces that the committed bundles match the proof packs. |
+| `make test` collects 0 tests | Dependencies not installed | `pip install -r requirements.txt`. `make doctor` names every missing prerequisite. |
+| Traces absent from SigNoz | No collector reachable | Telemetry is fail-safe by design — a scan never depends on it. Verify with `python scripts/verify_otel.py`. |
+
+`make doctor` is the first thing to run when something is wrong: it reports what
+is present, what is missing, and what each missing piece disables.
 
 ---
 
