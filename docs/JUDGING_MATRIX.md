@@ -15,6 +15,7 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 | Column-level tag + description on a schema field | [`artifact3-add_tags.json`](../evidence/proof-pack/d6-loop-pass2/scribe/artifact3-add_tags.json) | — |
 | Structured properties, definitions registered first | [`artifact4-add_structured_properties.json`](../evidence/proof-pack/d6-loop-pass2/scribe/artifact4-add_structured_properties.json) | — |
 | Ownership signal | [`write-back-summary.json`](../evidence/proof-pack/d6-loop-pass2/scribe/write-back-summary.json) | — |
+| **Paginated lineage traversal, cycle-safe** | [`backend/v2/agents/pathfinder.py`](../backend/v2/agents/pathfinder.py) · [`tests/test_lineage_pagination.py`](../tests/test_lineage_pagination.py) (13 tests) | `get_lineage` defaults to `max_results=30`; every trace previously read only the first page. Capped at 20 pages, and a capped read reports itself TRUNCATED |
 | Column-level lineage read for blast radius | [`backend/v2/agents/pathfinder.py`](../backend/v2/agents/pathfinder.py) | Column-level traversal stops at the last dataset; only the dataset-level trace reaches the `mlModel` |
 | MCP over stdio, capability negotiated | [`backend/v2/datahub_client.py`](../backend/v2/datahub_client.py) | — |
 | **13 of the 16 published `mcp-server-datahub` tools are actually invoked** | [`backend/v2/mcp_contract.py`](../backend/v2/mcp_contract.py) · [`tests/test_mcp_contract.py`](../tests/test_mcp_contract.py) (19 tests) | The three unused are `get_me` and the glossary/domain writes, which are deliberately outside the Scribe's allowlist |
@@ -28,7 +29,7 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 
 | Capability | Evidence | Honest limits |
 |---|---|---|
-| 985 tests, no API key or network required | `make test` | — |
+| 998 tests, no API key or network required | `make test` | — |
 | Clean-clone reproducibility | [`docs/REPRODUCIBILITY.md`](REPRODUCIBILITY.md) | — |
 | Fault-injection eval: 7/7, 0 false positives, control case | [`examples/eval/results.json`](../examples/eval/results.json) | Measures the deterministic detection path, **not** LLM diagnosis — stated in the artifact itself |
 | Retrieval ablation, N=5 per arm | [`examples/ablation/timings.json`](../examples/ablation/timings.json) | **Negative result**: 5.14 s with retrieval vs 4.87 s without. Published because measured |
