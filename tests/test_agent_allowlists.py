@@ -75,15 +75,38 @@ class TestContractTables:
         ("archivist", {"search_documents", "grep_documents"}),
         ("cartographer", {"search", "get_entities", "list_schema_fields"}),
         ("pathfinder", {"get_lineage", "get_lineage_paths_between",
-                        "get_dataset_queries"}),
+                        "get_dataset_queries", "get_entities"}),
         ("magistrate", {"get_entities"}),
     ])
     def test_matches_contract(self, agent, expected):
         assert AGENT_TOOL_ALLOWLISTS[agent] == frozenset(expected)
 
-    def test_pathfinder_allowlist_is_exactly_step_6(self):
-        """step 6 names three tools. Not two, not four."""
-        assert len(AGENT_TOOL_ALLOWLISTS["pathfinder"]) == 3
+    def test_pathfinder_holds_step_6_plus_one_documented_addition(self):
+        """
+        Step 6 of the design names three tools. The Pathfinder holds four, and
+        the fourth is a deliberate, documented departure rather than drift.
+
+        `get_entities` was added so the Pathfinder can enrich the `mlModel`
+        URNs it finds at the end of the blast radius (`backend/v2/ml_impact.py`).
+        Without it the agent can prove a model is affected but can say nothing
+        about which model or who owns it, and the model's owner — very often
+        not the dataset's owner — never gets told their training data moved.
+
+        The addition is read-only and changes no write surface: the mutation
+        allowlist still scopes every write to `dataset` and `document`, and
+        `test_mcp_contract.py::test_only_the_scribe_holds_any_writing_tool`
+        independently pins that the Pathfinder holds nothing that writes.
+        """
+        assert AGENT_TOOL_ALLOWLISTS["pathfinder"] == frozenset({
+            "get_lineage", "get_lineage_paths_between",
+            "get_dataset_queries", "get_entities",
+        })
+
+    def test_the_pathfinders_addition_is_read_only(self):
+        """The departure above may never become a write grant."""
+        from backend.v2.mcp_contract import WRITING_TOOLS
+
+        assert not (set(AGENT_TOOL_ALLOWLISTS["pathfinder"]) & WRITING_TOOLS)
 
 
 class TestFailClosed:
