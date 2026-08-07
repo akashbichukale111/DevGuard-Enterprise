@@ -62,6 +62,7 @@ import logging
 from typing import AsyncGenerator, Optional
 
 from backend.core import languages
+from backend.v2.proofpack import redact
 from backend.core.rag_store import get_store, format_cwe_context
 from backend.core.schemas import (
     AgentExecutionError,
@@ -443,7 +444,27 @@ async def _call_llm(
         # TODO: swap Groq for GPT-5.6
         resp = await groq_client.chat.completions.create(**kwargs)
     except Exception as exc:  # noqa: BLE001 — deliberate: normalize ALL SDK errors
-        raise AgentExecutionError(agent, f"LLM call failed on model {model}", cause=exc)
+        # Log the provider's own error before normalising it away. Without
+        # this the only thing that reached an operator was "LLM call failed on
+        # model <name>", which is identical whether the key is missing, the
+        # key is rejected, the model was decommissioned, the account is rate
+        # limited or the network is unreachable — five different fixes behind
+        # one message. The text is redacted because provider errors can echo
+        # request material.
+        logger.error(
+            "LLM call failed: agent=%s model=%s cause=%s: %s",
+            agent,
+            model,
+            type(exc).__name__,
+            redact(str(exc))[:500],
+            exc_info=True,
+        )
+        # `from exc` chains the original into __cause__. It was previously
+        # passed only as the `cause` attribute, which nothing reads, so the
+        # traceback stopped here and the real error was lost.
+        raise AgentExecutionError(
+            agent, f"LLM call failed on model {model}", cause=exc
+        ) from exc
 
     # SELF-OBSERVATION: shadow-record this call's cost locally, so
     # get_recent_cost_trend has real numbers even before MCP is wired up.
@@ -492,7 +513,9 @@ def _parse_json_content(agent: str, content: str) -> dict:
     try:
         return json.loads(content)
     except (json.JSONDecodeError, TypeError) as exc:
-        raise AgentExecutionError(agent, f"Non-JSON output: {content[:200]!r}", cause=exc)
+        raise AgentExecutionError(
+            agent, f"Non-JSON output: {content[:200]!r}", cause=exc
+        ) from exc
 
 
 # ---------------------------------------------------------------------------

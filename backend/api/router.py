@@ -55,6 +55,7 @@ from backend.core.resilience import (
     run_pipeline_resilient,
 )
 from backend.core.schemas import ScanRequest, ScanResult
+from backend.v2.proofpack import redact
 
 logger = logging.getLogger("devguard.api")
 router = APIRouter()
@@ -572,10 +573,28 @@ async def scan(request: Request, x_traceparent: Optional[str] = Header(default=N
         except AgentExecutionError as exc:
             latency = time.perf_counter() - started
             _record_slo_sample(latency)
-            raise HTTPException(
-                status_code=503,
-                detail={"error": f"Scan pipeline failed: {exc}", "trace_id": trace_id},
+            # Surface WHY, not just THAT. "Scan pipeline failed: [scanner] LLM
+            # call failed on model X" reads identically whether the API key is
+            # missing, rejected, the model was decommissioned, or the account
+            # is rate limited — and each has a different fix. The provider's
+            # own error class and message are the discriminator, so they are
+            # carried out to the caller, redacted, alongside the trace id.
+            cause = getattr(exc, "cause", None)
+            logger.error(
+                "scan failed: scan_id=%s agent=%s cause=%s",
+                scan_id,
+                getattr(exc, "agent", "unknown"),
+                type(cause).__name__ if cause else "none",
+                exc_info=True,
             )
+            detail = {
+                "error": f"Scan pipeline failed: {exc}",
+                "trace_id": trace_id,
+            }
+            if cause is not None:
+                detail["cause_type"] = type(cause).__name__
+                detail["cause"] = redact(str(cause))[:300]
+            raise HTTPException(status_code=503, detail=detail)
         except HTTPException:
             raise
         except Exception as exc:  # noqa: BLE001 — the catch-all that prevents raw 500s
