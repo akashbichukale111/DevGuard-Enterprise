@@ -39,6 +39,15 @@ from backend.v2.handoff import AgentDecision, AgentHandoff, ToolCallRecord, now
 from backend.v2.proofpack import ProofPack
 
 
+
+@dataclass(frozen=True)
+class _PageStatus:
+    """Just enough of a ToolResult for the evidence branches below."""
+
+    ok: bool
+    error: object
+    text: str
+
 @dataclass(frozen=True)
 class ImpactedEntity:
     urn: str
@@ -136,15 +145,15 @@ class Pathfinder:
 
         # ---- 1a. dataset-level trace: the one that reaches the terminus ------
         args = {"urn": root_urn, "upstream": False, "max_hops": max_hops}
-        lineage = self._client.call(self.NAME, "get_lineage", args)
-        lineage_ref = self._pack.write(
+        lineage_text, impacted, ds_truncated, ds_records = _paginate_lineage(
+            self._client, self.NAME, args, self._pack,
             "pathfinder/get_lineage-downstream.json",
-            {"arguments": args, "ok": lineage.ok, "text": lineage.text,
-             "error": lineage.error},
-            note="Dataset-level blast radius. Reaches the dataJob and the mlModel.",
-        )
-        records.append(lineage.record(lineage_ref))
-        impacted = _impacted(lineage.text)
+            "Dataset-level blast radius. Reaches the dataJob and the mlModel.")
+        records.extend(ds_records)
+        lineage_ref = ds_records[0].raw_ref if ds_records else ""
+        lineage = _PageStatus(ok=bool(ds_records and ds_records[0].ok),
+                              error=(ds_records[0].error if ds_records else None),
+                              text=lineage_text)
 
         radius = BlastRadius(root_urn=root_urn, column=column, impacted=tuple(impacted))
 
@@ -153,8 +162,10 @@ class Pathfinder:
                 source=EvidenceSource.DATAHUB_GRAPH,
                 trust=EvidenceTrust.TRUSTED_SYSTEM,
                 confidence=EvidenceConfidence.OBSERVED,
-                claim=f"{len(impacted)} downstream entities impacted within "
-                      f"{max_hops} hops of {short} (dataset-level)",
+                claim=(f"{len(impacted)} downstream entities impacted within "
+                       f"{max_hops} hops of {short} (dataset-level)"
+                       + (" — TRUNCATED at the page ceiling; the real radius is larger"
+                          if ds_truncated else "")),
                 raw_ref=lineage_ref, datahub_urn=root_urn,
             ))
         else:
@@ -330,6 +341,80 @@ def _walk(node) -> list:
             out.extend(_walk(v))
     return out
 
+
+
+# --------------------------------------------------------------------------- #
+# Pagination
+# --------------------------------------------------------------------------- #
+
+#: `get_lineage` in mcp-server-datahub defaults to `max_results=30, offset=0`
+#: (src/mcp_server_datahub/tools/lineage.py). Neither was ever passed here, so
+#: every trace silently read only the first 30 impacted entities.
+#:
+#: An *understated* blast radius is worse than the inflated one this module
+#: already fixed once: an inflated count looks wrong and gets investigated,
+#: while a truncated one looks clean and closes the incident. Worse still, the
+#: terminal `mlModel` is often the furthest node in the graph, so it is exactly
+#: what falls off the end of page one — the blast radius would report "no ML
+#: model reached" for a model that is very much reached.
+LINEAGE_PAGE_SIZE = 100
+
+#: Hard ceiling on pages, so a cyclic or pathological graph cannot spin here.
+#: At the page size above this is 2,000 entities, far past the point where a
+#: blast radius has stopped being actionable and started being an outage.
+MAX_LINEAGE_PAGES = 20
+
+
+def _paginate_lineage(client, agent: str, base_args: dict, pack, ref_name: str,
+                      note: str) -> tuple[str, list, bool, list]:
+    """
+    Read every page of a lineage trace.
+
+    Returns `(first_page_text, impacted, truncated, records)`.
+
+    The first page is written under the original artifact name so existing
+    replay bundles and proof-pack readers keep resolving; later pages get a
+    `-page{n}` suffix. Stops when a page comes back short, which is how the
+    tool signals the end, or when the page ceiling is hit — in which case
+    `truncated` is True and the caller must say so rather than presenting a
+    partial radius as complete.
+    """
+    seen: dict[str, ImpactedEntity] = {}
+    records: list = []
+    first_text = ""
+    truncated = False
+
+    for page in range(MAX_LINEAGE_PAGES):
+        args = dict(base_args)
+        args["max_results"] = LINEAGE_PAGE_SIZE
+        args["offset"] = page * LINEAGE_PAGE_SIZE
+
+        result = client.call(agent, "get_lineage", args)
+        name = ref_name if page == 0 else ref_name.replace(".json", f"-page{page + 1}.json")
+        ref = pack.write(
+            name,
+            {"arguments": args, "ok": result.ok, "text": result.text,
+             "error": result.error},
+            note=note if page == 0 else f"{note} (page {page + 1})",
+        )
+        records.append(result.record(ref))
+        if page == 0:
+            first_text = result.text or ""
+        if not result.ok:
+            break
+
+        page_entities = _impacted(result.text)
+        for entity in page_entities:
+            # A cyclic graph returns the same URN on more than one page. Keyed
+            # de-duplication makes a cycle harmless instead of doubling counts.
+            seen.setdefault(entity.urn, entity)
+
+        if len(page_entities) < LINEAGE_PAGE_SIZE:
+            break
+    else:
+        truncated = True
+
+    return first_text, list(seen.values()), truncated, records
 
 def _impacted(text: str) -> list[ImpactedEntity]:
     """Impacted entities, read ONLY from `searchResults`.
