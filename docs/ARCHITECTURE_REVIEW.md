@@ -2,7 +2,7 @@
 
 **Reviewed at:** `d4759ff` · **Method:** reverse-engineered from source, not from documentation. Every claim below is traceable to a file and line. Where the code and the docs disagree, the code wins and the disagreement is called out.
 
-**Scale:** 25,596 lines of Python across 94 files · 8,729 lines of TypeScript across 30 files · 882 tests.
+**Scale:** 25,596 lines of Python across 94 files · 8,729 lines of TypeScript across 30 files · 885 tests.
 
 ---
 
@@ -324,7 +324,7 @@ OpenTelemetry → OTLP/gRPC → SigNoz. **Traces, metrics and logs**, with a log
 | **Demo video <3:00** | **Missing** | — |
 | **Devpost submission** | **Missing** | — |
 | Eligibility disclosure | **Satisfied** | `DISCLOSURE.md` |
-| Reproducibility from clean clone | **Satisfied** | Verified; 882 tests, no key needed |
+| Reproducibility from clean clone | **Satisfied** | Verified; 885 tests, no key needed |
 | Evaluation suite | **Satisfied** | 7/7 accuracy, 0 FP, control case, published |
 | Ablation with N≥5 | **Satisfied, negative** | 5.14 s on vs 4.87 s off — reported honestly |
 | **`make demo`** | **Missing** | No such target |
