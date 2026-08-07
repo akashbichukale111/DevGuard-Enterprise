@@ -156,6 +156,33 @@ def run_checks(agent: str) -> list[Check]:
                {"input": {"name": "devguard-probe", "type": "postgres",
                           "config": {"recipe": "{}", "executorId": "default"}}}, agent))
 
+    # The two probes below close a gap between what the security documentation
+    # claimed and what this verifier actually proved. SECURITY.md listed seven
+    # privileges as "never granted, each verified as a live DENY", but only four
+    # of them had a probe here — glossary terms and domains were asserted rather
+    # than tested, and an assertion in a security document is exactly the kind of
+    # claim this project exists to not make.
+    #
+    # Both are real write paths a compromised or buggy agent could reach:
+    # `add_terms` and `set_domains` are live tools in mcp-server-datahub's
+    # mutation set, deliberately left out of the Scribe's allowlist. Server-side
+    # refusal is the control that survives a bug in that allowlist, so it is
+    # worth proving rather than assuming.
+    record("attach a glossary term", "DENY",
+           "EDIT_ENTITY_GLOSSARY_TERMS was never granted — an agent must not "
+           "author business vocabulary, only reference it",
+           gql("mutation a($input: AddTermsInput!){ addTerms(input:$input) }",
+               {"input": {"termUrns": ["urn:li:glossaryTerm:devguard_probe"],
+                          "resourceUrn": IN_SCOPE}}, agent))
+
+    record("assign a domain", "DENY",
+           "EDIT_DOMAINS_PRIVILEGE was never granted — domain membership decides "
+           "who else inherits access, so an agent must not reassign it",
+           gql("mutation s($entityUrn:String!, $domainUrn:String!)"
+               "{ setDomain(entityUrn:$entityUrn, domainUrn:$domainUrn) }",
+               {"entityUrn": IN_SCOPE,
+                "domainUrn": "urn:li:domain:devguard_probe"}, agent))
+
     return checks
 
 
