@@ -100,7 +100,24 @@ DevGuard does not own is nil, and narrowing reads would break lineage traversal.
 This duplicates the server-side Access Policy on purpose — and that redundancy
 proved its worth, as the next section explains.
 
-Pinned by `tests/test_agent_allowlists.py`.
+**A fourth axis lives on the server: `TOOLS_IS_MUTATION_ENABLED`.**
+`mcp-server-datahub` hides every mutation tool unless this is `true`.
+`DataHubMCPClient` sets it from `enable_mutations`, which defaults to **false**,
+so a client that never asks for writes cannot make one even if every allowlist
+above were bypassed.
+
+The trap worth stating: with the flag off, the write tools are not *refused*,
+they are **absent**. Capability negotiation reports them missing, the Scribe
+records artifacts it could not attempt, and the run completes. A write-back
+that silently did nothing looks very like a successful dry run, and the
+difference is one environment variable. Check `capability_report()` in the
+proof pack before concluding a run wrote anything.
+
+Pinned by `tests/test_agent_allowlists.py`, and by
+`tests/test_mcp_contract.py`, which additionally checks every tool named
+anywhere in this project against the published `mcp-server-datahub` tool
+reference — a tool renamed upstream or mistyped locally fails CI offline
+instead of failing against a live catalog.
 
 ---
 
