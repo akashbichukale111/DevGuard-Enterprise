@@ -24,7 +24,7 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 
 | Capability | Evidence | Honest limits |
 |---|---|---|
-| 861 tests, no API key or network required | `make test` | — |
+| 882 tests, no API key or network required | `make test` | — |
 | Clean-clone reproducibility | [`docs/REPRODUCIBILITY.md`](REPRODUCIBILITY.md) | — |
 | Fault-injection eval: 7/7, 0 false positives, control case | [`examples/eval/results.json`](../examples/eval/results.json) | Measures the deterministic detection path, **not** LLM diagnosis — stated in the artifact itself |
 | Retrieval ablation, N=5 per arm | [`examples/ablation/timings.json`](../examples/ablation/timings.json) | **Negative result**: 5.14 s with retrieval vs 4.87 s without. Published because measured |
@@ -43,6 +43,8 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 | A bad patch writes **nothing** back | run `d6-fail-the-fix` | — |
 | Dry-run shows exact payloads, sends nothing | run `d6-dry-run` | — |
 | Per-agent tool allowlists enforced pre-wire | [`tests/test_agent_allowlists.py`](../tests/test_agent_allowlists.py) (26 tests) | — |
+| Per-axis provenance that reports the **weakest** component, never the most flattering | [`backend/core/god_mode_orchestrator.py`](../backend/core/god_mode_orchestrator.py) · [`tests/test_god_mode_provenance.py`](../tests/test_god_mode_provenance.py) | A payload mixing measured and invented fields badges `partial`, never `live` |
+| Unmeasured values render `N/A` with a reason rather than a plausible number | [`tests/test_measured_error_rate.py`](../tests/test_measured_error_rate.py) (21 tests) | The memory *leak rate* is still a scenario — labelled `synthetic_scenario`, not passed off as measured |
 
 ## Criterion 4 — Real-world value
 

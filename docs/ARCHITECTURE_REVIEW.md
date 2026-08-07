@@ -2,7 +2,7 @@
 
 **Reviewed at:** `d4759ff` · **Method:** reverse-engineered from source, not from documentation. Every claim below is traceable to a file and line. Where the code and the docs disagree, the code wins and the disagreement is called out.
 
-**Scale:** 25,596 lines of Python across 94 files · 8,729 lines of TypeScript across 30 files · 861 tests.
+**Scale:** 25,596 lines of Python across 94 files · 8,729 lines of TypeScript across 30 files · 882 tests.
 
 ---
 
@@ -129,15 +129,17 @@ All five are `POST /god-mode/simulate/*`, all return in <100 ms, none needs an A
 |---|---|---|---|---|---|
 | **MOD-01** | Omni-Heal | Runs Scanner→Fixer→Validator as one commandable unit | `code` (optional) | diff, CWEs, validation | **`live` if `code` given — otherwise `synthetic`** |
 | **MOD-02** | FinOps Agent | LLM spend trend → OTel sampling recommendation | none | budget, trend, recommendation | `live` (SigNoz MCP) / `local_shadow` / `synthetic` |
-| **MOD-03** | Pre-Cog Ops | Extrapolates error-rate + memory drift over 15 min | none | forecast, autoscale recommendation | **`partial`** — RSS is real, error rate synthetic |
+| **MOD-03** | Pre-Cog Ops | Extrapolates error-rate + memory drift over 15 min | none | forecast, autoscale recommendation | **`partial`** — RSS and error rate both measured; the memory *leak rate* stays a labelled scenario |
 | **MOD-04** | Truth Serum | Cross-examines Scanner findings for hallucination | `code`, `cwe_id` | per-finding confidence verdicts | `live` with input, else `synthetic` |
 | **MOD-05** | Executive Commander | Rolls up the other four into one brief | none | incident digest | `partial` — aggregated via `_rollup_data_source` |
 
-**The most important finding in this section:** MOD-01 and MOD-04 accept a `code` parameter and will run the **real pipeline** when given one — `execute_omni_heal(code)` calls `run_pipeline()`, the same function `/scan` uses. **The UI never sends it.** `nexus/page.tsx` posts `{}` to every endpoint, so every module renders its synthetic branch.
+**The most important finding in this section, as first written:** MOD-01 and MOD-04 accept a `code` parameter and will run the **real pipeline** when given one — `execute_omni_heal(code)` calls `run_pipeline()`, the same function `/scan` uses. **The UI never sent it.** `nexus/page.tsx` posted `{}` to every endpoint, so every module rendered its synthetic branch. That was a ~10-line frontend change away from making two of five modules genuinely live, and it was the highest-leverage improvement available anywhere in this repository.
 
-That is a ~10-line frontend change away from making two of five modules genuinely live, and it is the highest-leverage improvement available anywhere in this repository.
+**Addressed.** `nexus/page.tsx` now carries a `payload` per module and sends a real vulnerable snippet to Omni-Heal and Truth Serum, so both take the live branch; the other three still post `{}` because they take no input. Verified at the API boundary rather than by inspection — with the payload, `run_pipeline` is entered; with the old empty body it is not.
 
-**Honesty machinery worth crediting.** `_current_rss_mb()` reads `/proc/self/statm` — a real measurement replacing what the comments record as a former `random.uniform(160, 260)`. `_aggregate_source()` ranks provenance (`live=3, local_shadow=2, synthetic=0`) and reports the *weakest* component, so a payload mixing real and synthetic is badged `partial`, never `live`. The badge taxonomy (`Live / Local / Partial / Simulated / Unlabelled`) is computed from the response, not chosen by the UI.
+**Honesty machinery worth crediting.** `_current_rss_mb()` reads `/proc/self/statm` — a real measurement replacing what the comments record as a former `random.uniform(160, 260)`. `_aggregate_source()` ranks provenance (`live=3, local_shadow=2, synthetic=0, unavailable=0`) and reports the *weakest* component, so a payload mixing real and synthetic is badged `partial`, never `live`. The badge taxonomy (`Live / Local / Partial / Simulated / Unlabelled`) is computed from the response, not chosen by the UI.
+
+*Addressed after this review:* MOD-03's error rate was the other `random.uniform` — `(1.0, 8.0)`, taken whenever the SigNoz MCP client was unreachable, which in the deployed backend is always, since `SIGNOZ_MCP_URL` is unset. Every forecast on the public Nexus was therefore a linear extrapolation of a random number, drawn as a chart. It now reads a measured pipeline error rate from `local_telemetry.get_recent_error_rate_local()` — the process runs the pipeline, so it knows how often the pipeline fails — and when nothing has run it reports `null` with a reason and an empty forecast rather than seeding one. Two related mislabels fell out of that: `_aggregate_source` returned whichever label came *first* when ranks tied, so a payload holding an invented leak rate could badge itself `unavailable`; and the executive digest rendered a null breaker ETA as "no imminent risk", turning absence of evidence into a claim of safety.
 
 ---
 
@@ -322,7 +324,7 @@ OpenTelemetry → OTLP/gRPC → SigNoz. **Traces, metrics and logs**, with a log
 | **Demo video <3:00** | **Missing** | — |
 | **Devpost submission** | **Missing** | — |
 | Eligibility disclosure | **Satisfied** | `DISCLOSURE.md` |
-| Reproducibility from clean clone | **Satisfied** | Verified; 861 tests, no key needed |
+| Reproducibility from clean clone | **Satisfied** | Verified; 882 tests, no key needed |
 | Evaluation suite | **Satisfied** | 7/7 accuracy, 0 FP, control case, published |
 | Ablation with N≥5 | **Satisfied, negative** | 5.14 s on vs 4.87 s off — reported honestly |
 | **`make demo`** | **Missing** | No such target |

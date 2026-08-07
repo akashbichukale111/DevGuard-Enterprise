@@ -94,6 +94,7 @@ from backend.core.self_observer import (
 # mcp_client is the thing self_observer.py itself reads telemetry through —
 # we reuse the same fail-safe client rather than inventing a second path.
 from backend.core.mcp_client import get_mcp_client
+from backend.core.local_telemetry import get_recent_error_rate_local
 
 logger = logging.getLogger(__name__)
 
@@ -139,7 +140,16 @@ def _current_rss_mb() -> Optional[float]:
 
 
 #: Ranking used to reduce per-axis provenance to one honest aggregate.
-_SOURCE_RANK = {"live": 3, "local_shadow": 2, "measured": 2, "synthetic": 0}
+#:
+#: "unavailable" ranks with "synthetic" at 0 on purpose. It is a better *answer*
+#: than an invented number — it reports null with a reason instead of a
+#: plausible substitute — but it contributes no evidence, and this ranking is
+#: measuring how much of the payload is real, not how honestly it was written.
+#: A payload whose every axis is absent or invented must not badge above
+#: "synthetic".
+_SOURCE_RANK = {
+    "live": 3, "local_shadow": 2, "measured": 2, "synthetic": 0, "unavailable": 0,
+}
 
 
 def _aggregate_source(*sources: str) -> str:
@@ -154,11 +164,22 @@ def _aggregate_source(*sources: str) -> str:
     """
     if not sources:
         return "synthetic"
-    ranks = {_SOURCE_RANK.get(s, 1) for s in sources}
-    if len(ranks) == 1:
+
+    if len(set(sources)) == 1:
         only = sources[0]
         return only if only in _SOURCE_RANK else "partial"
-    return "synthetic" if min(ranks) == 0 and max(ranks) == 0 else "partial"
+
+    # Distinct labels. This used to return `sources[0]` whenever their ranks
+    # tied, which was invisible while "synthetic" was the only rank-0 label and
+    # became wrong the moment "unavailable" joined it: a payload holding an
+    # invented leak rate would have badged itself "unavailable" purely because
+    # the error axis happened to be listed first.
+    ranks = {_SOURCE_RANK.get(s, 1) for s in sources}
+    if max(ranks) == 0:
+        # Nothing in the payload is real, and at least one part is invented
+        # rather than merely absent. "synthetic" is the warning that matters.
+        return "synthetic"
+    return "partial"
 
 
 def _synthetic_diff(original_hint: str = "") -> tuple[str, str, str]:
@@ -341,8 +362,22 @@ async def execute_precog_agent() -> dict[str, Any]:
     "in the next N minutes..." narrative, clearly labeled as a forecast.
     """
     run_id = _god_mode_id("precog")
-    error_rate_source = "synthetic"
-    current_error_rate_pct = round(random.uniform(1.0, 8.0), 2)
+
+    # Provenance ladder, best first. The last rung used to be
+    # `random.uniform(1.0, 8.0)` — and since SIGNOZ_MCP_URL is unset in the
+    # deployed backend, that rung was the one production always landed on, so
+    # the forecast below extrapolated from a random number and the panel drew
+    # a chart of it.
+    #
+    # The middle rung is the fix, and it is the same one already applied to the
+    # memory axis: this process runs the pipeline, so it can measure how often
+    # the pipeline fails instead of inventing it. When nothing has run there is
+    # no rate to report, and `None` is the honest answer — the API's stated
+    # convention is that an unmeasured value is null with a reason attached,
+    # never a plausible substitute.
+    error_rate_source = "unavailable"
+    error_rate_unavailable_reason: Optional[str] = None
+    current_error_rate_pct: Optional[float] = None
 
     try:
         client = get_mcp_client()
@@ -351,24 +386,38 @@ async def execute_precog_agent() -> dict[str, Any]:
             current_error_rate_pct = err.error_rate_pct
             error_rate_source = "live"
     except Exception:  # noqa: BLE001
-        logger.exception("execute_precog_agent: get_error_rate_detailed() failed; using synthetic baseline")
+        logger.exception("execute_precog_agent: get_error_rate_detailed() failed")
+
+    if current_error_rate_pct is None:
+        local = get_recent_error_rate_local()
+        if local["available"]:
+            current_error_rate_pct = local["error_rate_pct"]
+            error_rate_source = "local_shadow"
+        else:
+            error_rate_unavailable_reason = local["reason"]
 
     # Simple linear projection over a 15-minute horizon, in 3-minute steps.
+    # With no starting rate there is nothing to project from, so the forecast is
+    # empty rather than seeded — an extrapolation from an invented origin is an
+    # invented forecast however carefully the arithmetic is done. The panel
+    # already renders an empty series as "No forecast returned for this run".
     horizon_minutes = 15
     step_minutes = 3
-    drift_pct_per_step = round(current_error_rate_pct * 0.08 + 0.4, 3)
-    forecast = []
-    projected = current_error_rate_pct
-    for t in range(0, horizon_minutes + 1, step_minutes):
-        forecast.append({"minute": t, "projected_error_rate_pct": round(projected, 2)})
-        projected += drift_pct_per_step
-
     breaker_trip_threshold_pct = 30.0
+    forecast: list[dict[str, Any]] = []
     minutes_to_breaker_trip = None
-    for point in forecast:
-        if point["projected_error_rate_pct"] >= breaker_trip_threshold_pct:
-            minutes_to_breaker_trip = point["minute"]
-            break
+
+    if current_error_rate_pct is not None:
+        drift_pct_per_step = round(current_error_rate_pct * 0.08 + 0.4, 3)
+        projected = current_error_rate_pct
+        for t in range(0, horizon_minutes + 1, step_minutes):
+            forecast.append({"minute": t, "projected_error_rate_pct": round(projected, 2)})
+            projected += drift_pct_per_step
+
+        for point in forecast:
+            if point["projected_error_rate_pct"] >= breaker_trip_threshold_pct:
+                minutes_to_breaker_trip = point["minute"]
+                break
 
     # Memory-leak projection. INDEPENDENT AXIS from the error rate, and that
     # independence is the point: this block used to be entirely
@@ -425,6 +474,9 @@ async def execute_precog_agent() -> dict[str, Any]:
         },
         "started_at": _now_iso(),
         "current_error_rate_pct": current_error_rate_pct,
+        # Present only when the rate could not be measured, so a null above is
+        # never left for the reader to explain to themselves.
+        "current_error_rate_unavailable_reason": error_rate_unavailable_reason,
         "error_rate_forecast": forecast,
         "circuit_breaker_trip_threshold_pct": breaker_trip_threshold_pct,
         "projected_minutes_to_breaker_trip": minutes_to_breaker_trip,
@@ -446,7 +498,15 @@ async def execute_precog_agent() -> dict[str, Any]:
             f"~{minutes_to_breaker_trip} min; recommending scale-out now to "
             "absorb load before the breaker opens."
             if minutes_to_breaker_trip is not None
-            else "Error rate trend is within safe bounds for the forecast horizon; no scaling action needed."
+            else (
+                "Error rate trend is within safe bounds for the forecast horizon; "
+                "no scaling action needed."
+                if current_error_rate_pct is not None
+                else (
+                    f"No error-rate forecast: {error_rate_unavailable_reason}. "
+                    "Run a scan and re-run this module to populate it."
+                )
+            )
         ),
     }
 
@@ -652,7 +712,17 @@ async def generate_executive_summary(
     precog = sections.get("precog_ops")
     if precog:
         eta = precog["projected_minutes_to_breaker_trip"]
-        eta_str = f"~{eta} min" if eta is not None else "no imminent risk"
+        # A null ETA has two very different causes and they must not collapse
+        # into the same sentence: no trip inside the horizon is a measured
+        # all-clear, while no error rate at all is an absence of evidence.
+        # Reporting the second as "no imminent risk" is a claim of safety
+        # nobody made.
+        if eta is not None:
+            eta_str = f"~{eta} min"
+        elif precog.get("current_error_rate_pct") is None:
+            eta_str = "not forecast (no error-rate data)"
+        else:
+            eta_str = "no imminent risk"
         lines.append(
             f"• Pre-Cog Ops: breaker-trip ETA {eta_str}; autoscale recommendation="
             f"{precog['autoscale_recommendation']} [{precog['data_source']}]"

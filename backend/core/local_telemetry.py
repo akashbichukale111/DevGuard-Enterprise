@@ -142,3 +142,74 @@ def get_recent_cost_trend_local(window_minutes: int = 30) -> dict:
         "estimated_samples": estimated,
         "exact": estimated == 0,
     }
+
+
+# ===========================================================================
+# Pipeline outcomes — the local-shadow error rate
+# ===========================================================================
+# Pre-Cog Ops (MOD-03) forecasts circuit-breaker trips from an error rate. That
+# rate came from the SigNoz MCP client when it was reachable and from
+# `random.uniform(1.0, 8.0)` when it was not — and it is never reachable in the
+# deployed backend, so in production the module extrapolated a forecast from a
+# random number.
+#
+# This is the same fix already applied one axis over: `_current_rss_mb()`
+# replaced a fabricated RSS with a real `/proc` read. The error rate is
+# measurable too — the process runs the pipeline, so it knows how often the
+# pipeline fails. There was never a reason to invent it.
+#
+# Scan attempts only, deliberately. The breaker being forecast guards the
+# *pipeline*, so the denominator that predicts it is pipeline attempts. Mixing
+# in `/slo-status` polls would bury a real failure spike under health-check
+# traffic that always succeeds.
+
+#: Bounded like the cost samples above, for the same reason.
+_MAX_OUTCOMES = 5000
+
+_outcomes: Deque[tuple[float, bool]] = deque(maxlen=_MAX_OUTCOMES)
+
+
+def record_pipeline_outcome(ok: bool, ts: Optional[float] = None) -> None:
+    """Record one pipeline attempt. `ok=False` means it failed server-side."""
+    with _lock:
+        _outcomes.append((ts if ts is not None else time.time(), ok))
+
+
+def reset_outcomes() -> None:
+    """Drop all outcome samples. For tests; never called in the request path."""
+    with _lock:
+        _outcomes.clear()
+
+
+def get_recent_error_rate_local(window_minutes: int = 30) -> dict:
+    """
+    Measured pipeline error rate over the recent window.
+
+    `available` is False when nothing ran in the window. That is not a failure
+    to report — it is the honest answer to "what is the error rate?" when there
+    were no attempts, and it is what stops a caller substituting a plausible
+    number for an unmeasured one.
+    """
+    cutoff = time.time() - window_minutes * 60
+    with _lock:
+        recent = [ok for ts, ok in _outcomes if ts >= cutoff]
+
+    total = len(recent)
+    if total == 0:
+        return {
+            "available": False,
+            "reason": "no pipeline attempts in the window",
+            "error_rate_pct": None,
+            "samples": 0,
+            "window_minutes": window_minutes,
+        }
+
+    failures = sum(1 for ok in recent if not ok)
+    return {
+        "available": True,
+        "reason": None,
+        "error_rate_pct": round(100.0 * failures / total, 2),
+        "samples": total,
+        "failures": failures,
+        "window_minutes": window_minutes,
+    }
