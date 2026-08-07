@@ -105,8 +105,9 @@ def test_the_provenance_is_broken_down_per_axis(live_error_rate):
     assert src["memory"] in ("measured_current_synthetic_rate", "synthetic")
 
 
-def test_with_no_telemetry_the_error_axis_is_synthetic(dead_mcp):
-    """No MCP means the error rate is invented — but the RSS is still measured.
+def test_with_no_telemetry_and_no_traffic_the_error_axis_is_unavailable(dead_mcp):
+    """No MCP and nothing run yet means there is no error rate — but the RSS is
+    still measured.
 
     This test originally asserted `data_source == "synthetic"`. That was written
     before the RSS measurement existed and is wrong now: with a real current RSS
@@ -114,9 +115,24 @@ def test_with_no_telemetry_the_error_axis_is_synthetic(dead_mcp):
     aggregate, and the detail says which half is which. The genuinely
     all-synthetic case is covered by
     `test_an_rss_read_failure_degrades_to_synthetic_rather_than_raising`.
+
+    This test also originally asserted the error axis was `"synthetic"`, which
+    was accurate — it was `random.uniform(1.0, 8.0)`, and since SIGNOZ_MCP_URL
+    is unset in the deployed backend, that was the value production always got.
+    It is now `"unavailable"` with a null rate, which is the point of the
+    change: an unmeasured error rate must not be invented and then extrapolated
+    into a forecast chart.
     """
+    from backend.core.local_telemetry import reset_outcomes
+
+    reset_outcomes()
     result = run(gmo.execute_precog_agent())
-    assert result["data_source_detail"]["error_rate"] == "synthetic"
+    assert result["data_source_detail"]["error_rate"] == "unavailable"
+    assert result["current_error_rate_pct"] is None
+    assert result["current_error_rate_unavailable_reason"]
+    assert result["error_rate_forecast"] == [], (
+        "a forecast extrapolated from an absent starting value is invented"
+    )
     assert result["data_source"] == "partial"
 
 

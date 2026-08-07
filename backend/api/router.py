@@ -49,6 +49,7 @@ from pydantic import BaseModel, ValidationError
 
 from backend.core import audit, cache, languages, project_scan, telemetry
 from backend.core.auth import auth_enabled, enforce_api_key, key_fingerprints
+from backend.core.local_telemetry import record_pipeline_outcome
 from backend.core.ratelimit import enforce_scan_rate_limit, scan_limiter
 from backend.core.ai_agent import AgentExecutionError
 from backend.core.mcp_client import get_mcp_client
@@ -557,6 +558,7 @@ async def scan(request: Request, x_traceparent: Optional[str] = Header(default=N
 
             latency = time.perf_counter() - started
             _record_slo_sample(latency)
+            record_pipeline_outcome(ok=True)
             _emit_request_metrics(result, latency, cache_hit=False)
 
             return await _finalize_or_gate(scan_id, scan_req, result, trace_id, latency, cached_hit=False, cost=cost)
@@ -564,6 +566,7 @@ async def scan(request: Request, x_traceparent: Optional[str] = Header(default=N
         except CircuitOpenError as exc:
             latency = time.perf_counter() - started
             _record_slo_sample(latency)
+            record_pipeline_outcome(ok=False)
             parent.set_attribute("error.type", "CircuitOpenError")
             raise HTTPException(
                 status_code=503,
@@ -576,6 +579,7 @@ async def scan(request: Request, x_traceparent: Optional[str] = Header(default=N
         except AgentExecutionError as exc:
             latency = time.perf_counter() - started
             _record_slo_sample(latency)
+            record_pipeline_outcome(ok=False)
             # Surface WHY, not just THAT. "Scan pipeline failed: [scanner] LLM
             # call failed on model X" reads identically whether the API key is
             # missing, rejected, the model was decommissioned, or the account
@@ -603,6 +607,7 @@ async def scan(request: Request, x_traceparent: Optional[str] = Header(default=N
         except Exception as exc:  # noqa: BLE001 — the catch-all that prevents raw 500s
             latency = time.perf_counter() - started
             _record_slo_sample(latency)
+            record_pipeline_outcome(ok=False)
             parent.record_exception(exc)
             parent.set_status(trace.Status(trace.StatusCode.ERROR, str(exc)))
             logger.exception("Unhandled scan error (trace_id=%s)", trace_id)
