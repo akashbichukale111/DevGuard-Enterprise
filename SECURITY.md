@@ -275,14 +275,39 @@ Real, open, and stated rather than buried.
 
 **Deployment posture**
 
-- **CORS is wide open.** `allow_origins=["*"]`. Acceptable locally; it must be an
-  explicit allowlist before any public deployment.
-- **No authentication on any endpoint.** Anyone who can reach the backend can
-  submit a scan, read the audit log, and approve or reject a gated fix. Do not
-  expose this to the internet as-is.
-- **No rate limiting.** `POST /scan` forwards code to a paid API with no
-  per-caller quota, so an open instance is a cost-exhaustion target. A single
-  request's blast radius is bounded by the size cap; the request *rate* is not.
+- **CORS defaults to `*`, and is configurable.** `DEVGUARD_ALLOWED_ORIGINS` takes a
+  comma-separated allowlist. The default stays open so a clean clone works with no
+  configuration; set it on anything public. `render.yaml` sets it for the hosted
+  backend.
+- **Authentication is opt-in and off by default.** Set `DEVGUARD_API_KEYS`
+  (comma-separated, each at least 16 characters) and `POST /scan`, `/scan/zip`,
+  `/scan/repository` and both approval-gate endpoints require
+  `Authorization: Bearer <key>` or `X-API-Key: <key>`. Comparison is
+  constant-time; the check runs before the rate limiter so anonymous traffic
+  cannot burn a real caller's allowance; `GET /slo-status` reports which mode is
+  live plus SHA-256 fingerprints of the loaded keys. **Unset means open** — that
+  is deliberate, so a reviewer's first `curl` works, and it means an internet-facing
+  instance with no key set is unauthenticated.
+  - This is a shared secret, not an identity system: no users, no scopes, no
+    rotation, no expiry. Front it with a real IdP if you need those.
+  - **The bundled frontend does not send a key.** It is a static export, so a key
+    compiled into it would be public anyway. Turning auth on therefore protects
+    the API from scripts but breaks the Scanner UI and the approve/reject buttons
+    against that instance. That is the intended trade for a non-demo deployment:
+    keep the hosted demo keyless, and put a key on any instance that matters —
+    calling it from a server you control, or behind a proxy that injects the
+    header.
+  - **Reads remain unauthenticated even when it is on**, including `GET /audit-log`.
+    The audit log records what DevGuard did, not credentials or submitted source,
+    and a health check that 401s is a health check the platform marks unhealthy.
+    If the audit trail is sensitive in your deployment, put a proxy in front.
+- **Rate limiting on the endpoints that spend money.** `POST /scan`, `/scan/zip`
+  and `/scan/repository` are capped per client per window (default 20/60 s,
+  `DEVGUARD_SCAN_RATE_LIMIT` / `DEVGUARD_SCAN_RATE_WINDOW_S`, `0` disables).
+  A refusal is `429` with `Retry-After`. It keys on `X-Forwarded-For`, which a
+  direct caller can forge, so it is a **cost guard, not a security control** —
+  authentication is the control. State is per process, so behind N replicas the
+  effective ceiling is N×.
 - **Submitted code is sent to a third party.** Anything pasted into the Scanner
   is transmitted to the model provider. Do not submit proprietary source.
 - **Container images are not built end to end** in the capture environment, so

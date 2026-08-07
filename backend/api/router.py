@@ -48,7 +48,8 @@ from opentelemetry.trace import format_trace_id
 from pydantic import BaseModel, ValidationError
 
 from backend.core import audit, cache, languages, project_scan, telemetry
-from backend.core.ratelimit import enforce_scan_rate_limit
+from backend.core.auth import auth_enabled, enforce_api_key, key_fingerprints
+from backend.core.ratelimit import enforce_scan_rate_limit, scan_limiter
 from backend.core.ai_agent import AgentExecutionError
 from backend.core.mcp_client import get_mcp_client
 from backend.core.resilience import (
@@ -500,7 +501,7 @@ def _build_frontend_result(
 # ===========================================================================
 # POST /scan  — the main entry point
 # ===========================================================================
-@router.post("/scan", dependencies=[Depends(enforce_scan_rate_limit)])
+@router.post("/scan", dependencies=[Depends(enforce_api_key), Depends(enforce_scan_rate_limit)])
 async def scan(request: Request, x_traceparent: Optional[str] = Header(default=None)):
     # ---- Input parsing (400/422, never a 500) ----
     try:
@@ -838,7 +839,7 @@ async def get_scan(scan_id: str):
 # ===========================================================================
 # Approval / rejection (Feature #7)
 # ===========================================================================
-@router.post("/scan/{scan_id}/approve")
+@router.post("/scan/{scan_id}/approve", dependencies=[Depends(enforce_api_key)])
 async def approve(scan_id: str):
     entry = _pending_approvals.get(scan_id)
     if entry is None:
@@ -869,7 +870,7 @@ async def approve(scan_id: str):
     }
 
 
-@router.post("/scan/{scan_id}/reject")
+@router.post("/scan/{scan_id}/reject", dependencies=[Depends(enforce_api_key)])
 async def reject(scan_id: str, reason: Optional[str] = None):
     entry = _pending_approvals.get(scan_id)
     if entry is None:
@@ -1066,7 +1067,7 @@ def _start_project_scan(source_label: str, collection: project_scan.Collection) 
 _project_scan_tasks: set[asyncio.Task] = set()
 
 
-@router.post("/scan/zip", dependencies=[Depends(enforce_scan_rate_limit)])
+@router.post("/scan/zip", dependencies=[Depends(enforce_api_key), Depends(enforce_scan_rate_limit)])
 async def scan_zip(file: UploadFile = File(...)):
     """
     Scan every supported source file in an uploaded ZIP archive.
@@ -1092,7 +1093,7 @@ async def scan_zip(file: UploadFile = File(...)):
     return _start_project_scan(f"zip:{file.filename or 'archive.zip'}", collection)
 
 
-@router.post("/scan/repository", dependencies=[Depends(enforce_scan_rate_limit)])
+@router.post("/scan/repository", dependencies=[Depends(enforce_api_key), Depends(enforce_scan_rate_limit)])
 async def scan_repository(request: Request):
     """
     Shallow-clone a public repository and scan its supported source files.
@@ -1173,6 +1174,16 @@ async def supported_languages():
 async def slo_status():
     snap = _slo_snapshot()
     snap["circuit_breaker"] = circuit_status()
+    # A deployment that believes it is protected but is not is worse than one
+    # that knows it is open, so the mode is reported rather than assumed. The
+    # fingerprints are 8 hex characters of SHA-256 — enough to confirm which
+    # key is live after a rotation, far too little to invert.
+    snap["access_control"] = {
+        "api_key_auth": "enabled" if auth_enabled() else "disabled",
+        "key_fingerprints": key_fingerprints(),
+        "scan_rate_limit": scan_limiter.limit,
+        "scan_rate_window_seconds": scan_limiter.window_s,
+    }
     return snap
 
 

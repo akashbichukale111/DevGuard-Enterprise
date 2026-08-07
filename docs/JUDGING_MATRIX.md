@@ -24,7 +24,7 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 
 | Capability | Evidence | Honest limits |
 |---|---|---|
-| 831 tests, no API key or network required | `make test` | — |
+| 861 tests, no API key or network required | `make test` | — |
 | Clean-clone reproducibility | [`docs/REPRODUCIBILITY.md`](REPRODUCIBILITY.md) | — |
 | Fault-injection eval: 7/7, 0 false positives, control case | [`examples/eval/results.json`](../examples/eval/results.json) | Measures the deterministic detection path, **not** LLM diagnosis — stated in the artifact itself |
 | Retrieval ablation, N=5 per arm | [`examples/ablation/timings.json`](../examples/ablation/timings.json) | **Negative result**: 5.14 s with retrieval vs 4.87 s without. Published because measured |
@@ -54,7 +54,7 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 | ZIP / repository scanning with hostile-input handling | [`tests/test_project_scan.py`](../tests/test_project_scan.py) (36 tests) | Capped at 25 files per run |
 | Cost and token accounting per incident | [`backend/core/telemetry.py`](../backend/core/telemetry.py) | Renders `N/A` in recorded runs — no model was invoked |
 | Secret redaction at capture | [`tests/test_proof_pack_redaction.py`](../tests/test_proof_pack_redaction.py) (19 tests) | — |
-| **Authentication** | — | **Absent.** The scan endpoints are rate limited but unauthenticated |
+| Opt-in API-key auth on the spending endpoints | [`backend/core/auth.py`](../backend/core/auth.py) · [`tests/test_api_key_auth.py`](../tests/test_api_key_auth.py) (28 tests) | Shared secret, not an identity system — no users, scopes, rotation or expiry. **Off unless `DEVGUARD_API_KEYS` is set**, so a clean clone stays open by design |
 
 ## Criterion 5 — Submission quality
 

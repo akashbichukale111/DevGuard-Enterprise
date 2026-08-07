@@ -2,7 +2,7 @@
 
 **Reviewed at:** `d4759ff` · **Method:** reverse-engineered from source, not from documentation. Every claim below is traceable to a file and line. Where the code and the docs disagree, the code wins and the disagreement is called out.
 
-**Scale:** 25,596 lines of Python across 94 files · 8,729 lines of TypeScript across 30 files · 831 tests.
+**Scale:** 25,596 lines of Python across 94 files · 8,729 lines of TypeScript across 30 files · 861 tests.
 
 ---
 
@@ -269,13 +269,15 @@ OpenTelemetry → OTLP/gRPC → SigNoz. **Traces, metrics and logs**, with a log
 
 **Weak points, ranked:**
 
-1. **`allow_origins=["*"]`** — acceptable for a demo, wrong for production. Narrow to actual origins.
-2. **No authentication or rate limiting on any endpoint.** A public `/scan` spends money per request. This is the most serious production gap.
-3. **No request size limit on ZIP upload beyond 25 MB** and no per-IP quota.
-4. **In-memory job state** — a restart loses scans; no distributed lock for multi-instance.
-5. **`SECURITY.md` documents a threat model that exceeds what is enforced** in places.
+*Ranked as first written. Items 1–3 were addressed after this review; the original finding is kept alongside the resolution, because a review that quietly edits itself into agreement with the code is not a review.*
 
-**Production readiness: not ready without auth + rate limiting.** Everything else is defensible.
+1. ~~**`allow_origins=["*"]`** — acceptable for a demo, wrong for production.~~ **Addressed:** `DEVGUARD_ALLOWED_ORIGINS` takes an allowlist; the default stays `*` so a clean clone still runs, and `render.yaml` pins the hosted backend to the real frontend origin.
+2. ~~**No authentication or rate limiting on any endpoint.**~~ **Addressed, partly.** The three spending endpoints and both approval-gate endpoints now take an opt-in shared secret (`DEVGUARD_API_KEYS`, `backend/core/auth.py`), and the spending endpoints are rate limited per client (`backend/core/ratelimit.py`). Two caveats keep this from being a clean close: auth is **off unless configured**, so an internet-facing instance with no key set is still open, and reads — including `GET /audit-log` — stay unauthenticated by design.
+3. ~~**No per-IP quota.**~~ **Addressed:** 20 requests / 60 s per client by default. The ZIP size cap was already enforced (25 MB total, 5,000 entries, 25 files).
+4. **In-memory job state** — a restart loses scans; no distributed lock for multi-instance. **Open.** The rate limiter inherits this: its counter is per process, so N replicas means an effective ceiling of N×.
+5. **`SECURITY.md` documents a threat model that exceeds what is enforced** in places. **Narrowed**, not closed — the deployment-posture section was rewritten against what the code now does.
+
+**Production readiness: deployable behind a configured allowlist and a key; still single-instance.** The remaining blocker is state, not access control.
 
 ---
 
@@ -320,7 +322,7 @@ OpenTelemetry → OTLP/gRPC → SigNoz. **Traces, metrics and logs**, with a log
 | **Demo video <3:00** | **Missing** | — |
 | **Devpost submission** | **Missing** | — |
 | Eligibility disclosure | **Satisfied** | `DISCLOSURE.md` |
-| Reproducibility from clean clone | **Satisfied** | Verified; 831 tests, no key needed |
+| Reproducibility from clean clone | **Satisfied** | Verified; 861 tests, no key needed |
 | Evaluation suite | **Satisfied** | 7/7 accuracy, 0 FP, control case, published |
 | Ablation with N≥5 | **Satisfied, negative** | 5.14 s on vs 4.87 s off — reported honestly |
 | **`make demo`** | **Missing** | No such target |

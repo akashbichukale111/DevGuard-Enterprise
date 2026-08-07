@@ -26,7 +26,25 @@ The server starts and every endpoint below responds **without** an API key. Only
 
 **Provenance.** Responses that could be served from different sources carry a `data_source` field. It is never `live` unless the value genuinely came from a live dependency.
 
-**CORS** is open by default (`allow_origins=["*"]`, credentials disabled). Restrict it before exposing the API beyond a trusted network.
+**CORS** is open by default (`allow_origins=["*"]`, credentials disabled). Set `DEVGUARD_ALLOWED_ORIGINS` to a comma-separated allowlist before exposing the API beyond a trusted network.
+
+**Authentication** is off unless `DEVGUARD_API_KEYS` is set. When it is set, these endpoints require a key and return `401` with `WWW-Authenticate: Bearer` without one:
+
+| Endpoint | Why |
+|---|---|
+| `POST /scan`, `POST /scan/zip`, `POST /scan/repository` | each spends real model calls |
+| `POST /scan/{id}/approve`, `POST /scan/{id}/reject` | the governance gate — who may approve a fix |
+
+Send either header:
+
+```
+Authorization: Bearer <key>
+X-API-Key: <key>
+```
+
+Reads stay open in both modes, deliberately: throttling or 401-ing a liveness probe is how a service gets marked unhealthy. `GET /slo-status` reports the live mode under `access_control`, with SHA-256 fingerprints of the loaded keys rather than the keys.
+
+**Rate limiting** applies to the three spending endpoints: 20 requests per 60 s per client by default, `429` with `Retry-After` when exceeded. Tune with `DEVGUARD_SCAN_RATE_LIMIT` and `DEVGUARD_SCAN_RATE_WINDOW_S`; `0` disables. It keys on `X-Forwarded-For`, so it is a cost guard rather than a security control.
 
 ---
 
@@ -187,6 +205,9 @@ Set in `.env` — see [`.env.example`](../.env.example) for the annotated list.
 | Variable | Required | Effect when unset |
 |---|---|---|
 | `GROQ_API_KEY` | for `POST /scan` only | Server runs; `POST /scan` returns a clear error |
+| `DEVGUARD_API_KEYS` | no | **No authentication** — every endpoint is open. Set it (comma-separated, each ≥16 chars) on anything internet-facing |
+| `DEVGUARD_ALLOWED_ORIGINS` | no | CORS allows every origin |
+| `DEVGUARD_SCAN_RATE_LIMIT` / `DEVGUARD_SCAN_RATE_WINDOW_S` | no | 20 requests per 60 s per client; `0` disables |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | no | Defaults to `http://localhost:4317`; telemetry no-ops if nothing is listening |
 | `SIGNOZ_MCP_URL` | no | Self-observation uses the in-process shadow, reported as `local_shadow` |
 | `AUDIT_LOG_PATH` | no | Defaults to `data/audit_log.jsonl`; created on first write |
