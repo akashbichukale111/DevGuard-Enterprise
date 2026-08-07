@@ -14,7 +14,7 @@ related asset starts from more knowledge than the last one.
 
 `Agents That Do Real Work` &nbsp;·&nbsp; `Production ML Agents`
 
-[**Live demo**](#see-it-in-60-seconds) &nbsp;·&nbsp; [**Evidence**](evidence/) &nbsp;·&nbsp; [**Architecture**](ARCHITECTURE.md) &nbsp;·&nbsp; [**Security**](SECURITY.md) &nbsp;·&nbsp; [**Disclosure**](DISCLOSURE.md) &nbsp;·&nbsp; [**Judge walkthrough**](docs/JUDGE_WALKTHROUGH.md)
+[**Live demo**](#see-it-in-60-seconds) &nbsp;·&nbsp; [**Evidence**](evidence/) &nbsp;·&nbsp; [**Architecture**](ARCHITECTURE.md) &nbsp;·&nbsp; [**Security**](SECURITY.md) &nbsp;·&nbsp; [**Disclosure**](DISCLOSURE.md) &nbsp;·&nbsp; [**Judge walkthrough**](docs/JUDGE_WALKTHROUGH.md) &nbsp;·&nbsp; [**Devpost copy**](docs/DEVPOST.md)
 
 [![CI](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
