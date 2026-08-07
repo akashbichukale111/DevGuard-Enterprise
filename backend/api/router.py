@@ -34,6 +34,7 @@ from typing import Any, Optional
 
 from fastapi import (
     APIRouter,
+    Depends,
     File,
     Header,
     HTTPException,
@@ -47,6 +48,7 @@ from opentelemetry.trace import format_trace_id
 from pydantic import BaseModel, ValidationError
 
 from backend.core import audit, cache, languages, project_scan, telemetry
+from backend.core.ratelimit import enforce_scan_rate_limit
 from backend.core.ai_agent import AgentExecutionError
 from backend.core.mcp_client import get_mcp_client
 from backend.core.resilience import (
@@ -498,7 +500,7 @@ def _build_frontend_result(
 # ===========================================================================
 # POST /scan  — the main entry point
 # ===========================================================================
-@router.post("/scan")
+@router.post("/scan", dependencies=[Depends(enforce_scan_rate_limit)])
 async def scan(request: Request, x_traceparent: Optional[str] = Header(default=None)):
     # ---- Input parsing (400/422, never a 500) ----
     try:
@@ -1064,7 +1066,7 @@ def _start_project_scan(source_label: str, collection: project_scan.Collection) 
 _project_scan_tasks: set[asyncio.Task] = set()
 
 
-@router.post("/scan/zip")
+@router.post("/scan/zip", dependencies=[Depends(enforce_scan_rate_limit)])
 async def scan_zip(file: UploadFile = File(...)):
     """
     Scan every supported source file in an uploaded ZIP archive.
@@ -1090,7 +1092,7 @@ async def scan_zip(file: UploadFile = File(...)):
     return _start_project_scan(f"zip:{file.filename or 'archive.zip'}", collection)
 
 
-@router.post("/scan/repository")
+@router.post("/scan/repository", dependencies=[Depends(enforce_scan_rate_limit)])
 async def scan_repository(request: Request):
     """
     Shallow-clone a public repository and scan its supported source files.

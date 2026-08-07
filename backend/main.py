@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
@@ -21,9 +22,23 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="DevGuard AI", lifespan=lifespan)
 
+# CORS origins are configurable so a deployment can be narrowed without a code
+# change. The default stays "*" deliberately: this backend is also run locally,
+# from containers, and from a static export served on arbitrary ports, and
+# silently breaking every one of those to harden a demo would be the wrong
+# trade. `allow_credentials` is False, so "*" here does not expose cookies or
+# authenticated sessions — there are none.
+#
+# Production should set DEVGUARD_ALLOWED_ORIGINS to the real frontend origin;
+# render.yaml documents it. Comma-separated, whitespace tolerated.
+_origins_raw = os.environ.get("DEVGUARD_ALLOWED_ORIGINS", "*").strip()
+ALLOWED_ORIGINS = (
+    ["*"] if _origins_raw == "*" else [o.strip() for o in _origins_raw.split(",") if o.strip()]
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
