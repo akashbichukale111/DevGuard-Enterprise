@@ -125,15 +125,37 @@ Scoped to **five named dataset URNs**, not a domain. A URN allowlist is strictly
 narrower — a domain grants access to whatever is later added to it — and this
 substrate has no domain that would exist for any reason other than the policy.
 
-**Never granted, each verified as a live DENY:** `DELETE_ENTITY`,
-`EDIT_LINEAGE`, `EDIT_ENTITY_STATUS`, `MANAGE_POLICIES`, `MANAGE_INGESTION`,
-`EDIT_ENTITY_GLOSSARY_TERMS`, `EDIT_DOMAINS_PRIVILEGE`.
+**Never granted.** Not all of them are equally *proven*, and the difference
+matters — this section previously said "each verified as a live DENY" of all
+seven privileges below, when the committed artifact probed four. That was an
+overclaim in a security document, which is the worst place to have one, and the
+table now distinguishes the three cases.
+
+| Privilege | Status | Probe |
+|---|---|---|
+| `DELETE_ENTITY` | **Proven denied** against a live server | `batchUpdateSoftDeleted` |
+| `EDIT_LINEAGE` | **Proven denied** | `updateLineage` |
+| `MANAGE_POLICIES` | **Proven denied** | `createPolicy` |
+| `MANAGE_INGESTION` | **Proven denied** | `createIngestionSource` |
+| `EDIT_ENTITY_GLOSSARY_TERMS` | Probe added, **not yet executed** | `addTerms` |
+| `EDIT_DOMAINS_PRIVILEGE` | Probe added, **not yet executed** | `setDomain` |
+| `EDIT_ENTITY_STATUS` | **Asserted, not probeable** | DataHub's GraphQL exposes no dataset-status mutation — only `updateUserStatus`, which targets corp users. The grant is absent from the policy; there is no way to demonstrate the refusal through this surface. |
+
+A fifth DENY case in the artifact is not a privilege at all: it writes to a real,
+ingested dbt dataset that sits **outside the five-URN scope**, proving the scope
+axis independently of the privilege axis.
+
+The committed evidence records the state at its capture:
 
 ```
 $ python scripts/verify_least_privilege.py
 ALLOW: 4/4 behaved as required
 DENY : 5/5 correctly refused
 ```
+
+The two new probes take that to `DENY : 7/7` on the next run against a live
+DataHub. They are in the verifier now so the next capture proves them; until
+that capture exists this document does not claim they passed.
 
 ### Why that verifier exists
 

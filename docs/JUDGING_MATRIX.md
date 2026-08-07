@@ -24,7 +24,7 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 
 | Capability | Evidence | Honest limits |
 |---|---|---|
-| 885 tests, no API key or network required | `make test` | — |
+| 893 tests, no API key or network required | `make test` | — |
 | Clean-clone reproducibility | [`docs/REPRODUCIBILITY.md`](REPRODUCIBILITY.md) | — |
 | Fault-injection eval: 7/7, 0 false positives, control case | [`examples/eval/results.json`](../examples/eval/results.json) | Measures the deterministic detection path, **not** LLM diagnosis — stated in the artifact itself |
 | Retrieval ablation, N=5 per arm | [`examples/ablation/timings.json`](../examples/ablation/timings.json) | **Negative result**: 5.14 s with retrieval vs 4.87 s without. Published because measured |
@@ -51,7 +51,7 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 | Capability | Evidence | Honest limits |
 |---|---|---|
 | Owner-routed approval from the graph | [`backend/v2/agents/magistrate.py`](../backend/v2/agents/magistrate.py) | — |
-| Least-privilege service account, denials verified | [`evidence/proof-pack/security/least-privilege/`](../evidence/proof-pack/security/least-privilege/) | — |
+| Least-privilege service account, denials verified | [`evidence/proof-pack/security/least-privilege/`](../evidence/proof-pack/security/least-privilege/) · [`tests/test_least_privilege_claims.py`](../tests/test_least_privilege_claims.py) (7 tests) | **4** privilege denials proven live, plus one URN-scope denial. Glossary and domain probes are in the verifier but not yet executed; `EDIT_ENTITY_STATUS` has no probeable mutation in DataHub's GraphQL. The docs said all seven were verified — that overclaim is now build-enforced against the artifact |
 | Hash-chained tamper-evident audit trail | [`tests/test_audit_chain.py`](../tests/test_audit_chain.py) (37 tests) | — |
 | ZIP / repository scanning with hostile-input handling | [`tests/test_project_scan.py`](../tests/test_project_scan.py) (36 tests) | Capped at 25 files per run |
 | Cost and token accounting per incident | [`backend/core/telemetry.py`](../backend/core/telemetry.py) | Renders `N/A` in recorded runs — no model was invoked |
