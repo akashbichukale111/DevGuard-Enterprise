@@ -92,6 +92,23 @@ services:
       - key: OTEL_SERVICE_NAME
         value: devguard-backend
 
+      # Narrow CORS to the real frontend origin. The backend defaults to "*"
+      # because it also runs locally, in containers and behind static exports
+      # on arbitrary ports; production should not inherit that. Set this to
+      # the deployed frontend, comma-separated for more than one.
+      - key: DEVGUARD_ALLOWED_ORIGINS
+        value: https://dev-guard-enterprise.vercel.app
+
+      # Scan endpoints spend money per request — a scan is several model
+      # calls, a project scan up to 25 times that. These cap it per client
+      # per window. 0 disables the limiter; the read endpoints and the Nexus
+      # modules are never limited, because throttling a liveness probe is how
+      # a service gets marked unhealthy for being popular.
+      - key: DEVGUARD_SCAN_RATE_LIMIT
+        value: "20"
+      - key: DEVGUARD_SCAN_RATE_WINDOW_S
+        value: "60"
+
       # Belt and braces for the Python version.
       #
       # `runtime: docker` above pins Python through backend/Dockerfile
