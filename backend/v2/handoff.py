@@ -22,11 +22,16 @@ actually do:
 
 from __future__ import annotations
 
+import logging
+import os
+
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
+
+logger = logging.getLogger("devguard.handoff")
 
 
 class AgentDecision(str, Enum):
@@ -161,13 +166,66 @@ MUTABLE_ENTITY_TYPES: frozenset[str] = frozenset({"dataset", "document"})
 #: The exact assets DevGuard may write to. Same five datasets as the Access
 #: Policy. Documents have no stable URN before creation, so they are scoped by
 #: entity type only.
-MUTATION_SCOPE_URNS: frozenset[str] = frozenset({
+def _scope_from_env() -> frozenset[str] | None:
+    """
+    Operator-supplied write scope, or None to use the built-in default.
+
+    Onboarding a sixth asset used to be a code change and a redeploy, which
+    made the narrowest, most security-relevant setting in the system the one
+    hardest to adjust — and a control that is painful to widen correctly is a
+    control people widen incorrectly.
+
+    Entries are separated by **whitespace, not commas**. A DataHub dataset URN
+    contains commas of its own —
+    `urn:li:dataset:(urn:li:dataPlatform:postgres,db.schema.table,PROD)` — so
+    comma-splitting shreds every real URN into fragments, each of which then
+    fails the prefix check below. The scope would silently resolve to empty and
+    every write would be refused, which is safe but baffling. Whitespace cannot
+    appear inside a URN, and it lets a multi-line env value list one per line.
+
+    Fails **closed** on anything unparseable. A malformed allowlist must not
+    silently fall back to the default and let a deployment believe it narrowed
+    a scope it did not; an empty result means no dataset write is permitted at
+    all, which is the safe direction.
+    """
+    raw = os.environ.get("DEVGUARD_MUTATION_SCOPE_URNS")
+    if raw is None:
+        return None
+    urns = {u.strip() for u in raw.split() if u.strip()}
+    # Two checks, not one. The prefix alone accepts a comma-joined pair —
+    # "urn:li:dataset:(...),urn:li:dataset:(...)" starts with the prefix and
+    # ends with ")" — and it would be stored as a single bogus entry that
+    # matches no real asset. Requiring exactly one occurrence of the scheme
+    # rejects concatenation, which is the mistake someone reaching for a comma
+    # will actually make.
+    rejected = {
+        u for u in urns
+        if not u.startswith("urn:li:dataset:") or u.count("urn:li:dataset:") != 1
+    }
+    if rejected:
+        logger.error(
+            "DEVGUARD_MUTATION_SCOPE_URNS: %d entry(ies) are not dataset URNs and "
+            "were dropped; the write scope is narrower than configured", len(rejected))
+    return frozenset(urns - rejected)
+
+
+#: The exact assets DevGuard may write to. Same five datasets as the Access
+#: Policy by default; overridable through DEVGUARD_MUTATION_SCOPE_URNS so a
+#: deployment can scope itself without a code change. The server-side Access
+#: Policy remains the real control — this is the application-layer half of
+#: defence in depth, and widening it here grants nothing the policy denies.
+_DEFAULT_MUTATION_SCOPE_URNS: frozenset[str] = frozenset({
     "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
     "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.orders,PROD)",
     "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
     "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_orders,PROD)",
     "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
 })
+
+_ENV_SCOPE = _scope_from_env()
+MUTATION_SCOPE_URNS: frozenset[str] = (
+    _DEFAULT_MUTATION_SCOPE_URNS if _ENV_SCOPE is None else _ENV_SCOPE
+)
 
 #: Argument names that carry the entity a mutation targets. Read from the live
 #: inputSchemas against the live server rather than guessed.

@@ -89,7 +89,7 @@ written to the pipe.
 |---|---|---|
 | Tools | `add_tags`, `update_description`, `save_document`, `add_structured_properties`, `add_owners` — held by **Scribe only** | `AGENT_TOOL_ALLOWLISTS` |
 | Entity types | `dataset`, `document` | `MUTABLE_ENTITY_TYPES` |
-| Scope | five named dataset URNs | `MUTATION_SCOPE_URNS` |
+| Scope | five named dataset URNs by default; `DEVGUARD_MUTATION_SCOPE_URNS` overrides | `MUTATION_SCOPE_URNS` |
 
 An agent that requests a tool it does not hold raises `ToolNotAllowedError`; a
 write outside scope raises `EntityNotInScopeError`. Both are Python exceptions
@@ -97,6 +97,16 @@ with stack traces rather than server-side rejections that have to be interpreted
 
 Reads are deliberately unrestricted. The blast radius of reading a dataset
 DevGuard does not own is nil, and narrowing reads would break lineage traversal.
+
+The scope axis is configurable through `DEVGUARD_MUTATION_SCOPE_URNS` because
+onboarding a sixth asset used to be a code change and a redeploy — and a
+control that is painful to adjust correctly is one people adjust incorrectly,
+usually by removing it. Entries are separated by **whitespace, not commas**: a
+dataset URN contains commas of its own, so a comma-joined list is a single
+malformed token. It fails closed in both directions — an entry that is not
+exactly one dataset URN is dropped with an error log, and a wholly invalid
+value permits no dataset write at all rather than reverting to the default.
+Widening it grants nothing the server-side Access Policy denies.
 
 This duplicates the server-side Access Policy on purpose — and that redundancy
 proved its worth, as the next section explains.
