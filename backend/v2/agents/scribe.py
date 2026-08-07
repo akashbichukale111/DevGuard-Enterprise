@@ -118,12 +118,20 @@ class Scribe:
     NAME = "scribe"
 
     def __init__(self, client: DataHubMCPClient, builder: EvidenceBuilder,
-                 pack: ProofPack, *, gql=None, dry_run: bool = False) -> None:
+                 pack: ProofPack, *, gql=None, dry_run: bool = False,
+                 corroborator=None) -> None:
         self._client = client
         self._builder = builder
         self._pack = pack
         self._gql = gql  # incidents are GraphQL-only (documented server behaviour); injected for testability
         self._dry_run = dry_run
+        # Optional second opinion on recovery, read from DataHub's own
+        # assertions (backend/v2/assertions.py). Optional on purpose: every
+        # run recorded before this existed was captured without it, and making
+        # it mandatory would retroactively turn those into un-resolvable
+        # incidents. Absent -> behaviour is exactly what it was. Present -> the
+        # catalog gets a veto over resolving.
+        self._corroborator = corroborator
 
     @staticmethod
     def _key(incident_id: str, artifact_type: str, target_urn: str) -> str:
@@ -176,7 +184,7 @@ class Scribe:
 
         # Artifact 1's resolve half runs LAST and only if everything else landed.
         resolve = self._artifact_1_resolve_incident(
-            incident_urn, knowledge_landed, recovery, stamp)
+            incident_urn, knowledge_landed, recovery, stamp, dataset_urn)
         results.append(resolve)
         result.incident_resolved = resolve.outcome is ArtifactOutcome.WRITTEN
 
@@ -360,7 +368,7 @@ class Scribe:
         )
 
     def _artifact_1_resolve_incident(self, incident_urn, knowledge_landed, recovery,
-                                     stamp) -> ArtifactResult:
+                                     stamp, dataset_urn=None) -> ArtifactResult:
         """Write-back artifact #1 (resolve half) — LAST, and only when the knowledge is in place."""
         key = self._key("*", "incident_resolved", incident_urn or "")
         if self._dry_run:
@@ -388,6 +396,26 @@ class Scribe:
                 detail=("held ACTIVE on purpose: not every knowledge artifact landed, "
                         "and the write-back rules forbid asserting a verified state whose supporting "
                         "knowledge is missing"))
+
+        # The catalog's veto. Only consulted when a corroborator was supplied,
+        # so runs recorded before this existed behave exactly as they did.
+        if self._corroborator is not None:
+            from backend.v2.assertions import recovery_is_agreed
+
+            report = self._corroborator.corroborate(dataset_urn)
+            agreed, why = recovery_is_agreed(recovery.verified, report)
+            if not agreed:
+                return ArtifactResult(
+                    number=1, name="incident resolved", target_urn=incident_urn,
+                    outcome=ArtifactOutcome.FAILED, idempotency_key=key,
+                    detail=(f"held ACTIVE on purpose: {why}. Resolving on a check "
+                            "DevGuard performed on itself, against a catalog that "
+                            "does not agree, is the failure this gate exists to stop"),
+                    raw_ref=self._pack.write(
+                        "scribe/artifact1-corroboration-blocked.json",
+                        {"verdict": report.verdict.value, "reason": report.reason,
+                         "runtime_passed": recovery.verified},
+                        note="Incident held ACTIVE — the catalog did not corroborate recovery."))
         if self._gql is None:
             return ArtifactResult(
                 number=1, name="incident resolved", target_urn=incident_urn,

@@ -284,3 +284,86 @@ def test_the_corroborator_is_passed_the_urn_it_was_asked_about():
     AssertionCorroborator(_gql).corroborate(URN)
     assert seen["urn"] == URN
     assert seen["count"] > 0 and seen["limit"] > 0
+
+
+# --------------------------------------------------------------------------- #
+# The wiring — without this the module above is a library nobody calls
+# --------------------------------------------------------------------------- #
+
+class _Corroborator:
+    """Records the URN it was asked about and returns a fixed verdict."""
+
+    def __init__(self, assertions):
+        self._gql = _gql_for(assertions)
+        self.asked = []
+
+    def corroborate(self, dataset_urn):
+        self.asked.append(dataset_urn)
+        return AssertionCorroborator(self._gql).corroborate(dataset_urn)
+
+
+def _scribe(tmp_path, corroborator, resolved):
+    from tests.test_writeback_rules import FakeClient
+    from backend.v2.agents.scribe import Scribe
+    from backend.v2.proofpack import ProofPack
+
+    return Scribe(
+        FakeClient(ok=True), None, ProofPack(tmp_path, "r"),
+        gql=lambda q, v: resolved.append(v) or {"data": {"updateIncidentStatus": True}},
+        corroborator=corroborator,
+    )
+
+
+def _write_back(scribe):
+    from tests.test_writeback_rules import CHAIN, DATASET, VERIFIED, approved_request
+
+    return scribe.write_back(
+        chain=CHAIN, recovery=VERIFIED, approval=approved_request(),
+        dataset_urn=DATASET, column="user_id",
+        incident_urn="urn:li:incident:i", root_cause="rc")
+
+
+def test_a_contradicting_catalog_holds_the_incident_active(tmp_path):
+    """
+    The wiring, proven at the Scribe boundary. Runtime passed and every
+    knowledge artifact landed — the only thing standing between this and a
+    RESOLVED incident is the catalog's disagreement.
+    """
+    resolved: list = []
+    c = _Corroborator([_assertion("unique_user_id", "FAILURE")])
+    result = _write_back(_scribe(tmp_path, c, resolved))
+
+    assert result.incident_resolved is False
+    assert resolved == [], "the resolve mutation must not even be attempted"
+    assert c.asked, "the corroborator was never consulted"
+
+
+def test_an_agreeing_catalog_lets_the_incident_resolve(tmp_path):
+    """The converse — otherwise the gate above would just block everything."""
+    resolved: list = []
+    c = _Corroborator([_assertion("unique_user_id", "SUCCESS")])
+    result = _write_back(_scribe(tmp_path, c, resolved))
+
+    assert result.incident_resolved is True
+    assert len(resolved) == 1
+
+
+def test_the_corroborator_is_asked_about_the_dataset_not_the_incident(tmp_path):
+    """Assertions hang off the dataset; asking about the incident URN returns nothing."""
+    from tests.test_writeback_rules import DATASET
+
+    c = _Corroborator([_assertion("a", "SUCCESS")])
+    _write_back(_scribe(tmp_path, c, []))
+    assert c.asked == [DATASET]
+
+
+def test_without_a_corroborator_behaviour_is_unchanged(tmp_path):
+    """
+    Backwards compatibility, deliberately. Every run recorded before this
+    existed was captured without a corroborator; making it mandatory would
+    retroactively turn those into un-resolvable incidents.
+    """
+    resolved: list = []
+    result = _write_back(_scribe(tmp_path, None, resolved))
+    assert result.incident_resolved is True
+    assert len(resolved) == 1
