@@ -18,7 +18,7 @@ related asset starts from more knowledge than the last one.
 
 [![CI](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-1015%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-1037%20passing-brightgreen.svg)](tests/)
 [![DataHub](https://img.shields.io/badge/DataHub-v1.6.0-1890FF.svg)](https://datahubproject.io/)
 [![MCP](https://img.shields.io/badge/MCP-mcp--server--datahub%400.6.0-6E56CF.svg)](https://modelcontextprotocol.io/)
 [![SigNoz](https://img.shields.io/badge/SigNoz-v0.135.0-E75536.svg)](https://signoz.io/)
@@ -373,7 +373,7 @@ pip install -r requirements.txt
 cd frontend && npm ci && cd ..
 
 make doctor    # reports exactly what is present and what is missing
-make test      # 1015 tests — no key, no collector, no network
+make test      # 1037 tests — no key, no collector, no network
 make replay    # build replay bundles from the committed proof packs
 ```
 
@@ -432,7 +432,7 @@ Each path is documented step by step in **[docs/INSTALLATION.md](docs/INSTALLATI
 - Hash-chained, tamper-evident audit trail
 
 **Engineering**
-- 1015 tests running in CI on every push with no key, no collector and no network
+- 1037 tests running in CI on every push with no key, no collector and no network
 - Secret scanning over the working tree *and* the full git history
 - Dependency advisory reporting on every push
 - `make doctor` preflight that names every missing prerequisite and how to satisfy it
@@ -656,7 +656,7 @@ Everything below runs on a clean clone with **no API key, no catalog, no collect
 
 ```bash
 make doctor              # what is present, what is missing, what to do about it
-make test                # 1015 tests
+make test                # 1037 tests
 make replay              # replay bundles from the committed proof packs
 make replay-build        # static export of the Command Center
 make verify-replay-ui    # drive the built site in a real browser and assert
@@ -702,7 +702,7 @@ DevGuard-Enterprise/
 │   └── components/
 ├── evidence/                proof packs and captured artifacts
 ├── examples/                ablation study, evaluation results
-├── tests/                   1015 tests
+├── tests/                   1037 tests
 ├── scripts/                 verification, reproduction and demo scripts
 ├── substrate/               PostgreSQL seed, dbt project, ML model
 ├── recipes/                 DataHub ingestion recipes

@@ -273,6 +273,42 @@ def check_reachability() -> None:
 
 # --------------------------------------------------------------------------- #
 
+
+def _report_datahub() -> None:
+    """
+    DataHub configuration and connectivity.
+
+    Deliberately not a *required* check: the Command Center replays committed
+    proof packs with no catalog at all, so a missing DataHub must not fail the
+    preflight of someone who only wants the demo. But it was previously not
+    reported at all, which meant the one dependency the flagship module is
+    built around had no answer to "is it reachable, and am I authorised?" until
+    an agent failed mid-run.
+    """
+    # doctor.py is run directly (`python scripts/doctor.py`), so the repo root
+    # is not on sys.path the way it is under pytest or uvicorn.
+    import sys
+    root = str(Path(__file__).resolve().parents[1])
+    if root not in sys.path:
+        sys.path.insert(0, root)
+
+    from backend.v2.datahub_preflight import Status, preflight
+
+    report = preflight()
+    colour = {
+        Status.OK: GREEN,
+        Status.NOT_CONFIGURED: GREY,
+        Status.UNREACHABLE: AMBER,
+        Status.UNAUTHENTICATED: AMBER,
+    }[report.status]
+
+    print(f"\n{BOLD}DataHub:{RESET} {colour}{report.status.value}{RESET}")
+    print(f"  {GREY}{report.detail}{RESET}")
+    for name, ok, detail in report.checks:
+        mark = f"{GREEN}ok{RESET}" if ok else f"{AMBER}--{RESET}"
+        print(f"  [{mark}] {name}: {detail}")
+
+
 def main() -> int:
     print(f"\n{BOLD}DevGuard doctor{RESET}  {GREY}preflight diagnosis{RESET}\n")
 
@@ -305,6 +341,8 @@ def main() -> int:
             print(f"  {RED}{name}{RESET}: {detail}\n    -> {remedy}")
         print(f"\n{RED}doctor: {len(missing)} required check(s) failed.{RESET}\n")
         return 1
+
+    _report_datahub()
 
     print(f"\n{GREEN}doctor: all required checks passed.{RESET}")
     print(f"{GREY}Start the backend:  python -m uvicorn backend.main:app --port 8000{RESET}")

@@ -62,7 +62,7 @@ They are in [`docs/JUDGING_MATRIX.md`](JUDGING_MATRIX.md), stated plainly rather
 than left for you to discover:
 
 1. **No recorded run invoked a model.** All 49 handoff records carry
-   `model=null`. `api.groq.com` is unreachable from the capture environment — [proven to be a network egress block, not a missing key](verification/llm-egress-blocked.md). The
+   `model=null`. `api.groq.com` is unreachable from the capture environment — [proven to be a network egress block, not a missing key](LLM_EGRESS_BLOCKED.md). The
    evidence rule, the refusal path and the chain validation are proven; the
    *quality of model reasoning* is not.
 2. **The retrieval ablation is a negative result.** Retrieval made
