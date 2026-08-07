@@ -8,6 +8,10 @@
 PYTHON ?= python
 PORT   ?= 8000
 
+# The demo serves a static export and needs no backend, but defaulting it to
+# PORT would collide with `make backend` for anyone running both.
+DEMO_PORT ?= 8080
+
 .DEFAULT_GOAL := help
 
 .PHONY: help
@@ -103,6 +107,45 @@ backend:  ## Run the backend (works with no API key; /scan needs one)
 .PHONY: frontend
 frontend:  ## Run the frontend dev server
 	cd frontend && npm run dev
+
+.PHONY: demo
+demo: doctor  ## One command: preflight, build the replay bundles, serve the Command Center
+	@echo ""
+	@echo "=========================================================="
+	@echo " DevGuard demo"
+	@echo "=========================================================="
+	@echo ""
+	@echo "Building replay bundles from the committed proof packs..."
+	@$(PYTHON) scripts/build_replay.py
+	@echo ""
+	@echo "Building the static Command Center..."
+	@cd frontend && npm ci --silent && NEXT_OUTPUT=export npm run build
+	@echo ""
+	@echo "----------------------------------------------------------"
+	@echo " Open  http://localhost:$(DEMO_PORT)/command/"
+	@echo ""
+	@echo " This replays real recorded runs from evidence/proof-pack/."
+	@echo " No DataHub, no database, no API key and no backend are"
+	@echo " needed — every number on screen is read from a proof pack."
+	@echo ""
+	@echo " Use the run picker (top right) to switch runs. Try"
+	@echo " d5-refusal to see the Diagnostician decline, and"
+	@echo " d6-fail-the-fix to see a bad patch write nothing back."
+	@echo "----------------------------------------------------------"
+	@echo ""
+	@cd frontend/out && $(PYTHON) -m http.server $(DEMO_PORT)
+
+.PHONY: reset-demo
+reset-demo:  ## Rebuild demo artifacts from the proof packs, discarding local drift
+	@echo "Rebuilding replay bundles from evidence/proof-pack/..."
+	@$(PYTHON) scripts/build_replay.py
+	@echo ""
+	@echo "reset-demo: bundles regenerated. Committed proof packs are the"
+	@echo "source of truth, so this is always safe to re-run."
+	@echo ""
+	@echo "Note: DataHub write-backs are NOT undone by this. Incidents are"
+	@echo "resolved, not deleted, and catalog edits are overwritten rather"
+	@echo "than removed — see DEPLOYMENT.md."
 
 .PHONY: clean
 clean:  ## Remove build artifacts and caches

@@ -18,7 +18,7 @@ related asset starts from more knowledge than the last one.
 
 [![CI](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-766%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-831%20passing-brightgreen.svg)](tests/)
 [![DataHub](https://img.shields.io/badge/DataHub-v1.6.0-1890FF.svg)](https://datahubproject.io/)
 [![MCP](https://img.shields.io/badge/MCP-mcp--server--datahub%400.6.0-6E56CF.svg)](https://modelcontextprotocol.io/)
 [![SigNoz](https://img.shields.io/badge/SigNoz-v0.135.0-E75536.svg)](https://signoz.io/)
@@ -277,7 +277,9 @@ flowchart TB
     PP --> UI[Command Center replay UI]
 ```
 
-Full component-by-component detail, including the evidence type system and the handoff contract, is in **[ARCHITECTURE.md](ARCHITECTURE.md)**.
+Full component-by-component detail, including the evidence type system and the handoff contract, is in **[ARCHITECTURE.md](ARCHITECTURE.md)**. An independent component-by-component critique, including what scores badly, is in **[docs/ARCHITECTURE_REVIEW.md](docs/ARCHITECTURE_REVIEW.md)**.
+
+If you are evaluating this project against the hackathon's criteria, **[docs/JUDGING_MATRIX.md](docs/JUDGING_MATRIX.md)** maps every shipped capability to the artifact that proves it, and states where each row is weaker than it looks. Its paths and figures are checked by `tests/test_judging_matrix.py`, so it fails the build rather than quietly going stale.
 
 ### Observability with SigNoz
 
@@ -319,10 +321,18 @@ That last script matters: it proves the telemetry pipeline end to end without ne
 The Command Center replays **recorded runs from the committed proof packs**, with no DataHub, no PostgreSQL, no API key and no backend:
 
 ```bash
-make replay-serve
+make demo
 ```
 
-Then open <http://localhost:8000/command/>. Seven recorded runs are selectable:
+That runs the preflight check, rebuilds the replay bundles from the committed
+proof packs, builds the static Command Center and serves it — then tells you
+which runs are worth opening first. Open <http://localhost:8080/command/>.
+
+`make replay-serve` does the same without the preflight step, on port 8000.
+`make reset-demo` regenerates the bundles from the proof packs if a local run
+has left them modified.
+
+Seven recorded runs are selectable:
 
 | Run | What it shows |
 |---|---|
@@ -363,7 +373,7 @@ pip install -r requirements.txt
 cd frontend && npm ci && cd ..
 
 make doctor    # reports exactly what is present and what is missing
-make test      # 766 tests — no key, no collector, no network
+make test      # 831 tests — no key, no collector, no network
 make replay    # build replay bundles from the committed proof packs
 ```
 
@@ -422,7 +432,7 @@ Each path is documented step by step in **[docs/INSTALLATION.md](docs/INSTALLATI
 - Hash-chained, tamper-evident audit trail
 
 **Engineering**
-- 766 tests running in CI on every push with no key, no collector and no network
+- 831 tests running in CI on every push with no key, no collector and no network
 - Secret scanning over the working tree *and* the full git history
 - Dependency advisory reporting on every push
 - `make doctor` preflight that names every missing prerequisite and how to satisfy it
@@ -646,7 +656,7 @@ Everything below runs on a clean clone with **no API key, no catalog, no collect
 
 ```bash
 make doctor              # what is present, what is missing, what to do about it
-make test                # 766 tests
+make test                # 831 tests
 make replay              # replay bundles from the committed proof packs
 make replay-build        # static export of the Command Center
 make verify-replay-ui    # drive the built site in a real browser and assert
@@ -692,7 +702,7 @@ DevGuard-Enterprise/
 │   └── components/
 ├── evidence/                proof packs and captured artifacts
 ├── examples/                ablation study, evaluation results
-├── tests/                   766 tests
+├── tests/                   831 tests
 ├── scripts/                 verification, reproduction and demo scripts
 ├── substrate/               PostgreSQL seed, dbt project, ML model
 ├── recipes/                 DataHub ingestion recipes
@@ -752,7 +762,13 @@ DENY : 5/5 correctly refused
 
 Nothing is autonomous in this build. A module-level assertion enforces it, and `ApprovalRequest.approve()` raises `PermissionError` for CRITICAL, so no identity can authorise destructive DDL, a data mutation, a permission change or a hard-coded credential.
 
+**Rate limiting on the endpoints that spend money.** `POST /scan`, `/scan/zip` and `/scan/repository` each cost real model calls — a project scan is that multiplied by up to 25 files — so each is guarded by a per-client fixed window (`backend/core/ratelimit.py`), 20 requests per 60 s by default, configurable through `DEVGUARD_SCAN_RATE_LIMIT` and `DEVGUARD_SCAN_RATE_WINDOW_S`, with `0` disabling it for local work. A refusal returns `429` with `Retry-After`. Read endpoints are deliberately exempt: rate-limiting `/slo-status` is how a service gets marked unhealthy for being polled. The limiter is **per process** — behind N replicas the effective ceiling is N×, which is documented rather than solved, because moving the counter into the optional fail-open cache would trade a wallet risk for an availability risk.
+
+**CORS.** Origins come from `DEVGUARD_ALLOWED_ORIGINS` (comma-separated); the default remains `*` so a clean clone still works without configuration. Deployments that pair a known frontend with the backend should set it.
+
 **Secret hygiene.** No credential is committed. `scripts/scan_secrets.py` runs in CI over the working tree, and a separate CI job scans the full git history — a secret in an old commit still counts.
+
+**Authentication is absent**, and this is the honest gap in the list above. The scan endpoints are rate limited but unauthenticated, so the rate limiter is a cost guard rather than a security control — `X-Forwarded-For` is spoofable by a direct caller. Deploy behind an authenticating proxy if the instance is public.
 
 ---
 
