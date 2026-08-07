@@ -54,7 +54,39 @@ interface ModuleDef {
   endpoint: string;
   accent: "cyan" | "violet" | "emerald" | "amber" | "rose";
   stat: { label: string; value: number; suffix?: string; prefix?: string; decimals?: number };
+  /**
+   * Request body for this module. Only the two modules whose orchestrator
+   * accepts input set it; the rest genuinely take no parameters, and sending
+   * them a body would imply a configurability they do not have.
+   */
+  payload?: Record<string, unknown>;
 }
+
+// Real input for the two modules whose backend accepts it.
+//
+// execute_omni_heal() and execute_llm_judge() run the ACTUAL pipeline when
+// handed code — the same run_pipeline() that POST /scan uses — and fall back
+// to a synthetic payload, badged Simulated, when the model is unreachable.
+// This page used to post `{}` to every endpoint, which meant both modules took
+// their synthetic branch on every run regardless of whether a model was
+// available. Sending real code is what makes `data_source: "live"` reachable.
+//
+// The snippet is deliberately vulnerable — SQL injection via string
+// concatenation (CWE-89) plus an unescaped reflection (CWE-79) — so the
+// Scanner has something genuine to find rather than being asked to certify
+// clean code.
+const LIVE_SAMPLE = `import sqlite3
+from flask import Flask, request
+
+app = Flask(__name__)
+
+@app.route("/user")
+def get_user():
+    uid = request.args.get("id")
+    conn = sqlite3.connect("app.db")
+    row = conn.execute("SELECT name FROM users WHERE id = " + uid).fetchone()
+    return "<h1>Welcome " + row[0] + "</h1>"
+`;
 
 const MODULES: ModuleDef[] = [
   {
@@ -67,6 +99,7 @@ const MODULES: ModuleDef[] = [
     endpoint: "/god-mode/simulate/error",
     accent: "cyan",
     stat: { label: "Max reflection retries", value: 3 },
+    payload: { code: LIVE_SAMPLE },
   },
   {
     key: "finOps",
@@ -100,6 +133,7 @@ const MODULES: ModuleDef[] = [
     endpoint: "/god-mode/simulate/hallucination",
     accent: "amber",
     stat: { label: "Confidence floor", value: 0.5, decimals: 2 },
+    payload: { code: LIVE_SAMPLE, cwe_id: "CWE-89" },
   },
   {
     key: "execCommander",
@@ -199,7 +233,7 @@ export default function NexusCommandCenter() {
       const res = await fetch(`${API_BASE}${mod.endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
+        body: JSON.stringify(mod.payload ?? {}),
       });
       const elapsedMs = Math.round(performance.now() - started);
 
