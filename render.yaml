@@ -92,6 +92,25 @@ services:
       - key: OTEL_SERVICE_NAME
         value: devguard-backend
 
+      # Belt and braces for the Python version.
+      #
+      # `runtime: docker` above pins Python through backend/Dockerfile
+      # (python:3.11-slim), so this is redundant on that path. It matters when
+      # a service is created through the dashboard rather than from this
+      # blueprint: Render then auto-detects a Python service and uses its
+      # newest interpreter, which is currently 3.14, and the backend dies at
+      # import with
+      #
+      #   TypeError: Metaclasses with custom tp_new are not supported.
+      #
+      # That comes from protobuf 4.25.9, reached via
+      # opentelemetry-exporter-otlp-proto-grpc -> opentelemetry-proto. protobuf
+      # 4.25.9 publishes no wheel newer than cp310 and classifies itself for
+      # Python 3.8-3.11 only. `.python-version` at the repository root pins the
+      # same 3.11; PYTHON_VERSION takes precedence over it, so both are set.
+      - key: PYTHON_VERSION
+        value: "3.11"
+
       # Python 3.11 is pinned in the Dockerfile itself (python:3.11-slim). This
       # is here so the value is visible in the dashboard alongside the rest.
       - key: PYTHONUNBUFFERED
