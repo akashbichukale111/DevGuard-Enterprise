@@ -29,7 +29,7 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 
 | Capability | Evidence | Honest limits |
 |---|---|---|
-| 998 tests, no API key or network required | `make test` | — |
+| 1015 tests, no API key or network required | `make test` | — |
 | Clean-clone reproducibility | [`docs/REPRODUCIBILITY.md`](REPRODUCIBILITY.md) | — |
 | Fault-injection eval: 7/7, 0 false positives, control case | [`examples/eval/results.json`](../examples/eval/results.json) | Measures the deterministic detection path, **not** LLM diagnosis — stated in the artifact itself |
 | Retrieval ablation, N=5 per arm | [`examples/ablation/timings.json`](../examples/ablation/timings.json) | **Negative result**: 5.14 s with retrieval vs 4.87 s without. Published because measured |
@@ -72,6 +72,7 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 | Zero-setup replay URL | https://dev-guard-enterprise.vercel.app | Scanner and Nexus need a backend; only the Command Center works without one |
 | Architectural review | [`docs/ARCHITECTURE_REVIEW.md`](ARCHITECTURE_REVIEW.md) | — |
 | Eligibility disclosure | [`DISCLOSURE.md`](../DISCLOSURE.md) | — |
+| Upstream findings prepared for DataHub | [`docs/upstream/`](upstream/) · [`tests/test_upstream_claims.py`](../tests/test_upstream_claims.py) (13 tests) | **Prepared, not filed.** Two findings verified against DataHub `master` and a running stack; the filing checklists are deliberately unticked and a test fails if one is ticked |
 | Apache-2.0, detected by GitHub | [`LICENSE`](../LICENSE) | — |
 | **Demo video** | — | **Not recorded** |
 | **Devpost submission** | — | **Not submitted** |
