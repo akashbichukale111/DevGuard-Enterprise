@@ -28,7 +28,7 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 
 | Capability | Evidence | Honest limits |
 |---|---|---|
-| 975 tests, no API key or network required | `make test` | — |
+| 985 tests, no API key or network required | `make test` | — |
 | Clean-clone reproducibility | [`docs/REPRODUCIBILITY.md`](REPRODUCIBILITY.md) | — |
 | Fault-injection eval: 7/7, 0 false positives, control case | [`examples/eval/results.json`](../examples/eval/results.json) | Measures the deterministic detection path, **not** LLM diagnosis — stated in the artifact itself |
 | Retrieval ablation, N=5 per arm | [`examples/ablation/timings.json`](../examples/ablation/timings.json) | **Negative result**: 5.14 s with retrieval vs 4.87 s without. Published because measured |
