@@ -47,6 +47,29 @@ opentelemetry-exporter-otlp==1.20.0
 # install. Pinned to the 0.41b0 line that matches opentelemetry-* 1.20.0.
 opentelemetry-instrumentation-fastapi==0.41b0
 opentelemetry-instrumentation-logging==0.41b0
+
+# setuptools is pinned because the OTel instrumentation above imports
+# `pkg_resources`, which setuptools REMOVED in 81.0.0.
+#
+# Nothing here requests setuptools directly — chromadb pulls it in through
+# `build`, unpinned, so pip takes the newest. That made this a time bomb
+# rather than a stable state: installs that resolved setuptools < 81 worked,
+# and the first install to resolve 81+ produces a backend that cannot import
+# at all:
+#
+#     File "opentelemetry/instrumentation/dependencies.py", line 4
+#       from pkg_resources import (
+#     ModuleNotFoundError: No module named 'pkg_resources'
+#
+# `backend/main.py` imports FastAPIInstrumentor at module scope, so this is a
+# hard boot failure, not a degraded mode — uvicorn exits before serving a
+# single request. Reproduced on a clean install, which resolved setuptools
+# 83.0.0.
+#
+# Pinning setuptools is the smaller change: the alternative is moving the
+# whole opentelemetry-* set off the 1.20.0 / 0.41b0 line that
+# scripts/verify_otel.py is validated against.
+setuptools<81
 # aiohttp is NOT pinned here on purpose, and NOT because it is absent.
 #
 # It used to read `aiohttp==3.9.1`, and that one line carried 30 of the 56
