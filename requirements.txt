@@ -34,8 +34,37 @@ uvicorn[standard]==0.24.0
 # accepts it unchanged.
 pydantic==2.13.4
 groq==0.4.2
-chromadb==0.4.24
-sentence-transformers==2.2.2
+# chromadb and sentence-transformers are OPTIONAL accelerators for the CWE
+# retrieval store, and they are commented out here so a default install stays
+# deployable on a small container. docs/INSTALLATION.md already describes them
+# as optional and README's Limitations section already discloses that the
+# lexical fallback is what runs.
+#
+# Measured on a clean venv install of this file, both are unusable anyway:
+#
+#   import torch                  ->  8 MB to 691 MB
+#   sentence_transformers         ->  857 MB, then ImportError: cannot import
+#                                     name 'cached_download' from
+#                                     'huggingface_hub'
+#   chromadb                      ->  AttributeError: `np.float_` was removed
+#                                     in the NumPy 2.0 release
+#
+# sentence-transformers 2.2.2 needs huggingface_hub < 0.26 for cached_download,
+# while the transformers 4.57 it pulls requires huggingface_hub >= 0.34 — a
+# deadlock no pin resolves. chromadb 0.4.24 predates NumPy 2. So the 683 MB
+# torch costs is spent and then thrown away: rag_store falls through to the
+# same lexical embedder either way.
+#
+# Verified identical with and without them — same store backend ("memory"),
+# same embedder ("lexical-overlap-fallback[NOT-PROD]"), same retrieval output
+# for every query tried. The only difference is first-scan RSS: 913 MB with,
+# 86 MB without. That is the difference between OOM and healthy on a 512 MB
+# instance.
+#
+# To restore semantic retrieval, upgrade both to versions that work with
+# NumPy 2 and current huggingface_hub, then re-enable:
+# chromadb==0.4.24
+# sentence-transformers==2.2.2
 redis==5.0.1
 python-dotenv==1.0.0
 opentelemetry-api==1.20.0
