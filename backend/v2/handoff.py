@@ -117,8 +117,12 @@ AGENT_TOOL_ALLOWLISTS: dict[str, frozenset[str]] = {
     "watcher": frozenset(),  # deterministic; RuntimeEvidenceProvider only, not MCP
     "archivist": frozenset({"search_documents", "grep_documents"}),
     "cartographer": frozenset({"search", "get_entities", "list_schema_fields"}),
+    # get_entities is granted so the Pathfinder can enrich the mlModel URNs it
+    # discovers at the end of the blast radius — a URN alone cannot tell an
+    # operator which model broke or who owns it. Read-only; the mutation
+    # allowlist still scopes every write to datasets and documents.
     "pathfinder": frozenset({"get_lineage", "get_lineage_paths_between",
-                             "get_dataset_queries"}),
+                             "get_dataset_queries", "get_entities"}),
     "sentinel": frozenset(),  # scanner only; Role: "no DataHub tools"
     "diagnostician": frozenset(),  # Role: "LLM, zero tools"
     "surgeon": frozenset(),  # git/patch, not MCP

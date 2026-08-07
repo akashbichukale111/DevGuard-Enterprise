@@ -114,10 +114,17 @@ class Pathfinder:
     NAME = "pathfinder"
 
     def __init__(self, client: DataHubMCPClient, builder: EvidenceBuilder,
-                 pack: ProofPack) -> None:
+                 pack: ProofPack, *, ml_reader=None) -> None:
         self._client = client
         self._builder = builder
         self._pack = pack
+        # Optional enrichment of the mlModel URNs this agent discovers
+        # (backend/v2/ml_impact.py). Optional on purpose: every run recorded
+        # before this existed was captured without it, and every existing
+        # replay bundle must keep deserialising unchanged. Absent -> the bare
+        # URN evidence below, exactly as before. Present -> which model, what
+        # version, and who to notify.
+        self._ml_reader = ml_reader
 
     def trace(self, root_urn: str, *, column: Optional[str] = None,
               max_hops: int = 5, terminal_urn: Optional[str] = None
@@ -195,6 +202,16 @@ class Pathfinder:
                 claim=f"blast radius terminates at registered ML model {model.urn}",
                 raw_ref=lineage_ref, datahub_urn=model.urn,
             ))
+
+        # A URN proves the model is affected; it cannot tell an operator which
+        # model broke or who to call. The model's owner is very often not the
+        # dataset's owner, so without this the person whose model is now
+        # training on a moved column is the one person nobody notifies.
+        if self._ml_reader is not None and radius.terminal_ml_models:
+            ml_report = self._ml_reader.read(
+                [m.urn for m in radius.terminal_ml_models])
+            evidence.extend(self._ml_reader.evidence(
+                self._builder, ml_report, lineage_ref))
 
         # ---- 2. the column-level path, including the SQL in the middle -------
         if terminal_urn:
