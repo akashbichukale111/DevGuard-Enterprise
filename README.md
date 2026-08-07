@@ -18,7 +18,7 @@ related asset starts from more knowledge than the last one.
 
 [![CI](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-831%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-861%20passing-brightgreen.svg)](tests/)
 [![DataHub](https://img.shields.io/badge/DataHub-v1.6.0-1890FF.svg)](https://datahubproject.io/)
 [![MCP](https://img.shields.io/badge/MCP-mcp--server--datahub%400.6.0-6E56CF.svg)](https://modelcontextprotocol.io/)
 [![SigNoz](https://img.shields.io/badge/SigNoz-v0.135.0-E75536.svg)](https://signoz.io/)
@@ -373,7 +373,7 @@ pip install -r requirements.txt
 cd frontend && npm ci && cd ..
 
 make doctor    # reports exactly what is present and what is missing
-make test      # 831 tests — no key, no collector, no network
+make test      # 861 tests — no key, no collector, no network
 make replay    # build replay bundles from the committed proof packs
 ```
 
@@ -432,7 +432,7 @@ Each path is documented step by step in **[docs/INSTALLATION.md](docs/INSTALLATI
 - Hash-chained, tamper-evident audit trail
 
 **Engineering**
-- 831 tests running in CI on every push with no key, no collector and no network
+- 861 tests running in CI on every push with no key, no collector and no network
 - Secret scanning over the working tree *and* the full git history
 - Dependency advisory reporting on every push
 - `make doctor` preflight that names every missing prerequisite and how to satisfy it
@@ -656,7 +656,7 @@ Everything below runs on a clean clone with **no API key, no catalog, no collect
 
 ```bash
 make doctor              # what is present, what is missing, what to do about it
-make test                # 831 tests
+make test                # 861 tests
 make replay              # replay bundles from the committed proof packs
 make replay-build        # static export of the Command Center
 make verify-replay-ui    # drive the built site in a real browser and assert
@@ -702,7 +702,7 @@ DevGuard-Enterprise/
 │   └── components/
 ├── evidence/                proof packs and captured artifacts
 ├── examples/                ablation study, evaluation results
-├── tests/                   831 tests
+├── tests/                   861 tests
 ├── scripts/                 verification, reproduction and demo scripts
 ├── substrate/               PostgreSQL seed, dbt project, ML model
 ├── recipes/                 DataHub ingestion recipes
@@ -768,7 +768,9 @@ Nothing is autonomous in this build. A module-level assertion enforces it, and `
 
 **Secret hygiene.** No credential is committed. `scripts/scan_secrets.py` runs in CI over the working tree, and a separate CI job scans the full git history — a secret in an old commit still counts.
 
-**Authentication is absent**, and this is the honest gap in the list above. The scan endpoints are rate limited but unauthenticated, so the rate limiter is a cost guard rather than a security control — `X-Forwarded-For` is spoofable by a direct caller. Deploy behind an authenticating proxy if the instance is public.
+**Authentication, opt-in.** The rate limiter is a *cost* guard, not a security control — it keys on `X-Forwarded-For`, which a direct caller can forge — so the scan endpoints also accept a shared secret. Set `DEVGUARD_API_KEYS` to a comma-separated list and `POST /scan`, `/scan/zip` and `/scan/repository` require `Authorization: Bearer <key>` or `X-API-Key: <key>`; leave it unset and behaviour is exactly what it was, because a clean clone has to run with no configuration. Keys are compared with `secrets.compare_digest`, keys shorter than 16 characters are refused at load (a 4-character key reads as protection without being any), and the check runs *before* the rate limiter so anonymous traffic cannot burn a real caller's allowance. `GET /slo-status` reports which mode is live and the SHA-256 fingerprints of the loaded keys — a deployment that believes it is protected but is not is worse than one that knows it is open.
+
+> This is a shared secret, not an identity system: no users, no scopes, no rotation, no expiry. It is the right size for keeping strangers out of a paid inference endpoint and the wrong size for multi-tenant access control. Put a real IdP in front if you need one.
 
 ---
 

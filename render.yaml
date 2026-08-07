@@ -109,6 +109,14 @@ services:
       - key: DEVGUARD_SCAN_RATE_WINDOW_S
         value: "60"
 
+      # Optional shared secret for the three spending endpoints. Left unset
+      # here on purpose: the public demo has to stay clickable for a reviewer
+      # who has no key, and the rate limit above is what caps the bill. Set it
+      # (comma-separated, each key >= 16 chars) on any instance that is not a
+      # demo — /slo-status reports which mode is live.
+      - key: DEVGUARD_API_KEYS
+        sync: false
+
       # Belt and braces for the Python version.
       #
       # `runtime: docker` above pins Python through backend/Dockerfile
