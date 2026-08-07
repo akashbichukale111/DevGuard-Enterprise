@@ -1,0 +1,98 @@
+# Render Blueprint for the DevGuard backend.
+#
+# Deploy: Render Dashboard -> New -> Blueprint -> point at this repository.
+# Render reads this file, builds backend/Dockerfile from the repository root,
+# and asks for the one secret it cannot infer (GROQ_API_KEY).
+#
+# WHY DOCKER RATHER THAN RENDER'S NATIVE PYTHON RUNTIME
+# -----------------------------------------------------
+# backend/Dockerfile already exists, is multi-stage, runs as a non-root user,
+# and expands ${PORT} in a shell-form CMD, which is exactly what Render needs.
+# The native runtime would need the build context problem solved again:
+# main.py does `from backend.core import telemetry`, so the app must be
+# imported as `backend.main:app` with the repository root on sys.path — not as
+# a top-level `main`. The Dockerfile already sets PYTHONPATH=/app for this.
+#
+# WHY THE STANDARD PLAN AND NOT FREE
+# ----------------------------------
+# requirements.txt pins sentence-transformers, which pulls torch. The install
+# is roughly 5.4 GB and loading all-MiniLM-L6-v2 needs real memory. Free and
+# Starter are 512 MB and will OOM on startup.
+#
+# Dropping sentence-transformers is NOT a safe way to fit a smaller plan.
+# backend/core/rag_store.py degrades to an embedder it names
+# `lexical-overlap-fallback[NOT-PROD]` — the code itself declares that path
+# unfit for production, and retrieval quality is what the Scanner's findings
+# rest on. Pay for the memory or accept a documented downgrade; do not ship
+# the downgrade silently.
+#
+# IF THE BUILD IS SLOW OR RUNS OUT OF DISK, READ THIS FIRST
+# ---------------------------------------------------------
+# `pip install -r requirements.txt` resolves torch from PyPI, and the default
+# PyPI torch wheel bundles the whole CUDA stack. Verified by resolving the
+# file: it pulls nvidia-cublas, nvidia-cudnn, nvidia-cufft, nvidia-cusolver,
+# nvidia-cusparse, nvidia-nccl, cuda-toolkit, cuda-bindings and triton — none
+# of which a CPU-only Render instance can ever use.
+#
+# The standard fix is to install the CPU build of torch first, from PyTorch's
+# CPU index, before the rest of the requirements:
+#
+#   RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+#   RUN pip wheel --wheel-dir /wheels -r requirements.txt
+#
+# This keeps sentence-transformers and the all-MiniLM-L6-v2 model exactly as
+# they are — same embeddings, same retrieval — and only drops GPU libraries
+# that cannot run here. It is NOT applied to backend/Dockerfile in this repo
+# because download.pytorch.org is unreachable from the environment this was
+# prepared in, so the change could not be built and tested. Apply it if the
+# stock build is too heavy, and verify the build before relying on it.
+#
+# HEALTH CHECK
+# ------------
+# There is no /health route. `/slo-status` is the real liveness endpoint: it
+# returns the SLO window and circuit-breaker state, needs no API key, and is
+# what backend/Dockerfile's own HEALTHCHECK already polls.
+
+services:
+  - type: web
+    name: devguard-backend
+    runtime: docker
+    # Build context is the repository root — requirements.txt lives there, not
+    # under backend/.
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    plan: standard
+    region: oregon
+    healthCheckPath: /slo-status
+
+    # Overrides the image's `--workers 2`. Each worker loads its own copy of
+    # torch and the embedding model, so two workers double the memory floor for
+    # no benefit at demo traffic. Raise this only with the plan raised too.
+    dockerCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT --workers 1
+
+    envVars:
+      # The only true secret. Render prompts for it on first deploy.
+      # Required only by POST /scan and the ZIP/repository scans; every other
+      # endpoint — including all five Nexus modules — works without it.
+      - key: GROQ_API_KEY
+        sync: false
+
+      # Redis is optional. backend/core/cache.py fails open by design: with no
+      # Redis reachable every scan simply re-runs the pipeline. Attach a Render
+      # Key Value instance and set this to its internal URL to enable caching.
+      # - key: REDIS_URL
+      #   sync: false
+
+      # OpenTelemetry is fail-safe: with no collector reachable, telemetry is
+      # dropped and no request path is affected. Point this at a collector to
+      # turn tracing on.
+      # - key: OTEL_EXPORTER_OTLP_ENDPOINT
+      #   sync: false
+
+      - key: OTEL_SERVICE_NAME
+        value: devguard-backend
+
+      # Python 3.11 is pinned in the Dockerfile itself (python:3.11-slim). This
+      # is here so the value is visible in the dashboard alongside the rest.
+      - key: PYTHONUNBUFFERED
+        value: "1"
