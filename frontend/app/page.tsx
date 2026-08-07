@@ -457,7 +457,7 @@ function ActionCard({
 
         <h3 className="mt-5 text-2xl font-bold tracking-tight text-white sm:text-[26px]">{def.title}</h3>
         <p className={`mt-1 text-xs font-semibold uppercase tracking-wider ${a.text}`}>{def.subtitle}</p>
-        <p className="mt-3 max-w-sm text-[13.5px] leading-relaxed text-slate-400">{def.description}</p>
+        <p className="dg-card-desc mt-3 max-w-sm text-[13.5px] leading-relaxed text-slate-400">{def.description}</p>
 
         <div className="mt-5 flex flex-wrap gap-2">
           {def.stats.map((s) => (
@@ -570,7 +570,7 @@ function EnterpriseHeroCard({
           <p className={`mt-0.5 text-[11px] font-semibold uppercase tracking-wider ${a.text}`}>
             Governed incident agent for the data platform
           </p>
-          <p className="mt-1.5 max-w-3xl text-[13px] leading-snug text-slate-400">
+          <p className="dg-card-desc mt-1.5 max-w-3xl text-[13px] leading-snug text-slate-400">
             Detects a real production break, proves root cause and blast radius from the
             DataHub graph, fixes it under an owner-routed policy gate, verifies recovery,
             and only then writes verified incident knowledge back into the catalog.
@@ -703,13 +703,13 @@ export default function LandingPage() {
           initial={{ opacity: 0 }}
           animate={booted ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: booted ? 0.05 : 0 }}
-          className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 py-10 sm:px-6 sm:py-12"
+          className="dg-landing relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 py-10 sm:px-6 sm:py-12"
         >
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="dg-badge inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/[0.06] px-4 py-1.5 text-[11px] font-medium text-cyan-200"
+            className="dg-landing-badge dg-badge inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/[0.06] px-4 py-1.5 text-[11px] font-medium text-cyan-200"
           >
             <Sparkles className="h-3.5 w-3.5" />
             One platform &middot; three modules &middot; one evidence model
@@ -719,7 +719,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.28, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-5 max-w-3xl text-center text-3xl font-bold tracking-tight text-white sm:text-[44px] lg:text-[48px]"
+            className="dg-landing-title mt-5 max-w-3xl text-center text-3xl font-bold tracking-tight text-white sm:text-[44px] lg:text-[48px]"
           >
             <span className="dg-gradient-text">The DevGuard</span>{" "}
             <span className="dg-gradient-text-2">Platform</span>
@@ -729,7 +729,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-4 max-w-xl text-center text-sm leading-relaxed text-slate-400 sm:text-base"
+            className="dg-landing-sub mt-4 max-w-xl text-center text-sm leading-relaxed text-slate-400 sm:text-base"
           >
             Agents that read a real catalog, refuse when the evidence will not
             support an answer, and write what they proved back where the next
@@ -749,7 +749,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.62, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-5 grid w-full grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6"
+            className="dg-landing-cards mt-5 grid w-full grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6"
           >
             {ACTION_CARDS.map((def) => (
               <ActionCard key={def.href} def={def} onNavigate={handleNavigate} />
@@ -760,7 +760,7 @@ export default function LandingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.75, duration: 0.7 }}
-            className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[10.5px] uppercase tracking-widest text-slate-600 sm:mt-8"
+            className="dg-landing-strip mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[10.5px] uppercase tracking-widest text-slate-600 sm:mt-8"
           >
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="h-3.5 w-3.5" /> Hash-chained audit trail
@@ -875,6 +875,59 @@ function GlobalStyles() {
         to {
           transform: rotate(360deg);
         }
+      }
+
+      /* ── Single-viewport compaction ────────────────────────────────────
+         The landing page has to show the Enterprise hero and both module
+         cards without scrolling, and "1920x1080" in a browser is not a
+         1080px viewport: tab strip, address bar and a bookmarks bar take
+         120-200px, and a 1366x768 laptop leaves about 625px. At full size
+         the content is ~861px tall, so it was cut off on every common
+         laptop.
+
+         These steps shrink spacing and type as the viewport gets shorter.
+         The layout, the colours, the copy and the card order are unchanged
+         — only the vertical rhythm tightens, and only when it has to. Each
+         breakpoint is the height at which the previous step stops fitting.
+         Widths are untouched, so nothing here affects the mobile layout. */
+
+      @media (max-height: 960px) {
+        .dg-landing { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+        .dg-landing-title { font-size: 40px; }
+        .dg-landing-sub { margin-top: 0.75rem; }
+        .dg-landing-cards { margin-top: 1rem; }
+        .dg-landing-strip { margin-top: 1rem; }
+        .dg-gateway-card { min-height: 0; }
+      }
+
+      @media (max-height: 860px) {
+        .dg-landing { padding-top: 1rem; padding-bottom: 1rem; }
+        .dg-landing-title { font-size: 34px; }
+        .dg-landing-sub { font-size: 13px; margin-top: 0.5rem; }
+        .dg-landing-cards { margin-top: 0.75rem; gap: 1rem; }
+        .dg-landing-strip { margin-top: 0.75rem; }
+      }
+
+      /* Below this the badge and the bottom capability strip are the first
+         things to go: both restate what the cards already say, so losing
+         them costs no information, while a clipped Nexus card does. */
+      @media (max-height: 780px) {
+        .dg-landing-badge, .dg-landing-strip { display: none; }
+        .dg-landing-title { font-size: 30px; }
+        .dg-landing-sub { display: none; }
+      }
+
+      @media (max-height: 700px) {
+        /* Last step. The card descriptions go: the module name, the coloured
+           subtitle and the stat chips already say what each card is, and a
+           visible Nexus card is worth more than a paragraph about it. The
+           cards themselves stay fully intact and clickable. */
+        .dg-landing { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .dg-landing-title { font-size: 26px; }
+        .dg-landing-cards { margin-top: 0.5rem; gap: 0.75rem; }
+        .dg-card-desc { display: none; }
+        .dg-gateway-card { padding: 1rem; }
+        .dg-enter-btn { padding-top: 0.5rem; padding-bottom: 0.5rem; margin-top: 0.75rem; }
       }
 
       .dg-gateway-card {
