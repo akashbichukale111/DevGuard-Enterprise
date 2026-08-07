@@ -2,7 +2,10 @@
 
 **Reviewed at:** `d4759ff` · **Method:** reverse-engineered from source, not from documentation. Every claim below is traceable to a file and line. Where the code and the docs disagree, the code wins and the disagreement is called out.
 
-**Scale:** 25,596 lines of Python across 94 files · 8,729 lines of TypeScript across 30 files · 885 tests.
+**This document has outlived its baseline.** Several findings were acted on after the review was written. Where that happened the original finding is kept and the resolution is marked beside it rather than edited away — a review that quietly rewrites itself into agreement with the code has stopped being evidence of anything. Anything not marked as addressed still stands.
+
+**Scale at the review commit:** 25,596 lines of Python across 94 files · 8,729 lines of TypeScript across 30 files · 775 tests.
+**Scale now:** 27,514 lines of Python across 105 files · 8,769 lines of TypeScript across 31 files · 885 tests.
 
 ---
 
@@ -433,3 +436,29 @@ flowchart TB
 3. **Nexus under-delivers against its own capability.** MOD-01 and MOD-04 will run the real pipeline if handed `code`. That the UI does not send it is the single cheapest high-impact fix in the repository.
 
 **The one-line summary:** this is an unusually well-engineered *system* with an unusually honest relationship to its own limitations, whose weakest link is that the most impressive parts have never been switched on.
+
+---
+
+### Re-score after the follow-up work
+
+The table above is the review as written, at `d4759ff`. Four of its rationales
+have since been overtaken. Revising one's own score upward deserves suspicion,
+so the original stays visible and every movement below names the commit that
+earned it — and the two deductions that carry the most weight do not move at
+all.
+
+| Subsystem | Was | Now | What changed |
+|---|---|---|---|
+| **Backend** | 85 | **88** | "No auth, no rate limiting" is no longer true — opt-in API keys on the spending and approval endpoints, per-client rate limiting on the spending ones. In-memory state is unchanged, which is why this is +3 and not more. |
+| **Nexus** | 58 | **68** | The two capable-but-unwired modules are wired and verified at the API boundary, and Pre-Cog's error rate is measured rather than drawn from `random.uniform`. Still thin: three of five modules take no input. |
+| **AI agents** | 78 | **80** | The roster inconsistency is resolved — verified from source that only the Diagnostician takes a `Reasoner`, and the docs corrected to eight of nine. Model reasoning is still unexercised, which is the larger half of the original deduction. |
+| **Enterprise readiness** | 55 | **65** | Auth and rate limiting exist; persistence and multi-tenancy do not. Auth is also off unless configured, so this is a capability score, not a posture score. |
+| **Demo quality** | 80 | **80** | Deliberately unmoved. A backend has since been deployed, but this environment cannot reach the live site to confirm Scanner and Nexus work for a visitor, and an unverified claim is exactly what this document exists not to make. |
+| **Hackathon readiness** | 72 | **72** | Unmoved. The video and the Devpost submission are still missing, and no amount of engineering substitutes for them. |
+
+**Revised final: 81 / 100** (from 78).
+
+The two heaviest deductions are untouched. The intelligence is still unproven —
+every recorded run remains `model=null` — and the submission package is still
+incomplete. Those are worth more than everything above them combined, and
+neither was addressed by any of this work.
