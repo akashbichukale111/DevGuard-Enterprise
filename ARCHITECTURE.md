@@ -126,7 +126,12 @@ sequenceDiagram
     end
 ```
 
-### Why six of nine are deterministic
+### Why eight of the nine are deterministic
+
+Only the Diagnostician is model-backed. The table below covers the five whose
+determinism is a deliberate design choice worth arguing for; Cartographer,
+Archivist and Pathfinder are deterministic for the less interesting reason
+that resolving URNs and traversing lineage are lookups, not judgements.
 
 | Agent | Deterministic because |
 |---|---|
@@ -325,7 +330,7 @@ Each row has a test.
 
 ## Design decisions
 
-**Deterministic where determinism is available.** Six of nine agents use no model. This is cheaper, faster, and — more importantly — unfalsifiable in the places where a hallucination would be most expensive.
+**Deterministic where determinism is available.** Eight of the nine agents use no model — only the Diagnostician does, and it holds zero tools. This is cheaper, faster, and — more importantly — unfalsifiable in the places where a hallucination would be most expensive.
 
 **Refusal as a first-class outcome.** An agent that always answers is easy to build and impossible to trust. The evidence rule makes refusal structural rather than a matter of prompt discipline, and the refusal path has its own recorded run.
 
