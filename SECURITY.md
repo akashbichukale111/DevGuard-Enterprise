@@ -16,6 +16,7 @@ coverage that does not exist.
 - [Secret hygiene](#secret-hygiene)
 - [Application-layer controls](#application-layer-controls)
 - [What is regression-protected](#what-is-regression-protected)
+- [Assertions — read, never authored](#assertions--read-never-authored)
 - [Known gaps](#known-gaps)
 - [Dependencies](#dependencies)
 
@@ -456,3 +457,24 @@ assigned during render.
 ---
 
 Related: [Architecture](ARCHITECTURE.md) · [Deployment](DEPLOYMENT.md) · [API](docs/API.md)
+
+## Assertions — read, never authored
+
+`backend/v2/assertions.py` reads a dataset's assertions and their run events as
+an independent second opinion on recovery. Three properties keep it inside the
+existing security model rather than widening it:
+
+- **Read-only.** Reads are already unrestricted, so no privilege changes and
+  none of the least-privilege evidence is invalidated.
+- **No second write channel.** DataHub OSS's GraphQL has no
+  `reportAssertionResult` mutation — that is a DataHub Cloud surface. Emitting
+  an `assertionRunEvent` aspect through the ingestion REST path would work, and
+  is deliberately not done: it is a second write channel with its own
+  credential and blast radius, and the single-writer rule exists to stop one
+  being added casually.
+- **A null answer is never agreement.** A dataset with no assertions, an
+  assertion that never ran, an unreachable catalog and a GraphQL error all
+  return `NOT_CORROBORATED`. `evidence()` refuses to mint a chain item for that
+  verdict, because `EvidenceChain.is_sufficient()` counts `DATAHUB_GRAPH` by
+  source alone — a failed lookup would otherwise satisfy the two-source rule it
+  exists to enforce.
