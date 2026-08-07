@@ -5,7 +5,7 @@
 **This document has outlived its baseline.** Several findings were acted on after the review was written. Where that happened the original finding is kept and the resolution is marked beside it rather than edited away — a review that quietly rewrites itself into agreement with the code has stopped being evidence of anything. Anything not marked as addressed still stands.
 
 **Scale at the review commit:** 25,596 lines of Python across 94 files · 8,729 lines of TypeScript across 30 files · 775 tests.
-**Scale now:** 27,514 lines of Python across 105 files · 8,769 lines of TypeScript across 31 files · 915 tests.
+**Scale now:** 27,514 lines of Python across 105 files · 8,769 lines of TypeScript across 31 files · 940 tests.
 
 ---
 
@@ -327,7 +327,7 @@ OpenTelemetry → OTLP/gRPC → SigNoz. **Traces, metrics and logs**, with a log
 | **Demo video <3:00** | **Missing** | — |
 | **Devpost submission** | **Missing** | — |
 | Eligibility disclosure | **Satisfied** | `DISCLOSURE.md` |
-| Reproducibility from clean clone | **Satisfied** | Verified; 915 tests, no key needed |
+| Reproducibility from clean clone | **Satisfied** | Verified; 940 tests, no key needed |
 | Evaluation suite | **Satisfied** | 7/7 accuracy, 0 FP, control case, published |
 | Ablation with N≥5 | **Satisfied, negative** | 5.14 s on vs 4.87 s off — reported honestly |
 | **`make demo`** | **Missing** | No such target |
