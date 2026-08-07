@@ -81,7 +81,7 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 
 ## The three things a judge should be told before they find them
 
-1. **No recorded run invoked a model.** All 49 handoff records across the committed bundles carry `model=null, tokens=0`, and the Diagnostician reports `REASONER_UNAVAILABLE`. The evidence rule, the refusal path and the chain validation are proven; the *quality of model reasoning* is not. Root causes in those runs were derived deterministically from runtime evidence, and each artifact says so.
+1. **No recorded run invoked a model.** ([proof the cause is network egress, not credentials](verification/llm-egress-blocked.md)) All 49 handoff records across the committed bundles carry `model=null, tokens=0`, and the Diagnostician reports `REASONER_UNAVAILABLE`. The evidence rule, the refusal path and the chain validation are proven; the *quality of model reasoning* is not. Root causes in those runs were derived deterministically from runtime evidence, and each artifact says so.
 
 2. **The ablation is a negative result.** Retrieval made time-to-root-cause *slower* (5.14 s vs 4.87 s, N=5 per arm). Both arms reached the root cause the same way, so the delta is the cost of retrieval and says nothing about its benefit. It is published because it was measured.
 
