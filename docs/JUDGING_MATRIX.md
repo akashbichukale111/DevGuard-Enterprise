@@ -17,6 +17,8 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 | Ownership signal | [`write-back-summary.json`](../evidence/proof-pack/d6-loop-pass2/scribe/write-back-summary.json) | — |
 | Column-level lineage read for blast radius | [`backend/v2/agents/pathfinder.py`](../backend/v2/agents/pathfinder.py) | Column-level traversal stops at the last dataset; only the dataset-level trace reaches the `mlModel` |
 | MCP over stdio, capability negotiated | [`backend/v2/datahub_client.py`](../backend/v2/datahub_client.py) | — |
+| **13 of the 16 published `mcp-server-datahub` tools are actually invoked** | [`backend/v2/mcp_contract.py`](../backend/v2/mcp_contract.py) · [`tests/test_mcp_contract.py`](../tests/test_mcp_contract.py) (19 tests) | The three unused are `get_me` and the glossary/domain writes, which are deliberately outside the Scribe's allowlist |
+| Tool names checked offline against the published contract | [`tests/test_mcp_contract.py`](../tests/test_mcp_contract.py) | The contract is a transcription recorded 2026-08-07; it cannot detect an upstream change until someone re-reads the source it names |
 | Retrieval loop — prior runbooks read back | [`backend/v2/agents/archivist.py`](../backend/v2/agents/archivist.py) | Measured effect was negative; see Criterion 2 |
 | Write-back idempotency + all-or-nothing resolve | [`tests/test_writeback_rules.py`](../tests/test_writeback_rules.py) (35 tests) | — |
 
@@ -24,7 +26,7 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 
 | Capability | Evidence | Honest limits |
 |---|---|---|
-| 893 tests, no API key or network required | `make test` | — |
+| 915 tests, no API key or network required | `make test` | — |
 | Clean-clone reproducibility | [`docs/REPRODUCIBILITY.md`](REPRODUCIBILITY.md) | — |
 | Fault-injection eval: 7/7, 0 false positives, control case | [`examples/eval/results.json`](../examples/eval/results.json) | Measures the deterministic detection path, **not** LLM diagnosis — stated in the artifact itself |
 | Retrieval ablation, N=5 per arm | [`examples/ablation/timings.json`](../examples/ablation/timings.json) | **Negative result**: 5.14 s with retrieval vs 4.87 s without. Published because measured |
