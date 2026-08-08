@@ -102,8 +102,16 @@ def test_the_quoted_suite_total_is_not_overstated():
 
 
 #: Markdown that makes claims to a reader, as opposed to generated reports.
+#: Documents that quote the suite size as a current fact. SECURITY.md,
+#: DISCLOSURE.md and DEMO.md were added after all three were found sitting at
+#: 1041 against a suite of 1101 — they drifted precisely because nothing
+#: checked them. CHANGELOG.md is deliberately absent: its release sections
+#: record what was true at each release and must be allowed to say 1041
+#: forever. Same for the numbers inside evidence/, which are capture records.
 _CLAIM_DOCS = ["README.md", "ARCHITECTURE.md", "docs/JUDGING_MATRIX.md",
-               "docs/ARCHITECTURE_REVIEW.md", "docs/REPRODUCIBILITY.md"]
+               "docs/ARCHITECTURE_REVIEW.md", "docs/REPRODUCIBILITY.md",
+               "SECURITY.md", "DISCLOSURE.md", "DEMO.md",
+               "docs/INSTALLATION.md"]
 
 
 def test_no_document_claims_more_tests_than_exist():
