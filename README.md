@@ -20,7 +20,7 @@ related asset starts from more knowledge than the last one.
 
 [![CI](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-1096%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-1101%20passing-brightgreen.svg)](tests/)
 [![DataHub](https://img.shields.io/badge/DataHub-v1.7.0%20verified%20live-1890FF.svg)](evidence/datahub-live/)
 [![Capabilities](https://img.shields.io/badge/capabilities-25%20verified%20%C2%B7%200%20absent-1890FF.svg)](evidence/datahub-live/CAPABILITY_MATRIX.md)
 [![MCP](https://img.shields.io/badge/MCP-mcp--server--datahub%400.6.0-6E56CF.svg)](https://modelcontextprotocol.io/)
@@ -742,7 +742,7 @@ pip install -r requirements.txt
 cd frontend && npm ci && cd ..
 
 make doctor    # reports exactly what is present and what is missing
-make test      # 1096 tests — no key, no collector, no network
+make test      # 1101 tests — no key, no collector, no network
 make replay    # build replay bundles from the committed proof packs
 ```
 
@@ -853,7 +853,7 @@ than cross-published.
 - Hash-chained, tamper-evident audit trail
 
 **Engineering**
-- 1096 tests running in CI on every push with no key, no collector and no network
+- 1101 tests running in CI on every push with no key, no collector and no network
 - Secret scanning over the working tree *and* the full git history
 - Dependency advisory reporting on every push
 - `make doctor` preflight that names every missing prerequisite and how to satisfy it
@@ -1158,7 +1158,7 @@ Open any of them in the Command Center with the run picker in the top right.
 
 ## Testing
 
-**1096 tests, 54 files, no API key, no collector, no network, no database.** That
+**1101 tests, 55 files, no API key, no collector, no network, no database.** That
 constraint is not a convenience — it is what makes the suite a reviewer's tool
 rather than the author's. CI runs it on every push in exactly the state a clean
 clone is in.
@@ -1211,7 +1211,7 @@ Everything below runs on a clean clone with **no API key, no catalog, no collect
 
 ```bash
 make doctor              # what is present, what is missing, what to do about it
-make test                # 1096 tests
+make test                # 1101 tests
 make replay              # replay bundles from the committed proof packs
 make replay-build        # static export of the Command Center
 make verify-replay-ui    # drive the built site in a real browser and assert
@@ -1263,7 +1263,7 @@ DevGuard-Enterprise/
 │   ├── datahub-live/        DataHub v1.7.0: capability matrix, auth A/B, config
 │   └── d0 … d10/            the v1.6.0-era capture trail
 ├── examples/                ablation study, evaluation results
-├── tests/                   1096 tests
+├── tests/                   1101 tests
 ├── scripts/
 │   ├── verify_datahub_capabilities.py   probe every capability, four statuses
 │   ├── verify_least_privilege.py        ALLOW/DENY proof; refuses if auth is off

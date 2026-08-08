@@ -40,8 +40,17 @@ interrogated, driven end to end, and photographed. Trail:
 - `evidence/datahub-live/` — service verification, the auth-off/auth-on A/B, the
   resolved configuration table, and the capability matrix.
 - A DataHub block in `.env.example`, each variable naming the module that reads it.
-- 32 tests (`tests/test_replay_catalog_surface.py`,
-  `tests/test_screenshot_manifest.py`). Suite is now **1096**.
+- `tests/test_documentation_integrity.py` — every relative link resolves, every
+  in-page anchor resolves, every committed screenshot is displayed somewhere, the
+  documents judges are pointed at exist, and mermaid fences are closed and typed.
+  The orphan check found a 724 KB Command Center capture committed and referenced
+  by nothing; it is now the live-run screenshot in the README.
+- The live v1.7.0 run on screen in the README — blast radius terminating at
+  `devguard_churn_risk`, `NAMED_OWNER` routed to an owner read from the graph, and
+  five write-back artifacts, four `WRITTEN` and one `ALREADY PRESENT`.
+- 37 tests (`tests/test_replay_catalog_surface.py`,
+  `tests/test_screenshot_manifest.py`, `tests/test_documentation_integrity.py`).
+  Suite is now **1101**.
 
 ### Changed
 
