@@ -93,6 +93,26 @@ $ …same request…
 HTTP 401
 ```
 
+## Where the `false` actually comes from
+
+Confirmed by reading the source tree at `master` @ `f4fda77c`, not just the
+generated file a user ends up with. The `false` is **not** an inherited default
+— the composed profiles default it to `true`:
+
+| Location | Value |
+|---|---|
+| `docker/profiles/docker-compose.gms.yml:163` and `:206` | `${METADATA_SERVICE_AUTH_ENABLED:-true}` |
+| `docker/build.gradle:491` — quickstart compose generation | injects `'false'` |
+| `docker/quickstart/docker-compose.quickstart-profile.yml:99` (generated) | `'false'` |
+
+So the quickstart generator **overrides an enforcing default with a
+non-enforcing one**, deliberately, at one line. That is a defensible choice for
+a zero-configuration evaluation stack, and this finding does not ask for it to
+be reversed. It matters here for two reasons: it tells a maintainer exactly
+where the decision lives, and it means a reader who checks
+`docker/profiles/` — the natural place to look — will conclude that enforcement
+is on, and be wrong about the stack they are actually running.
+
 ## Proposed change
 
 Add an admonition to the Access Policies documentation, and a line to the
