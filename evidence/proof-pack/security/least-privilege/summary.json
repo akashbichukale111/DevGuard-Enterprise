@@ -1,13 +1,15 @@
 {
   "schema": "devguard.least-privilege/1",
-  "generated_at_utc": "2026-08-01T13:46:41.555596+00:00",
+  "generated_at_utc": "2026-08-08T10:22:20.389593+00:00",
   "service_account": "urn:li:corpuser:devguard_agent",
-  "total": 9,
-  "passed": 9,
+  "auth_enforced": true,
+  "auth_enforcement_evidence": "a forged token was rejected with HTTP 401",
+  "total": 11,
+  "passed": 11,
   "allow_checks": 4,
   "allow_passed": 4,
-  "deny_checks": 5,
-  "deny_passed": 5,
+  "deny_checks": 7,
+  "deny_passed": 7,
   "checks": [
     {
       "name": "read in-scope dataset",
@@ -49,7 +51,7 @@
       "expectation": "DENY",
       "observed": "DENY",
       "passed": true,
-      "detail": "EDIT_LINEAGE was never granted \u2014 lineage is ingested, never authored (\u00a73)"
+      "detail": "EDIT_LINEAGE was never granted \u2014 lineage is ingested, never authored (the design thesis)"
     },
     {
       "name": "write to an OUT-OF-SCOPE dataset",
@@ -71,6 +73,20 @@
       "observed": "DENY",
       "passed": true,
       "detail": "MANAGE_INGESTION was never granted \u2014 it must not change what enters the catalog"
+    },
+    {
+      "name": "attach a glossary term",
+      "expectation": "DENY",
+      "observed": "DENY",
+      "passed": true,
+      "detail": "EDIT_ENTITY_GLOSSARY_TERMS was never granted \u2014 an agent must not author business vocabulary, only reference it"
+    },
+    {
+      "name": "assign a domain",
+      "expectation": "DENY",
+      "observed": "DENY",
+      "passed": true,
+      "detail": "EDIT_DOMAINS_PRIVILEGE was never granted \u2014 domain membership decides who else inherits access, so an agent must not reassign it"
     }
   ]
 }

@@ -113,21 +113,32 @@ def shots() -> list[Shot]:
              "The schema DataHub holds for the dataset — field paths, native "
              "types and nullability as ingested from Postgres.",
              wait_for="text=/Field|Type/i"),
+        # The three graph shots collapse the entity sidebar first. It occupies
+        # roughly a quarter of the viewport, and the graph does not reflow into
+        # the space it leaves — so without this the lineage of five nodes is
+        # rendered into a strip and is unreadable at the size a README embeds it.
         Shot("07-dataset-lineage", "Lineage graph",
              "/dataset/{ds}/Lineage",
-             "The lineage graph. Every edge here was ingested from the running "
-             "stack; none was hand-authored.",
-             wait_for="canvas, svg", settle_ms=5000, full_page=False),
+             "The lineage graph: stg_users and stg_orders into the feature "
+             "table, then through the training job to the churn model. Every "
+             "edge was ingested from the running stack; none was hand-authored.",
+             wait_for="[data-testid^='unexpanded-lineage-card']",
+             click="[data-testid='entity-sidebar-collapse-tab']",
+             settle_ms=5000, full_page=False),
         Shot("08-column-lineage", "Column lineage",
-             "/dataset/{ds}/Lineage?column_lineage=true",
-             "Column-level lineage, derived by DataHub's dbt source from the "
-             "manifest dbt itself produced.",
-             wait_for="canvas, svg", settle_ms=5000, full_page=False),
+             "/dataset/{ds}/Lineage",
+             "The same graph with column detail expanded — the field-level "
+             "mapping DataHub's dbt source derived from the manifest dbt "
+             "itself produced.",
+             wait_for="[data-testid='expand-contract-columns']",
+             click="[data-testid='expand-contract-columns']",
+             settle_ms=5000, full_page=False),
         Shot("09-impact-analysis", "Impact analysis",
-             "/dataset/{ds}/Lineage?is_lineage_mode=false",
+             "/dataset/{ds}/Lineage",
              "DataHub's own impact analysis over the same graph DevGuard's "
              "Pathfinder walks for blast radius.",
-             wait_for="text=/Impact|Downstream|Upstream/i", settle_ms=4000),
+             wait_for="text=/Impact Analysis/i",
+             click="text=/Impact Analysis/i", settle_ms=5000, full_page=False),
         Shot("10-dataset-stats", "Dataset profile / stats",
              "/dataset/{ds}/Stats",
              "Dataset profile: row and column counts and per-column statistics, "
@@ -173,6 +184,52 @@ def shots() -> list[Shot]:
              "DataHub's built-in usage analytics over this instance.",
              wait_for="text=/Analytic|Chart|Section/i", settle_ms=4000),
     ]
+
+
+#: DataHub greets a fresh profile with a product tour — a modal plus a dimming
+#: backdrop that lands on top of the very panels these screenshots exist to
+#: show. It is dismissed rather than photographed: a screenshot of DataHub's
+#: onboarding is not evidence of DataHub's lineage.
+_OVERLAY_CLOSERS = (
+    "button[aria-label='close']",
+    ".ant-modal-close",
+    ".ant-tour-close",
+    "[data-testid='onboarding-close']",
+    "button:has-text('Skip')",
+)
+
+
+def dismiss_overlays(page) -> None:
+    """Close any tour/modal, then confirm the dimming backdrop is gone.
+
+    Runs before every shot, not once after login: the tour is step-based and
+    re-arms on pages the profile has not visited yet, so dismissing it on the
+    home page does not dismiss it on the lineage tab.
+    """
+    for _ in range(4):
+        closed = False
+        for selector in _OVERLAY_CLOSERS:
+            try:
+                node = page.query_selector(selector)
+                if node and node.is_visible():
+                    node.click(timeout=3000)
+                    closed = True
+                    page.wait_for_timeout(400)
+            except Exception:  # noqa: BLE001 — best effort by design
+                pass
+        if not closed:
+            break
+    try:
+        page.keyboard.press("Escape")
+    except Exception:  # noqa: BLE001
+        pass
+    # The backdrop outlives the modal by an animation frame; waiting for it to
+    # detach is what stops a dimmed screenshot.
+    try:
+        page.wait_for_selector(".ant-modal-mask, .ant-tour-mask",
+                               state="detached", timeout=4000)
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def main() -> int:
@@ -237,14 +294,19 @@ def main() -> int:
             print(f"  ok      {login_shot.slug}")
 
         try:
-            page.fill("input[name='username'], input#username, "
-                      "input[data-testid='username']", user)
-            page.fill("input[name='password'], input#password, "
-                      "input[data-testid='password']", password)
-            page.click("button[type='submit'], button:has-text('Sign In'), "
-                       "button:has-text('Log In')")
+            page.fill("input[data-testid='username'], input#username, "
+                      "input[name='username']", user)
+            page.fill("input[data-testid='password'], input#password, "
+                      "input[name='password']", password)
+            # `data-testid='sign-in'` and nothing looser. A `:has-text('Sign
+            # In')` fallback matches DataHub's **"Sign in with SSO"** button,
+            # which navigates nowhere on a quickstart with no IdP configured —
+            # the run then dies on a navigation timeout that looks like a bad
+            # password.
+            page.click("button[data-testid='sign-in']")
             page.wait_for_url(lambda u: "/login" not in u, timeout=45000)
             page.wait_for_timeout(4000)
+            dismiss_overlays(page)
             print(f"  ok      authenticated as {user}")
         except Exception as exc:  # noqa: BLE001
             print(f"FATAL: login failed: {type(exc).__name__}: {exc}", file=sys.stderr)
@@ -276,6 +338,8 @@ def main() -> int:
                     except Exception as exc:  # noqa: BLE001
                         errors.append(f"click failed: {exc}")
                 page.wait_for_timeout(shot.settle_ms)
+                dismiss_overlays(page)
+                page.wait_for_timeout(600)
                 f = out / f"{shot.slug}.png"
                 page.screenshot(path=str(f), full_page=shot.full_page)
                 size = f.stat().st_size

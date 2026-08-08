@@ -186,10 +186,51 @@ def run_checks(agent: str) -> list[Check]:
     return checks
 
 
+def auth_is_enforced() -> tuple[bool, str]:
+    """Is `METADATA_SERVICE_AUTH_ENABLED` on? Asked of the server, not the env.
+
+    THIS GATE IS NOT A CONVENIENCE — IT IS A SAFETY INTERLOCK.
+
+    Every DENY probe below is a real mutation: a soft-delete, a lineage edit, a
+    policy creation, a domain reassignment. The whole design rests on the server
+    refusing them. When metadata service authentication is disabled the server
+    refuses nothing, so the probes do not "fail the check" — **they succeed and
+    land**. Running this suite against a stock `datahub docker quickstart` once
+    soft-deleted the hero dataset, added a cycle to its lineage, and left a
+    self-escalating policy behind, all while reporting the deny half as failed.
+    The report was correct and the damage was already done.
+
+    The reason it can be asked of the server at all is that a disabled auth
+    layer cannot tell a forged token from a real one. So: present a token that
+    could not possibly be valid. A server that accepts it is not checking.
+
+    This is the same defect written up in `docs/upstream/02-*.md`, met from the
+    other side — that document is about a verifier being *misled* by unenforced
+    policies; this gate is about a verifier being *destructive* because of them.
+    """
+    forged = "not.a.real.token"
+    payload = gql("query { me { corpUser { urn } } }", {}, forged)
+    if payload.get("httpError") in (401, 403):
+        return True, f"a forged token was rejected with HTTP {payload['httpError']}"
+    actor = (((payload.get("data") or {}).get("me") or {}).get("corpUser") or {}).get("urn")
+    if actor:
+        return False, (f"a forged token was accepted and resolved to {actor} — "
+                       "METADATA_SERVICE_AUTH_ENABLED is off and no policy is "
+                       "being evaluated")
+    if payload.get("errors"):
+        return True, "a forged token produced a GraphQL error rather than a session"
+    return False, f"could not determine enforcement from: {json.dumps(payload)[:200]}"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--pack-root", default="evidence/proof-pack/security")
     parser.add_argument("--run-id", default="least-privilege")
+    parser.add_argument(
+        "--i-understand-the-deny-probes-will-mutate", action="store_true",
+        help="Run even though the server is not enforcing auth. The DENY probes "
+             "WILL take effect. Only for demonstrating that unenforced policies "
+             "are undetectable — never on a catalog you care about.")
     args = parser.parse_args()
 
     agent_file = os.environ.get("DEVGUARD_AGENT_TOKEN_FILE")
@@ -198,6 +239,23 @@ def main() -> int:
               file=sys.stderr)
         return 2
     agent = Path(agent_file).read_text().strip()
+
+    enforced, why = auth_is_enforced()
+    print(f"auth enforcement: {'ON' if enforced else 'OFF'} — {why}\n")
+    if not enforced and not args.i_understand_the_deny_probes_will_mutate:
+        print("REFUSING TO RUN.\n"
+              "  This server is not enforcing metadata service authentication, so the\n"
+              "  seven DENY probes would not be refused — they would be APPLIED. That\n"
+              "  soft-deletes a hero dataset, edits its lineage, and creates a policy\n"
+              "  granting this account MANAGE_POLICIES.\n\n"
+              "  Fix the server, do not bypass this check:\n"
+              "    set METADATA_SERVICE_AUTH_ENABLED=true on the GMS container,\n"
+              "    preserving DATAHUB_TOKEN_SERVICE_SIGNING_KEY so existing tokens\n"
+              "    stay valid, then recreate it. See DEPLOYMENT.md.\n\n"
+              "  --i-understand-the-deny-probes-will-mutate exists only to reproduce\n"
+              "  the unenforced-policy demonstration in docs/upstream/02.",
+              file=sys.stderr)
+        return 2
 
     pack = ProofPack(args.pack_root, args.run_id)
     checks = run_checks(agent)
@@ -221,6 +279,10 @@ def main() -> int:
         "schema": "devguard.least-privilege/1",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "service_account": "urn:li:corpuser:devguard_agent",
+        # Without this the summary is ambiguous in the one way that matters: a
+        # DENY row reading "refused" means nothing if nothing was checking.
+        "auth_enforced": enforced,
+        "auth_enforcement_evidence": why,
         "total": len(checks),
         "passed": sum(1 for c in checks if c.passed),
         "allow_checks": len(allowed),
