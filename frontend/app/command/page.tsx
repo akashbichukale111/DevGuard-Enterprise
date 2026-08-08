@@ -27,6 +27,7 @@ import BlastRadiusPanel from "@/components/command/BlastRadius";
 import RootCause, { PriorKnowledge } from "@/components/command/RootCause";
 import PolicyApproval from "@/components/command/PolicyApproval";
 import WriteBack from "@/components/command/WriteBack";
+import CatalogSurface from "@/components/command/CatalogSurface";
 import { MetricsStrip, MissingLedger, SecurityPanel } from "@/components/command/SecurityMetrics";
 import RawViewer from "@/components/command/RawViewer";
 
@@ -188,6 +189,10 @@ function CommandCenter() {
           />
           <PolicyApproval bundle={bundle} onOpenRaw={setRawRef} />
           <WriteBack bundle={bundle} onOpenRaw={setRawRef} />
+          {/* Below the write-back on purpose: the catalog surface explains how
+              everything above reached DataHub, so it reads as the substrate of
+              the run rather than a step in it. */}
+          <CatalogSurface bundle={bundle} />
           <SecurityPanel bundle={bundle} />
           <MissingLedger bundle={bundle} />
         </div>

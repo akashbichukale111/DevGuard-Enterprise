@@ -142,6 +142,24 @@ export interface ReplayBundle {
     time_to_root_cause_s: number | null;
     capabilities_ref: string | null;
   };
+  /**
+   * The DataHub tool surface this run negotiated, and the part of it the agents
+   * actually invoked.
+   *
+   * `offered` is the server's `tools/list` response for THIS run, not a
+   * constant — a catalog holding no documents does not offer the document
+   * tools, so the count differs between runs against the same server. That is
+   * the point of showing it.
+   */
+  catalog: {
+    server: { name: string | null; version: string | null } | null;
+    protocol_version: string | null;
+    offered: string[];
+    offered_count: number | null;
+    /** tool name → number of calls made in this run. */
+    used: Record<string, number>;
+    capabilities_ref: string | null;
+  };
   blast_radius: BlastRadius | null;
   root_cause: {
     refused: boolean;

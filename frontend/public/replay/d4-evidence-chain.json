@@ -1,7 +1,7 @@
 {
  "schema_version": 1,
  "run_id": "d4-evidence-chain",
- "built_at": "2026-08-08T10:46:48.841177+00:00",
+ "built_at": "2026-08-08T11:00:38.050087+00:00",
  "source_pack": "evidence/proof-pack/d4-evidence-chain",
  "pack_written_at": "2026-08-01T07:13:51.886889+00:00",
  "artifact_count": 12,
@@ -511,6 +511,34 @@
   "documents": [],
   "document_count": 0,
   "time_to_root_cause_s": null,
+  "capabilities_ref": "evidence/proof-pack/d4-evidence-chain/archivist/capabilities.json"
+ },
+ "catalog": {
+  "server": {
+   "name": "datahub",
+   "version": "3.4.5"
+  },
+  "protocol_version": "2024-11-05",
+  "offered": [
+   "get_dataset_queries",
+   "get_entities",
+   "get_lineage",
+   "get_lineage_paths_between",
+   "grep_documents",
+   "list_schema_fields",
+   "search",
+   "search_documents"
+  ],
+  "offered_count": 8,
+  "used": {
+   "grep_documents": 1,
+   "search_documents": 1,
+   "search": 1,
+   "list_schema_fields": 1,
+   "get_lineage": 2,
+   "get_lineage_paths_between": 1,
+   "get_dataset_queries": 1
+  },
   "capabilities_ref": "evidence/proof-pack/d4-evidence-chain/archivist/capabilities.json"
  },
  "blast_radius": {
