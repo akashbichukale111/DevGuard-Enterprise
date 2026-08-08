@@ -55,7 +55,7 @@ source does not do, so they cannot be filled from this substrate at all.
 
 | Capability | Evidence | Honest limits |
 |---|---|---|
-| 1096 tests, no API key or network required | `make test` | — |
+| 1101 tests, no API key or network required | `make test` | — |
 | DataHub configuration detected and validated before a run depends on it | [`backend/v2/datahub_preflight.py`](../backend/v2/datahub_preflight.py) · [`tests/test_datahub_preflight.py`](../tests/test_datahub_preflight.py) (21 tests) | NOT_CONFIGURED / UNREACHABLE / UNAUTHENTICATED are distinct states; `DATAHUB_TOKEN` was previously read by nothing |
 | Clean-clone reproducibility | [`docs/REPRODUCIBILITY.md`](REPRODUCIBILITY.md) | — |
 | Fault-injection eval: 7/7, 0 false positives, control case | [`examples/eval/results.json`](../examples/eval/results.json) | Measures the deterministic detection path, **not** LLM diagnosis — stated in the artifact itself |
