@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.0.0] — 2026-08-08
+
+First public release.
+
 ### Added
 
 **DataHub agent platform**
@@ -124,3 +130,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fabricated values from the `/scan` response and the operations panels
 - Unbacked accuracy figures — no number reaches the UI without an artifact
+
+---
+
+[Unreleased]: https://github.com/akashbichukale111/DevGuard-Enterprise/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/akashbichukale111/DevGuard-Enterprise/releases/tag/v1.0.0
