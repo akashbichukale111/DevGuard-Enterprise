@@ -1,0 +1,43 @@
+# The substrate's business glossary, in DataHub's own glossary format.
+#
+# Ingested by `recipes/business_glossary.yml`. Three terms, each of which is
+# referenced by something else in this repository — a glossary term nothing
+# points at is decoration.
+version: "1"
+source: DevGuard substrate
+owners:
+  users:
+    - datahub
+url: "https://github.com/akashbichukale111/devguard-enterprise"
+
+nodes:
+  - name: DevGuard
+    description: >
+      Terms the DevGuard substrate attaches to its own assets. Scoped to this
+      demonstration platform — nothing here claims to be an organisation-wide
+      taxonomy.
+    terms:
+      - name: PersonalData
+        description: >
+          Data that identifies a natural person, directly or in combination with
+          other fields. Applied automatically to any dbt model declaring
+          `meta.has_pii: true`, through the `meta_mapping` block in
+          recipes/dbt.yml — so the classification lives in the transformation
+          project and is reviewable in a diff, not clicked into a UI.
+        term_source: INTERNAL
+
+      - name: HeroPathAsset
+        description: >
+          An asset on the reference incident's path: raw.users →
+          stg_users → user_order_features → the churn model. These are the
+          assets DevGuard's write-back scope is limited to, and the ones whose
+          lineage every recorded proof pack traverses.
+        term_source: INTERNAL
+
+      - name: MLFeatureTable
+        description: >
+          A table read directly by model training. Renaming a column here does
+          not fail loudly at the warehouse — it fails later, in a training run,
+          which is why the blast radius has to reach past the table to the model
+          that consumes it.
+        term_source: INTERNAL

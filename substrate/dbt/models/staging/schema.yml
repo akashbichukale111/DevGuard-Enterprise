@@ -16,10 +16,35 @@ version: 2
 #
 # `dbt run` behaviour is unchanged by this file, so every earlier phase's
 # recorded evidence remains reproducible.
+#
+# OWNERSHIP, TAGS AND TERMS ARE DECLARED HERE, NOT CLICKED INTO DATAHUB.
+# `meta.owner` / `meta.business_owner` / `meta.has_pii` are read by DataHub's
+# dbt source through the `meta_mapping` block in `recipes/dbt.yml`, and dbt
+# `tags` arrive as DataHub tags. Declaring them in the transformation project
+# means the catalog's governance state is reproducible from a clone — which is
+# the same standard the lineage is held to. An owner set by hand in the UI
+# would vanish on the next `datahub docker nuke` and could not be reviewed in a
+# diff.
+#
+# The owners are the two local operator identities the quickstart creates, not
+# invented people: `urn:li:corpuser:datahub` is the admin the quickstart seeds,
+# and `urn:li:corpuser:devguard_agent` is the least-privilege service account
+# `scripts/setup_service_account.py` creates. DevGuard's Magistrate resolves the
+# approver from whatever the graph says here — never from its own config.
 
 models:
   - name: stg_users
     description: Typed, filtered users from raw.users.
+    # `meta` and `tags` live under `config` — dbt moved them there, and a
+    # top-level `tags:` key is silently accepted and silently ignored, which
+    # produced an empty `tags` array in the manifest and no DataHub tags at all.
+    config:
+      meta:
+        owner: datahub
+        has_pii: true
+      tags:
+        - devguard_hero_path
+        - pii
     columns:
       - name: user_id
         description: Primary key, carried through to the ML feature table.
@@ -29,6 +54,11 @@ models:
 
   - name: stg_orders
     description: Typed orders from raw.orders.
+    config:
+      meta:
+        owner: datahub
+      tags:
+        - devguard_hero_path
     columns:
       - name: order_id
         tests: [unique, not_null]

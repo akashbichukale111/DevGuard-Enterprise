@@ -11,8 +11,26 @@
 # The manifest will be stale and the lineage will describe a world that no longer
 # exists — which after the reference-incident rename is exactly the wrong answer.
 #
-#   cd substrate/dbt && dbt run
+#   cd substrate/dbt && dbt build && dbt docs generate
 #   datahub ingest -c recipes/dbt.yml
+#
+# `dbt build` rather than `dbt run`, and `docs generate` after it, because this
+# recipe now consumes three of dbt's artifacts and each comes from a different
+# command:
+#
+#   manifest.json      `dbt run` / `dbt build`   — models, refs, column lineage
+#   catalog.json       `dbt docs generate`       — warehouse-resolved columns
+#   run_results.json   `dbt build` / `dbt test`  — TEST OUTCOMES
+#
+# The third is the one worth explaining. Without `test_results_path`, dbt tests
+# exist only in the transformation project and DataHub knows nothing about
+# them. With it, DataHub materialises each test as a first-class **Assertion**
+# entity and each run as an assertion result. That is what lets DevGuard's
+# Referee corroborate a recovery against a verdict it did not produce: dbt
+# decides whether `user_id` is still unique and non-null, DataHub records that
+# decision, and DevGuard reads it back. A system grading its own homework is not
+# verification, and this is the seam that stops it being that.
+#
 # Required whenever stateful_ingestion is enabled: the state is keyed by this
 # name, so it must be stable across runs.
 pipeline_name: "devguard_substrate_dbt"
@@ -22,12 +40,44 @@ source:
   config:
     manifest_path: "substrate/dbt/target/manifest.json"
     catalog_path: "substrate/dbt/target/catalog.json"
+    # dbt's own verdicts, ingested as DataHub Assertions + assertion run events.
+    # Absent on a project that has only ever been `dbt run`; the source warns
+    # and continues rather than failing, so a run-only workflow still ingests.
+    test_results_path: "substrate/dbt/target/run_results.json"
     # Must match the platform + instance the postgres recipe emitted, or dbt
     # nodes will not attach to the physical tables and the lineage will be
     # orphaned rather than joined.
     target_platform: postgres
     infer_dbt_schemas: true
     include_column_lineage: true
+
+    # dbt `tags:` become DataHub tags. Left unprefixed on purpose: a prefixed
+    # `dbt:pii` would not match the `pii` tag anything else in the catalog uses,
+    # which defeats the point of a tag.
+    tag_prefix: ""
+
+    # Governance declared in the transformation project, read here. Each key is
+    # a `meta` key on a dbt model; `match` is a regex over its value. This is
+    # DataHub's own documented mechanism — nothing bespoke.
+    meta_mapping:
+      owner:
+        match: ".*"
+        operation: "add_owner"
+        config:
+          owner_type: user
+          owner_category: TECHNICAL_OWNER
+      business_owner:
+        match: ".*"
+        operation: "add_owner"
+        config:
+          owner_type: user
+          owner_category: BUSINESS_OWNER
+      has_pii:
+        match: true
+        operation: "add_term"
+        config:
+          term: "PersonalData"
+
     stateful_ingestion:
       enabled: true
 

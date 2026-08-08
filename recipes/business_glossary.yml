@@ -1,0 +1,30 @@
+# DataHub ingestion — the substrate's business glossary.
+#
+#   datahub ingest -c recipes/business_glossary.yml
+#
+# Why a glossary at all, when the substrate is four tables
+# --------------------------------------------------------
+# Because `recipes/dbt.yml` maps `meta.has_pii: true` to `add_term:
+# PersonalData`, and a term reference to a term that was never defined produces
+# a dangling URN in the catalog: the tag renders, the definition is empty, and
+# nobody can find out what the project means by "personal data". Defining the
+# terms here makes the reference resolve to something a human can read.
+#
+# This uses DataHub's own `datahub-business-glossary` source, so the glossary is
+# a committed, reviewable file rather than a set of UI clicks that vanish on the
+# next `datahub docker nuke`.
+#
+# The terms are deliberately few. A glossary invented to look comprehensive
+# would be exactly the fabrication this repository refuses elsewhere; these
+# three are the ones the substrate's own metadata actually references.
+source:
+  type: datahub-business-glossary
+  config:
+    file: recipes/glossary/devguard_glossary.yml
+    enable_auto_id: false
+
+sink:
+  type: datahub-rest
+  config:
+    server: "${DATAHUB_GMS_URL:-http://localhost:8080}"
+    token: "${DATAHUB_GMS_TOKEN}"
