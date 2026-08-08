@@ -55,7 +55,7 @@ source does not do, so they cannot be filled from this substrate at all.
 
 | Capability | Evidence | Honest limits |
 |---|---|---|
-| 1101 tests, no API key or network required | `make test` | — |
+| 1104 tests, no API key or network required | `make test` | — |
 | DataHub configuration detected and validated before a run depends on it | [`backend/v2/datahub_preflight.py`](../backend/v2/datahub_preflight.py) · [`tests/test_datahub_preflight.py`](../tests/test_datahub_preflight.py) (21 tests) | NOT_CONFIGURED / UNREACHABLE / UNAUTHENTICATED are distinct states; `DATAHUB_TOKEN` was previously read by nothing |
 | Clean-clone reproducibility | [`docs/REPRODUCIBILITY.md`](REPRODUCIBILITY.md) | — |
 | Fault-injection eval: 7/7, 0 false positives, control case | [`examples/eval/results.json`](../examples/eval/results.json) | Measures the deterministic detection path, **not** LLM diagnosis — stated in the artifact itself |
@@ -99,7 +99,7 @@ source does not do, so they cannot be filled from this substrate at all.
 | Zero-setup replay URL | https://dev-guard-enterprise.vercel.app | Scanner and Nexus need a backend; only the Command Center works without one |
 | Architectural review | [`docs/ARCHITECTURE_REVIEW.md`](ARCHITECTURE_REVIEW.md) | — |
 | Eligibility disclosure | [`DISCLOSURE.md`](../DISCLOSURE.md) | — |
-| Upstream findings prepared for DataHub | [`docs/upstream/`](upstream/) · [`tests/test_upstream_claims.py`](../tests/test_upstream_claims.py) (13 tests) | **Prepared, not filed.** Two findings verified against DataHub `master` and a running stack; the filing checklists are deliberately unticked and a test fails if one is ticked |
+| Upstream findings prepared for DataHub | [`docs/upstream/`](upstream/) · [`tests/test_upstream_claims.py`](../tests/test_upstream_claims.py) (16 tests) | **Prepared, not filed.** Two findings verified against DataHub `master` and a running stack; the filing checklists are deliberately unticked and a test fails if one is ticked |
 | Apache-2.0, detected by GitHub | [`LICENSE`](../LICENSE) | — |
 | **Demo video** | — | **Not recorded** |
 | **Devpost submission** | — | **Not submitted** |

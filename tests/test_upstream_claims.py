@@ -25,7 +25,27 @@ INDEX = UPSTREAM / "README.md"
 
 
 def _findings() -> list[Path]:
+    """
+    The finding write-ups themselves: top-level, index excluded.
+
+    Deliberately not recursive. A finding is one document at the top of the
+    directory, and the structural checks below assert the section headings a
+    finding must carry — headings that supporting material (a patch, a written
+    PR body) has no reason to have.
+    """
     return sorted(p for p in UPSTREAM.glob("*.md") if p.name != "README.md")
+
+
+def _every_document() -> list[Path]:
+    """
+    Every markdown document under `docs/upstream/`, at any depth.
+
+    The honesty checks — not filed, no merged PR — must reach further than the
+    findings. `01-patch/PULL_REQUEST.md` is a written-out pull request body, so
+    it is the single document here most likely to drift into announcing that it
+    was filed and merged, and a non-recursive glob was not looking at it.
+    """
+    return sorted(UPSTREAM.rglob("*.md"))
 
 
 def test_the_directory_exists_with_findings():
@@ -45,7 +65,7 @@ def test_every_finding_is_reproducible_from_its_own_text(doc):
     assert "## Suggested issue title" in text
 
 
-@pytest.mark.parametrize("doc", _findings(), ids=lambda p: p.name)
+@pytest.mark.parametrize("doc", _every_document(), ids=lambda p: p.name)
 def test_no_finding_claims_to_have_been_filed(doc):
     """
     The load-bearing test. Until someone actually files these, the unticked
@@ -83,7 +103,7 @@ def test_the_index_links_every_finding():
     assert on_disk <= linked, f"unlinked findings: {sorted(on_disk - linked)}"
 
 
-@pytest.mark.parametrize("doc", _findings() + [INDEX], ids=lambda p: p.name)
+@pytest.mark.parametrize("doc", _every_document(), ids=lambda p: p.name)
 def test_no_document_claims_a_merged_pull_request(doc):
     """
     "Contributed to DataHub" is a claim with a public, checkable answer. It may

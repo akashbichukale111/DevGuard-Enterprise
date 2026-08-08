@@ -364,7 +364,7 @@ Local throwaway credentials for the disposable substrate PostgreSQL (`devguard`,
 
 ## What is regression-protected
 
-**1101 tests run on every push in CI**, with no API key, no collector and no
+**1104 tests run on every push in CI**, with no API key, no collector and no
 network. They cover the typed agent boundaries, tool allowlists, the mutation
 scope, the evidence chain rule, refusal reasons, the untrusted-content boundary,
 audit-chain tamper detection, the circuit-breaker state machine, telemetry

@@ -108,11 +108,11 @@ Point at the cost field showing **N/A**.
 Drop to a terminal.
 
 ```bash
-make test                # 1101 passed
+make test                # 1104 passed
 make verify-replay-ui    # 14/14 checks passed
 ```
 
-> "1101 tests in CI on every push, with no key, no collector and no network. And
+> "1104 tests in CI on every push, with no key, no collector and no network. And
 > the demonstration you just watched is itself verified — that second command
 > drives the built site in a real browser and asserts every guarantee, including
 > that the evidence chips open real captured bytes."

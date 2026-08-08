@@ -50,7 +50,7 @@ interrogated, driven end to end, and photographed. Trail:
   five write-back artifacts, four `WRITTEN` and one `ALREADY PRESENT`.
 - 37 tests (`tests/test_replay_catalog_surface.py`,
   `tests/test_screenshot_manifest.py`, `tests/test_documentation_integrity.py`).
-  Suite is now **1101**.
+  Suite is now **1104**.
 
 ### Changed
 
@@ -91,6 +91,17 @@ interrogated, driven end to end, and photographed. Trail:
 - The capability prober followed DataHub **siblings**. Profiling lands on the
   warehouse URN and ownership on the dbt one, so a single-URN probe reported no
   ownership on a catalog that had it.
+- **Upstream finding 01 proposed a patch that would not compile.** It was checked
+  by grepping one directory, which showed `UpdateIncidentStatusInput` referenced
+  nowhere; a repository-wide search shows a Java resolver binds it, and
+  `graphql-java-codegen` generates a class per declared type, so deleting the
+  schema type alone breaks `compileJava`. The real defect is larger — schema,
+  resolver and published docs each name a different input type — and now ships
+  as a patch verified to apply cleanly to `master`.
+- `tests/test_upstream_claims.py` globbed `docs/upstream/*.md` non-recursively,
+  so the written-out pull request body added under `01-patch/` — the document
+  most likely to drift into announcing it was filed and merged — was covered by
+  none of the honesty checks. Both now walk the tree.
 
 ### Withdrawn
 
