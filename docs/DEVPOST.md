@@ -128,7 +128,30 @@ excluded by design, not oversight.
 
 Also used: column-level lineage for blast radius, ownership for approval
 routing, Context Documents for knowledge persistence, structured properties,
-incidents, Access Policies, and — read-only — Assertions and `mlModel` metadata.
+incidents, Access Policies, domains, glossary terms, dataset profiles, and —
+read-only — Assertions and `mlModel` metadata.
+
+**Verified against a live DataHub v1.7.0, not asserted.** The stack was
+provisioned from the official `datahub docker quickstart`, and every capability
+claim was checked by executing a query against it:
+`evidence/datahub-live/CAPABILITY_MATRIX.md` — **25 verified · 2 present-but-empty
+· 0 absent · 0 error** across 27 probes. The prober asks two separate questions
+per capability (is the field in the introspected schema; did it return data)
+because collapsing those into one "supported" column is how a capability matrix
+starts lying. The two empties are freshness and usage statistics, which need a
+connector that reads warehouse query history; DataHub's Postgres source does not,
+so they cannot be filled from this substrate at all.
+
+The full incident loop then ran end to end against that instance, with
+authentication enforced, as a least-privilege service account (**ALLOW 5/5, DENY
+7/7**). All five write-back artifacts landed, and the next run's Archivist
+retrieved the runbook the previous run had written. 23 screenshots of the running
+instance are in `docs/screenshots/datahub/`, including the post-write-back state.
+
+Two claims that previously carried an explicit *"not yet executed against a live
+catalog"* caveat no longer do: the blast radius reaching a registered `mlModel`
+(`reaches_ml_model=True` over 7 impacted assets), and ownership resolved from the
+graph (`NAMED_OWNER`).
 
 ## Open source contribution
 
@@ -138,11 +161,24 @@ Two genuine DataHub findings, prepared and reproducible, in `docs/upstream/`:
    referenced by nothing.** The mutation takes `IncidentStatusInput`; the dead
    type is the one whose name matches the mutation, with an identical field set.
    Verified against `master`.
-2. **The quickstart ships Access Policies silently unenforced.** Under
-   `METADATA_SERVICE_AUTH_ENABLED=false` every DENY case passes, so a policy
-   test suite returns green whether the policy is correct, wrong, or absent.
+2. **The quickstart ships Access Policies silently unenforced** — re-confirmed on
+   **v1.7.0**. Under `METADATA_SERVICE_AUTH_ENABLED=false` every DENY case
+   passes, so a policy test suite returns green whether the policy is correct,
+   wrong, or absent. The second run found something the first write-up missed:
+   because DENY cases are *mutations*, they do not merely appear to pass — **they
+   execute**. Running the suite against a stock quickstart soft-deleted the
+   dataset under test, put a cycle in its lineage, and created a policy granting
+   the test account `MANAGE_POLICIES`. The finding now documents that, and
+   supplies a client-side way to detect the state: present an invalid bearer
+   token and see whether the server returns 401 or answers.
 
 Neither has been filed. The checklists in those documents say so.
+
+A third candidate was **withdrawn** rather than filed, and the withdrawal is kept
+in `docs/upstream/README.md`: this project had proposed that `get_lineage`
+responses should carry a marker letting a client detect truncation. Reading the
+live response shows `total` already there beside the results page. The information
+existed; this project was not reading it.
 
 ## Known limitations
 

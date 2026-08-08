@@ -10,7 +10,7 @@ Claiming a contribution that does not exist would be worse than making none.
 | # | Finding | Target | Type | Verified |
 |---|---|---|---|---|
 | [01](01-incident-status-input-duplicate.md) | `UpdateIncidentStatusInput` declared but never referenced | `datahub-project/datahub` | Schema cleanup | Against `master` |
-| [02](02-quickstart-policies-silently-unenforced.md) | Access Policies silently unenforced under the quickstart default | `datahub-project/datahub` | Documentation | Against a running stack |
+| [02](02-quickstart-policies-silently-unenforced.md) | Access Policies silently unenforced under the quickstart default | `datahub-project/datahub` | Documentation | Against a running stack; **re-confirmed on v1.7.0** |
 
 ## Why these two and not more
 
@@ -30,11 +30,25 @@ Two candidates were considered and rejected:
 - **`get_lineage` defaults to `max_results=30`.** This silently truncated every
   blast radius here until `34639d4`. But the default is documented in the
   signature and the parameter is right there — the bug was ours, not
-  DataHub's. A more defensible upstream suggestion would be to have the
-  response carry a `hasMore`/`total` marker so a client can *detect*
-  truncation rather than infer it from a short page. That is worth proposing
-  once this project has run it against a live catalog and can show the
-  response shape, which it has not yet done.
+  DataHub's.
+
+  This entry previously went further and proposed that the response should carry
+  a `hasMore`/`total` marker so a client could *detect* truncation rather than
+  infer it from a short page, deferred until the response shape had been seen
+  against a live catalog. **It has now been seen, and the proposal is withdrawn:
+  the marker already exists.** `total` is a top-level field of the
+  `downstreams` object, alongside the `searchResults` page:
+
+  ```json
+  {"downstreams": {"total": 7, "facets": [...], "searchResults": [...]}}
+  ```
+
+  Captured at
+  [`d6-live-v170/pathfinder/get_lineage-downstream.json`](../../evidence/proof-pack/d6-live-v170/pathfinder/get_lineage-downstream.json).
+  A client can compare `total` against the number of results it received and know
+  it was truncated. There is nothing to ask upstream for; the information was
+  there and this project was not reading it. Recorded rather than deleted,
+  because a withdrawn proposal is a result.
 
 ## Reusable components
 

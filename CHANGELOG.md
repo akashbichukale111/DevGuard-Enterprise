@@ -7,7 +7,88 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Nothing yet.
+### Verified against a live DataHub v1.7.0
+
+The whole stack was provisioned from the official `datahub docker quickstart`,
+interrogated, driven end to end, and photographed. Trail:
+[`evidence/datahub-live/`](evidence/datahub-live/).
+
+### Added
+
+- `scripts/verify_datahub_capabilities.py` — probes every capability against the
+  live server and keeps *"is the field in this build's schema"* apart from *"did
+  this catalog return data"*, so `ABSENT` and `PRESENT_NO_DATA` can never collapse
+  into "supported". Result on v1.7.0: **25 verified · 2 present-but-empty · 0
+  absent · 0 error** over 27 probes, with every raw GraphQL response kept.
+- `scripts/capture_datahub_screenshots.py` — drives the real UI and records the
+  outcome of every attempt in `MANIFEST.json`, including failures. **23 captures**
+  in `docs/screenshots/datahub/`, five of them the post-write-back catalog state
+  that was previously listed as the repository's one missing screenshot.
+- `substrate/ml/register_model.py` — registers the trained churn model with the
+  lineage hop that makes it reachable. `MLModelProperties.trainingData` produces
+  no traversable graph edge, so the path runs `dataset → dataJob → mlModel`.
+- `scripts/provision_catalog.py` (was `provision_domain.py`) — the domain and the
+  **tag vocabulary** DevGuard writes into. The Scribe refuses to mint a missing
+  tag, so this is an operator responsibility by design.
+- `recipes/business_glossary.yml` + `recipes/glossary/devguard_glossary.yml` — the
+  glossary the dbt `meta_mapping` references, as a committed file.
+- **Catalog surface** panel in the Command Center
+  (`frontend/components/command/CatalogSurface.tsx`) — the DataHub tool set each
+  run negotiated, and which of it the agents used. Six tools on a document-less
+  catalog, eight once a run has written a runbook: the loop closing, as two
+  numbers read out of the proof pack.
+- `evidence/datahub-live/` — service verification, the auth-off/auth-on A/B, the
+  resolved configuration table, and the capability matrix.
+- A DataHub block in `.env.example`, each variable naming the module that reads it.
+- 32 tests (`tests/test_replay_catalog_surface.py`,
+  `tests/test_screenshot_manifest.py`). Suite is now **1096**.
+
+### Changed
+
+- `recipes/dbt.yml` ingests **dbt test results as DataHub Assertions**
+  (`test_results_path`) and maps ownership and PII classification in through
+  DataHub's own `meta_mapping`. 13 dbt tests are now first-class `Assertion`
+  entities, which is what lets the Referee corroborate recovery against a verdict
+  it did not produce.
+- Ownership, tags and glossary terms are declared in the dbt project rather than
+  clicked into a UI, so catalog governance is reproducible from a clone.
+- `versions.env` records **two** DataHub generations. `v1.6.0` stays because the
+  committed `d4`/`d5`/`d6-loop` proof packs were captured against it; `v1.7.0` is
+  what the quickstart gives a reviewer today.
+- `scripts/verify_least_privilege.py` resolves the incident it raises. Every
+  previous run left an ACTIVE incident on a production dataset.
+- Two claims lost their *"not yet executed against a live catalog"* caveat: the
+  blast radius reaching a registered `mlModel` (`reaches_ml_model=True` over 7
+  impacted assets), and ownership resolved from the graph (`NAMED_OWNER`).
+  Seven of seven privilege denials are now proven live, up from four.
+
+### Fixed
+
+- **`scripts/verify_least_privilege.py` could damage the catalog it was
+  verifying.** Its DENY probes are real mutations, and under the quickstart's
+  default `METADATA_SERVICE_AUTH_ENABLED=false` nothing refuses them — so they
+  land. One run soft-deleted the hero dataset, added a cycle to its lineage, and
+  created a policy granting the agent `MANAGE_POLICIES`. It now detects
+  non-enforcement by presenting a forged token and refuses to run. The failing run
+  is kept as evidence.
+- `--only` in the screenshot capture overwrote `MANIFEST.json` with a partial
+  record, so the index generated from it disagreed with the directory. Partial
+  runs now merge — including the login-failure exit, which wrote the manifest on
+  its way out and clobbered it just the same. Each capture also carries its own
+  timestamp, so a two-panel re-shoot can no longer re-date the twenty-one panels
+  it did not take.
+- dbt requires model `tags` and `meta` under `config:`; a top-level `tags:` key is
+  accepted and silently ignored, which is why the first ingestion produced no tags.
+- The capability prober followed DataHub **siblings**. Profiling lands on the
+  warehouse URN and ownership on the dbt one, so a single-URN probe reported no
+  ownership on a catalog that had it.
+
+### Withdrawn
+
+- The proposed upstream suggestion that `get_lineage` responses should carry a
+  truncation marker. Reading the live response shows `total` already present
+  beside the results page. Recorded in `docs/upstream/README.md` rather than
+  deleted — a withdrawn proposal is a result.
 
 ## [1.0.0] — 2026-08-08
 

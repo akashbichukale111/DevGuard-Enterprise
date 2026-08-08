@@ -1,13 +1,14 @@
 {
-  "captured_at": "2026-08-08T10:46:21.482657+00:00",
+  "captured_at": "2026-08-08T11:14:19.019497+00:00",
   "frontend": "http://localhost:9002",
   "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
-  "ml_model_urn": "",
+  "ml_model_urn": "urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)",
   "writeback_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
   "viewport": {
     "width": 1680,
     "height": 1050
   },
+  "partial_run": null,
   "captures": [
     {
       "slug": "01-login",
@@ -21,13 +22,263 @@
       "console_errors": []
     },
     {
+      "slug": "02-home",
+      "title": "Home",
+      "url": "http://localhost:9002/",
+      "shows": "The authenticated landing page: platform tiles and entity counts for the catalog this session ingested.",
+      "captured": true,
+      "file": "02-home.png",
+      "bytes": 192537,
+      "reason": "",
+      "console_errors": [
+        "marker not found: text=/Datasets|Explore|Welcome/i"
+      ]
+    },
+    {
+      "slug": "03-search",
+      "title": "Search",
+      "url": "http://localhost:9002/search?query=%2A",
+      "shows": "Free-text search across all entity types, with the facet rail DataHub builds from the live index.",
+      "captured": true,
+      "file": "03-search.png",
+      "bytes": 113395,
+      "reason": "",
+      "console_errors": []
+    },
+    {
+      "slug": "04-browse",
+      "title": "Browse",
+      "url": "http://localhost:9002/browse/dataset",
+      "shows": "Hierarchical browse paths, derived by DataHub from the ingested platform/database/schema structure.",
+      "captured": true,
+      "file": "04-browse.png",
+      "bytes": 49393,
+      "reason": "",
+      "console_errors": [
+        "marker not found: text=/postgres|dbt|Platform/i"
+      ]
+    },
+    {
+      "slug": "05-dataset",
+      "title": "Dataset",
+      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.analytics_marts.user_order_features%2CPROD%29/",
+      "shows": "A dataset entity page: platform, description, owners, tags and domain, all read from the catalog.",
+      "captured": true,
+      "file": "05-dataset.png",
+      "bytes": 178498,
+      "reason": "",
+      "console_errors": []
+    },
+    {
+      "slug": "06-dataset-schema",
+      "title": "Dataset schema",
+      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.analytics_marts.user_order_features%2CPROD%29/Schema",
+      "shows": "The schema DataHub holds for the dataset \u2014 field paths, native types and nullability as ingested from Postgres.",
+      "captured": true,
+      "file": "06-dataset-schema.png",
+      "bytes": 178499,
+      "reason": "",
+      "console_errors": []
+    },
+    {
+      "slug": "07-dataset-lineage",
+      "title": "Lineage graph",
+      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.analytics_marts.user_order_features%2CPROD%29/Lineage",
+      "shows": "The lineage graph: stg_users and stg_orders into the feature table, then through the training job to the churn model. Every edge was ingested from the running stack; none was hand-authored.",
+      "captured": true,
+      "file": "07-dataset-lineage.png",
+      "bytes": 140770,
+      "reason": "",
+      "console_errors": [
+        "Failed to load resource: net::ERR_CONNECTION_RESET"
+      ]
+    },
+    {
+      "slug": "08-column-lineage",
+      "title": "Column lineage",
+      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.analytics_marts.user_order_features%2CPROD%29/Lineage",
+      "shows": "The same graph with column detail expanded \u2014 the field-level mapping DataHub's dbt source derived from the manifest dbt itself produced.",
+      "captured": true,
+      "file": "08-column-lineage.png",
+      "bytes": 171665,
+      "reason": "",
+      "console_errors": [
+        "Failed to load resource: net::ERR_CONNECTION_RESET"
+      ]
+    },
+    {
+      "slug": "09-impact-analysis",
+      "title": "Impact analysis",
+      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.analytics_marts.user_order_features%2CPROD%29/Lineage",
+      "shows": "DataHub's own impact analysis over the same graph DevGuard's Pathfinder walks for blast radius.",
+      "captured": true,
+      "file": "09-impact-analysis.png",
+      "bytes": 166764,
+      "reason": "",
+      "console_errors": [
+        "Failed to load resource: net::ERR_CONNECTION_RESET"
+      ]
+    },
+    {
+      "slug": "10-dataset-stats",
+      "title": "Dataset profile / stats",
+      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.analytics_marts.user_order_features%2CPROD%29/Stats",
+      "shows": "Dataset profile: row and column counts and per-column statistics, profiled from the live database during ingestion.",
+      "captured": true,
+      "file": "10-dataset-stats.png",
+      "bytes": 128788,
+      "reason": "",
+      "console_errors": [
+        "Failed to load resource: net::ERR_CONNECTION_RESET"
+      ]
+    },
+    {
+      "slug": "11-dataset-quality",
+      "title": "Assertions / quality",
+      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.analytics_marts.user_order_features%2CPROD%29/Quality",
+      "shows": "The assertions surface DevGuard's Referee reads for independent recovery corroboration.",
+      "captured": true,
+      "file": "11-dataset-quality.png",
+      "bytes": 148957,
+      "reason": "",
+      "console_errors": []
+    },
+    {
+      "slug": "12-domains",
+      "title": "Domains",
+      "url": "http://localhost:9002/domains",
+      "shows": "Domains \u2014 the governance grouping DevGuard resolves alongside ownership.",
+      "captured": true,
+      "file": "12-domains.png",
+      "bytes": 92690,
+      "reason": "",
+      "console_errors": []
+    },
+    {
+      "slug": "13-glossary",
+      "title": "Business glossary",
+      "url": "http://localhost:9002/glossary",
+      "shows": "The business glossary as this instance holds it.",
+      "captured": true,
+      "file": "13-glossary.png",
+      "bytes": 89399,
+      "reason": "",
+      "console_errors": []
+    },
+    {
+      "slug": "14-tags",
+      "title": "Tags",
+      "url": "http://localhost:9002/search?query=%2A&filter__entityType___false___EQUAL___0=TAG",
+      "shows": "Tag entities, including `devguard_incident_impacted`. That one is provisioned by scripts/provision_catalog.py, not minted by the agent: `add_tags` fails against a tag URN that does not exist, and the Scribe deliberately does not create one.",
+      "captured": true,
+      "file": "14-tags.png",
+      "bytes": 88262,
+      "reason": "",
+      "console_errors": []
+    },
+    {
+      "slug": "15-policies",
+      "title": "Policies",
+      "url": "http://localhost:9002/settings/permissions/policies",
+      "shows": "The policy list DevGuard's least-privilege service account is scoped by.",
+      "captured": true,
+      "file": "15-policies.png",
+      "bytes": 168880,
+      "reason": "",
+      "console_errors": []
+    },
+    {
+      "slug": "16-ml-model",
+      "title": "ML model metadata",
+      "url": "http://localhost:9002/mlModels/urn%3Ali%3AmlModel%3A%28urn%3Ali%3AdataPlatform%3Amlflow%2Cdevguard_churn_risk%2CPROD%29/",
+      "shows": "The ML model at the end of the blast radius, read as an entity rather than counted as a URN.",
+      "captured": true,
+      "file": "16-ml-model.png",
+      "bytes": 123418,
+      "reason": "",
+      "console_errors": []
+    },
+    {
+      "slug": "17-ingestion",
+      "title": "Ingestion sources",
+      "url": "http://localhost:9002/ingestion",
+      "shows": "DataHub's ingestion surface. The substrate was ingested with the committed recipes rather than through this screen, so this shows the platform capability, not the path used.",
+      "captured": true,
+      "file": "17-ingestion.png",
+      "bytes": 94320,
+      "reason": "",
+      "console_errors": []
+    },
+    {
+      "slug": "18-analytics",
+      "title": "Analytics",
+      "url": "http://localhost:9002/analytics",
+      "shows": "DataHub's built-in usage analytics over this instance.",
+      "captured": true,
+      "file": "18-analytics.png",
+      "bytes": 97854,
+      "reason": "",
+      "console_errors": []
+    },
+    {
+      "slug": "19-writeback-incident",
+      "title": "Write-back \u2014 incident",
+      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.raw.users%2CPROD%29/Incidents",
+      "shows": "Artifact 1: the incident DevGuard raised on detection and resolved only after the Referee verified the fix. Filtered to Resolved, because a completed run leaves no active incident behind.",
+      "captured": true,
+      "file": "19-writeback-incident.png",
+      "bytes": 126423,
+      "reason": "",
+      "console_errors": [
+        "click 'text=/^Resolved$/' failed: Page.click: Timeout 8000ms exceeded.\nCall log:\n  - waiting for locator(\"text=/^Resolved$/\")\n",
+        "Failed to load resource: net::ERR_CONNECTION_RESET"
+      ]
+    },
+    {
+      "slug": "20-writeback-column",
+      "title": "Write-back \u2014 column annotation",
+      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.raw.users%2CPROD%29/Schema",
+      "shows": "Artifact 3: the column-level tag and description written back to the exact field the incident was about.",
+      "captured": true,
+      "file": "20-writeback-column.png",
+      "bytes": 130679,
+      "reason": "",
+      "console_errors": []
+    },
+    {
       "slug": "21-writeback-properties",
       "title": "Write-back \u2014 structured properties",
       "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.raw.users%2CPROD%29/Properties",
       "shows": "Artifact 4: structured incident facts \u2014 verified_at and last_incident_id \u2014 written as typed catalog values rather than prose, under the `devguard` namespace.",
       "captured": true,
       "file": "21-writeback-properties.png",
-      "bytes": 142940,
+      "bytes": 143129,
+      "reason": "",
+      "console_errors": [
+        "Failed to load resource: net::ERR_CONNECTION_RESET"
+      ]
+    },
+    {
+      "slug": "22-writeback-governance",
+      "title": "Write-back \u2014 governance tab",
+      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.raw.users%2CPROD%29/Governance",
+      "shows": "The governance surface of the dataset the agent wrote to, showing owners, terms and domain alongside the agent's own annotations.",
+      "captured": true,
+      "file": "22-writeback-governance.png",
+      "bytes": 107706,
+      "reason": "",
+      "console_errors": [
+        "Failed to load resource: net::ERR_CONNECTION_RESET"
+      ]
+    },
+    {
+      "slug": "23-writeback-dataset",
+      "title": "Write-back \u2014 dataset overview",
+      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.raw.users%2CPROD%29/",
+      "shows": "The whole picture on the incident's dataset after a complete run.",
+      "captured": true,
+      "file": "23-writeback-dataset.png",
+      "bytes": 130726,
       "reason": "",
       "console_errors": []
     }

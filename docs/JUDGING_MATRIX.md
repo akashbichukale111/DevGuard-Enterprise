@@ -8,9 +8,32 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 
 ## Criterion 1 — Meaningful DataHub usage
 
+### The live instance, and what it proved
+
+DataHub **v1.7.0** was provisioned from the official `datahub docker quickstart`,
+verified, driven end to end, and photographed. Full trail:
+[`evidence/datahub-live/`](../evidence/datahub-live/).
+
+| Claim | Verified | Artifact |
+|---|---|---|
+| Every service healthy | GMS · GraphQL · frontend · OpenSearch 2.19.3 · Kafka (9 topics) · MySQL 8.2.0 | [`01-service-verification.md`](../evidence/datahub-live/01-service-verification.md) |
+| 27 capabilities probed | **25 verified · 2 present-but-empty · 0 absent · 0 error** | [`CAPABILITY_MATRIX.md`](../evidence/datahub-live/CAPABILITY_MATRIX.md) · [`capability-matrix.json`](../evidence/datahub-live/capability-matrix.json) (every raw response) |
+| Authentication enforced | forged token → 401 · no token → 401 · agent token → `urn:li:corpuser:devguard_agent` | [`04-devguard-configuration.md`](../evidence/datahub-live/04-devguard-configuration.md) |
+| Least privilege | **ALLOW 5/5 · DENY 7/7** | [`03-least-privilege-AUTH-ON.txt`](../evidence/datahub-live/03-least-privilege-AUTH-ON.txt) |
+| Full incident loop | all 5 write-back artifacts landed; the next run retrieved the previous run's runbook | [`d6-live-v170/`](../evidence/proof-pack/d6-live-v170/) |
+| The UI, photographed | 23 captures of the running instance | [`docs/screenshots/datahub/`](screenshots/datahub/) |
+
+**Honest limits on the block above.** It is a single-node quickstart, not a
+cluster: OpenSearch stays `yellow` because replicas cannot be assigned on one
+node. The two `PRESENT_NO_DATA` capabilities — freshness and usage statistics —
+need a connector that reads warehouse query history, which DataHub's Postgres
+source does not do, so they cannot be filled from this substrate at all.
+
+### Per-capability rows
+
 | Capability | Evidence | Honest limits |
 |---|---|---|
-| Incident raised → resolved via GraphQL | [`d6-loop-pass2/scribe/artifact1-raiseIncident.json`](../evidence/proof-pack/d6-loop-pass2/scribe/artifact1-raiseIncident.json) | Recorded against a local DataHub Core, not a hosted instance |
+| Incident raised → resolved via GraphQL | [`d6-live-v170/scribe/artifact1-raiseIncident.json`](../evidence/proof-pack/d6-live-v170/scribe/artifact1-raiseIncident.json) · [`d6-loop-pass2/…`](../evidence/proof-pack/d6-loop-pass2/scribe/artifact1-raiseIncident.json) | Recorded against a local quickstart, not a hosted instance |
 | Runbook published as a Context Document | [`artifact2-save_document.json`](../evidence/proof-pack/d6-loop-pass2/scribe/artifact2-save_document.json) | — |
 | Column-level tag + description on a schema field | [`artifact3-add_tags.json`](../evidence/proof-pack/d6-loop-pass2/scribe/artifact3-add_tags.json) | — |
 | Structured properties, definitions registered first | [`artifact4-add_structured_properties.json`](../evidence/proof-pack/d6-loop-pass2/scribe/artifact4-add_structured_properties.json) | — |
@@ -20,16 +43,19 @@ Where a row is weaker than it looks, the Honest limits column says so. A matrix 
 | MCP over stdio, capability negotiated | [`backend/v2/datahub_client.py`](../backend/v2/datahub_client.py) | — |
 | **13 distinct `mcp-server-datahub` tools are actually invoked** — 8 read, 5 write | [`backend/v2/mcp_contract.py`](../backend/v2/mcp_contract.py) · [`backend/v2/handoff.py`](../backend/v2/handoff.py) (`AGENT_TOOL_ALLOWLISTS`) · [`tests/test_mcp_contract.py`](../tests/test_mcp_contract.py) (19 tests) | Out of the **21** the transcribed contract enumerates across all server configurations; the captured server exposed **18** of those ([`evidence/d0/mcp-tool-list.json`](../evidence/d0/mcp-tool-list.json)). The unused ones are `get_me`, the glossary/domain writes and every `remove_*` — deliberately outside the Scribe's allowlist. Two of the 13, `search_documents` and `grep_documents`, are hidden by the server on a document-less catalog, which is exactly the capability gap the Archivist degrades on rather than throwing |
 | Tool names checked offline against the published contract | [`tests/test_mcp_contract.py`](../tests/test_mcp_contract.py) | The contract is a transcription recorded 2026-08-07; it cannot detect an upstream change until someone re-reads the source it names |
-| **ML model impact — the model at the end of the blast radius, read not just counted** | [`backend/v2/ml_impact.py`](../backend/v2/ml_impact.py) · [`tests/test_ml_impact.py`](../tests/test_ml_impact.py) (28 tests) | Read-only; no `mlModel` is ever written to. **Not yet executed against a live catalog** |
+| **ML model impact — the model at the end of the blast radius, read not just counted** | [`backend/v2/ml_impact.py`](../backend/v2/ml_impact.py) · [`tests/test_ml_impact.py`](../tests/test_ml_impact.py) (28 tests) · registration: [`substrate/ml/register_model.py`](../substrate/ml/register_model.py) · live: [`d6-live-v170/pathfinder/`](../evidence/proof-pack/d6-live-v170/pathfinder/) | **Now executed against a live catalog** — `reaches_ml_model=True` over 7 impacted assets. Still read-only; no `mlModel` is ever written to. The traversable path had to run `dataset → dataJob → mlModel`, because `MLModelProperties.trainingData` produces no graph edge |
+| **Assertions ingested from dbt test results** | [`recipes/dbt.yml`](../recipes/dbt.yml) (`test_results_path`) · [`CAPABILITY_MATRIX.md`](../evidence/datahub-live/CAPABILITY_MATRIX.md) | 13 dbt tests become first-class `Assertion` entities with run events, so the Referee's second opinion is dbt's verdict rather than DevGuard's own test run. DataHub OSS has no `reportAssertionResult`, so this is read-only by necessity |
+| **Ownership, tags, terms and domain as metadata-as-code** | [`substrate/dbt/models/*/schema.yml`](../substrate/dbt/models/staging/schema.yml) · [`recipes/dbt.yml`](../recipes/dbt.yml) (`meta_mapping`) · [`recipes/glossary/devguard_glossary.yml`](../recipes/glossary/devguard_glossary.yml) · [`scripts/provision_catalog.py`](../scripts/provision_catalog.py) | Declared in the transformation project and ingested by DataHub's own `meta_mapping`, so catalog governance survives a `datahub docker nuke` and is reviewable in a diff. dbt requires these under `config:`; a top-level `tags:` key is accepted and silently ignored, which is why the first ingestion produced no tags |
+| **Negotiated capability set surfaced in the UI** | [`frontend/components/command/CatalogSurface.tsx`](../frontend/components/command/CatalogSurface.tsx) · [`tests/test_replay_catalog_surface.py`](../tests/test_replay_catalog_surface.py) (20 tests) | The tool list is the server's answer for that run: six tools on a document-less catalog, eight after a run writes a runbook. Read from the proof pack, never from a fallback constant |
 | Retrieval loop — prior runbooks read back | [`backend/v2/agents/archivist.py`](../backend/v2/agents/archivist.py) | Measured effect was negative; see Criterion 2 |
-| **Assertions read as an independent second opinion on recovery** | [`backend/v2/assertions.py`](../backend/v2/assertions.py) · [`tests/test_assertion_corroboration.py`](../tests/test_assertion_corroboration.py) (27 tests) | Read-only. DataHub OSS has no `reportAssertionResult` mutation, so DevGuard corroborates but does not author assertion results. **Not yet executed against a live catalog** |
+| **Assertions read as an independent second opinion on recovery** | [`backend/v2/assertions.py`](../backend/v2/assertions.py) · [`tests/test_assertion_corroboration.py`](../tests/test_assertion_corroboration.py) (27 tests) | Read-only. DataHub OSS has no `reportAssertionResult` mutation, so DevGuard corroborates but does not author assertion results. Assertions themselves are now live in the catalog (row above), and `Dataset.assertions` is `VERIFIED` with 5 on the hero dataset; the corroboration **code path** has still not been exercised inside a recorded run, because the recorded loop verifies recovery from its own `dbt build` before reading the catalog back |
 | Write-back idempotency + all-or-nothing resolve | [`tests/test_writeback_rules.py`](../tests/test_writeback_rules.py) (35 tests) | — |
 
 ## Criterion 2 — Technical execution
 
 | Capability | Evidence | Honest limits |
 |---|---|---|
-| 1041 tests, no API key or network required | `make test` | — |
+| 1096 tests, no API key or network required | `make test` | — |
 | DataHub configuration detected and validated before a run depends on it | [`backend/v2/datahub_preflight.py`](../backend/v2/datahub_preflight.py) · [`tests/test_datahub_preflight.py`](../tests/test_datahub_preflight.py) (21 tests) | NOT_CONFIGURED / UNREACHABLE / UNAUTHENTICATED are distinct states; `DATAHUB_TOKEN` was previously read by nothing |
 | Clean-clone reproducibility | [`docs/REPRODUCIBILITY.md`](REPRODUCIBILITY.md) | — |
 | Fault-injection eval: 7/7, 0 false positives, control case | [`examples/eval/results.json`](../examples/eval/results.json) | Measures the deterministic detection path, **not** LLM diagnosis — stated in the artifact itself |

@@ -5,7 +5,7 @@
 **This document has outlived its baseline.** Several findings were acted on after the review was written. Where that happened the original finding is kept and the resolution is marked beside it rather than edited away — a review that quietly rewrites itself into agreement with the code has stopped being evidence of anything. Anything not marked as addressed still stands.
 
 **Scale at the review commit:** 25,596 lines of Python across 94 files · 8,729 lines of TypeScript across 30 files · 775 tests.
-**Scale now:** 30,537 lines of Python across 117 files · 8,769 lines of TypeScript across 31 files · 1041 tests.
+**Scale now:** 30,537 lines of Python across 117 files · 8,769 lines of TypeScript across 31 files · 1096 tests.
 
 <sub>Counted over tracked files only — `git ls-files '*.py' | xargs cat | wc -l` and the `*.ts`/`*.tsx` equivalent — so vendored and generated code is excluded. The test total is what `pytest tests/ --collect-only` reports, not a count of `def test_`, which would undercount every parametrized case.</sub>
 
@@ -329,7 +329,7 @@ OpenTelemetry → OTLP/gRPC → SigNoz. **Traces, metrics and logs**, with a log
 | **Demo video <3:00** | **Missing** | — |
 | **Devpost submission** | **Missing** | — |
 | Eligibility disclosure | **Satisfied** | `DISCLOSURE.md` |
-| Reproducibility from clean clone | **Satisfied** | Verified; 1041 tests, no key needed |
+| Reproducibility from clean clone | **Satisfied** | Verified; 1096 tests, no key needed |
 | Evaluation suite | **Satisfied** | 7/7 accuracy, 0 FP, control case, published |
 | Ablation with N≥5 | **Satisfied, negative** | 5.14 s on vs 4.87 s off — reported honestly |
 | **`make demo`** | **Missing** | No such target |

@@ -33,13 +33,19 @@ Use the run picker, top right.
 
 | Run | What it proves | Why it is unusual |
 |---|---|---|
-| `d6-loop-pass2` | The full loop, ending in five write-back artifacts that really landed in DataHub | The loop **closes** — this pass retrieves the runbook the previous pass wrote |
-| `d5-refusal` | The Diagnostician declining to guess, naming the exact evidence class it lacked | It holds **zero tools**. Refusal is structural, not prompt discipline |
+| **`d6-live-v170`** | The full loop against **DataHub v1.7.0** with authentication enforced, as a least-privilege service account. All five write-back artifacts landed | The **Catalog surface** panel shows **8/8 negotiated tools used** — six on a clean catalog, eight once a runbook exists. The blast radius reaches `devguard_churn_risk` (MLMODEL) through a `dataJob`, and the owner is read from the graph, not from config |
+| `d6-loop-pass2` | The same loop against v1.6.0, the run the video uses | The loop **closes** — this pass retrieves the runbook the previous pass wrote |
+| `d5-refusal` | The Diagnostician declining to guess, naming the exact evidence class it lacked | It holds **zero tools**. Refusal is structural, not prompt discipline. Its Catalog surface panel reads *not negotiated*, because the Archivist never ran — an honest absence rather than an empty list |
 | `d6-fail-the-fix` | A patch failing validation | **Nothing is written back.** A bad fix reaches no human and touches no catalog |
 | `d6-dry-run` | Every write payload recorded | And nothing sent |
 
 Click any evidence chip. It opens the exact captured request and response behind
 that claim.
+
+**Compare `d6-live-v170` with `d5-refusal` on one panel.** Same UI, same
+pipeline. The first negotiated eight DataHub tools and used all eight; the second
+negotiated none, and says so rather than rendering a blank. Neither number is
+typed anywhere — both are read out of the proof pack.
 
 ## 3 · Check a claim without trusting the UI
 
@@ -47,7 +53,10 @@ Every number on that screen is read from a committed proof pack. Read one:
 
 ```bash
 # The five write-back artifacts, as the server answered them
-ls evidence/proof-pack/d6-loop-pass2/scribe/
+ls evidence/proof-pack/d6-live-v170/scribe/
+
+# The DataHub tool list the LIVE run negotiated — the panel's numbers come from here
+python -c "import json;d=json.load(open('evidence/proof-pack/d6-live-v170/archivist/capabilities.json'));print(d['tool_count'],'tools:',d['tools'])"
 
 # The least-privilege verifier's real output
 cat evidence/proof-pack/security/least-privilege/summary.json
@@ -55,6 +64,31 @@ cat evidence/proof-pack/security/least-privilege/summary.json
 # Fault-injection evaluation: 7/7, zero false positives, with a control case
 cat examples/eval/results.json
 ```
+
+### The live DataHub trail
+
+Not on screen, but the strongest evidence of DataHub usage in the repository:
+[**`evidence/datahub-live/`**](../evidence/datahub-live/).
+
+```bash
+# 27 capabilities, each probed against the running server. 25 verified, 0 absent.
+head -40 evidence/datahub-live/CAPABILITY_MATRIX.md
+
+# Least privilege, twice: the same suite with policy enforcement off, then on
+cat evidence/datahub-live/02-least-privilege-AUTH-OFF.txt   # ALLOW 4/4 · DENY 0/7
+cat evidence/datahub-live/03-least-privilege-AUTH-ON.txt    # ALLOW 5/5 · DENY 7/7
+```
+
+**Read the auth-off file if you read only one thing.** It is a *failed* run, kept
+on purpose. The DataHub quickstart still ships `METADATA_SERVICE_AUTH_ENABLED=false`
+on v1.7.0, and the DENY probes are real mutations — so with nothing enforcing
+policy they were not refused, they landed, soft-deleting the dataset under test and
+creating a policy that granted the agent `MANAGE_POLICIES`. It was all repaired,
+the verifier now refuses to run against an unenforcing server, and the write-up is
+in [`docs/upstream/02`](upstream/02-quickstart-policies-silently-unenforced.md).
+
+And 23 screenshots of the live instance, with a caption each:
+[`docs/screenshots/datahub/`](screenshots/datahub/).
 
 ## 4 · The three things worth knowing before you score us
 
