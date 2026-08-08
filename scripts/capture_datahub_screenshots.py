@@ -80,6 +80,61 @@ class Capture:
     bytes: int = 0
     reason: str = ""
     console_errors: list[str] = field(default_factory=list)
+    # Stamped per shot, not per run. A `--only` re-shoot merges into the
+    # existing manifest, so a single run-level timestamp would re-date every
+    # row it did not actually take.
+    captured_at: str = field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+
+def write_manifest(out: Path, captures: list[Capture], *, merge: bool,
+                   **meta) -> int:
+    """Write MANIFEST.json, merging into any existing one on a partial run.
+
+    A `--only` run MERGES instead of replacing. Replacing made the manifest lie:
+    re-shooting two panels rewrote the file to describe two captures while
+    twenty-three PNGs sat in the directory, and the manifest is what the docs
+    index is generated from. A record of what is on disk that disagrees with
+    what is on disk is worse than no record. The same applies when a partial run
+    dies at login — that path must not clobber a full manifest either.
+
+    Returns the number of rows the written manifest describes.
+    """
+    rows: dict[str, dict] = {}
+    path = out / "MANIFEST.json"
+    if merge and path.is_file():
+        try:
+            previous = json.loads(path.read_text(encoding="utf-8"))
+            # Manifests written before shots were stamped individually carry
+            # only a run-level time. Backfill it so a re-shoot cannot leave the
+            # file claiming to be newer than the rows it kept.
+            inherited = previous.get("captured_at")
+            for row in previous.get("captures") or []:
+                if row.get("slug"):
+                    row.setdefault("captured_at", inherited)
+                    rows[row["slug"]] = row
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"  note    could not merge the existing manifest ({exc}); "
+                  "writing only this run's captures")
+    for capture in captures:
+        rows[capture.slug] = capture.__dict__
+
+    # Ordered by the canonical shot list, so the file reads in the same order the
+    # docs present it regardless of which subset was last re-shot.
+    order = {shot.slug: i for i, shot in enumerate(shots())}
+    ordered = sorted(rows.values(),
+                     key=lambda r: order.get(r.get("slug", ""), len(order)))
+    # The newest capture the manifest describes — which equals the run time on a
+    # full run, and stays true on a merged one. Per-shot times are on each row.
+    stamps = [r["captured_at"] for r in ordered if r.get("captured_at")]
+    path.write_text(json.dumps({
+        "captured_at": max(stamps) if stamps else
+                       datetime.now(timezone.utc).isoformat(),
+        "manifest_written_at": datetime.now(timezone.utc).isoformat(),
+        **meta,
+        "captures": ordered,
+    }, indent=2), encoding="utf-8")
+    return len(ordered)
 
 
 def shots() -> list[Shot]:
@@ -367,11 +422,8 @@ def main() -> int:
             print(f"  ok      authenticated as {user}")
         except Exception as exc:  # noqa: BLE001
             print(f"FATAL: login failed: {type(exc).__name__}: {exc}", file=sys.stderr)
-            (out / "MANIFEST.json").write_text(json.dumps({
-                "captured_at": datetime.now(timezone.utc).isoformat(),
-                "frontend": base, "login_failed": str(exc),
-                "captures": [c.__dict__ for c in captures],
-            }, indent=2), encoding="utf-8")
+            write_manifest(out, captures, merge=bool(wanted),
+                           frontend=base, login_failed=str(exc))
             browser.close()
             return 2
 
@@ -414,19 +466,19 @@ def main() -> int:
 
         browser.close()
 
-    manifest = {
-        "captured_at": datetime.now(timezone.utc).isoformat(),
-        "frontend": base,
-        "dataset_urn": args.dataset_urn,
-        "ml_model_urn": args.ml_model_urn,
-        "writeback_urn": args.writeback_urn,
-        "viewport": DEFAULT_VIEWPORT,
-        "captures": [c.__dict__ for c in captures],
-    }
-    (out / "MANIFEST.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    listed = write_manifest(
+        out, captures, merge=bool(wanted),
+        frontend=base,
+        dataset_urn=args.dataset_urn,
+        ml_model_urn=args.ml_model_urn,
+        writeback_urn=args.writeback_urn,
+        viewport=DEFAULT_VIEWPORT,
+        partial_run=sorted(wanted) if wanted else None,
+    )
 
     ok = sum(1 for c in captures if c.captured)
-    print(f"\n  {ok}/{len(captures)} captured → {out}")
+    print(f"\n  {ok}/{len(captures)} captured → {out}"
+          f"{f' (manifest now lists {listed})' if wanted else ''}")
     return 0 if ok else 1
 
 
