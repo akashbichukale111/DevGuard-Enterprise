@@ -4,12 +4,19 @@
     "graphql_url": "http://localhost:8080/api/graphql",
     "server_version": "v1.7.0",
     "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
-    "sibling_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+    "datasets_probed": [
+      "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+      "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+      "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)",
+      "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+      "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)"
+    ],
     "ml_model_urn": "urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)",
-    "captured_at": "2026-08-08T10:18:41.055890+00:00",
+    "captured_at": "2026-08-08T10:36:55.117784+00:00",
     "graphql_types_introspected": 935,
-    "graphql_calls": 37,
-    "token_source": null
+    "graphql_calls": 50,
+    "token_source": "DATAHUB_TOKEN_FILE (/root/.devguard/admin.token)"
   },
   "results": [
     {
@@ -222,6 +229,13 @@
               {
                 "degree": 3,
                 "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "degree": 3,
+                "entity": {
                   "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)",
                   "type": "DATASET"
                 }
@@ -244,13 +258,6 @@
                 "degree": 3,
                 "entity": {
                   "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.orders,PROD)",
-                  "type": "DATASET"
-                }
-              },
-              {
-                "degree": 3,
-                "entity": {
-                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
                   "type": "DATASET"
                 }
               },
@@ -555,7 +562,7 @@
       "surface": "GraphQL `Dataset.ownership` \u2192 owners + ownership type",
       "status": "VERIFIED",
       "evidence": "2 owners",
-      "note": "Answered on the sibling entity, not the URN probed first.",
+      "note": "Answered on urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD), not the URN probed first.",
       "answered_on": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
       "missing_fields": [],
       "raw": {
@@ -653,19 +660,27 @@
       "capability": "Tags",
       "surface": "GraphQL `Dataset.tags` + `searchAcrossEntities(types:[TAG])`",
       "status": "VERIFIED",
-      "evidence": "3 tag entities",
+      "evidence": "4 tag entities",
       "note": "",
       "answered_on": "",
       "missing_fields": [],
       "raw": {
         "data": {
           "searchAcrossEntities": {
-            "total": 3,
+            "total": 4,
             "searchResults": [
               {
                 "entity": {
                   "urn": "urn:li:tag:devguard_hero_path",
                   "properties": null
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:tag:devguard_incident_impacted",
+                  "properties": {
+                    "name": "devguard_incident_impacted"
+                  }
                 }
               },
               {
@@ -718,7 +733,7 @@
       "surface": "GraphQL `Dataset.assertions`",
       "status": "VERIFIED",
       "evidence": "5 assertions on this dataset",
-      "note": "Answered on the sibling entity, not the URN probed first.",
+      "note": "Answered on urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD), not the URN probed first.",
       "answered_on": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
       "missing_fields": [],
       "raw": {
@@ -773,14 +788,14 @@
       "capability": "Policies",
       "surface": "GraphQL `listPolicies`",
       "status": "VERIFIED",
-      "evidence": "16 policies",
+      "evidence": "18 policies",
       "note": "",
       "answered_on": "",
       "missing_fields": [],
       "raw": {
         "data": {
           "listPolicies": {
-            "total": 16,
+            "total": 18,
             "policies": [
               {
                 "urn": "urn:li:dataHubPolicy:0",
@@ -857,6 +872,39 @@
                   "ES_EXPLAIN_QUERY_PRIVILEGE",
                   "EXECUTE_ENTITY",
                   "MANAGE_ASSET_SUMMARY"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:4be9d636-3a4d-4936-b045-d5c65f8df767",
+                "type": "PLATFORM",
+                "state": "ACTIVE",
+                "name": "devguard-agent-platform",
+                "privileges": [
+                  "MANAGE_DOCUMENTS"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:6924041b-ba56-472b-a733-58f0c3ae287a",
+                "type": "METADATA",
+                "state": "ACTIVE",
+                "name": "devguard-agent-metadata",
+                "privileges": [
+                  "EDIT_DATASET_COL_DESCRIPTION",
+                  "EDIT_DATASET_COL_TAGS",
+                  "EDIT_ENTITY_INCIDENTS",
+                  "EDIT_ENTITY_OWNERS",
+                  "EDIT_ENTITY_PROPERTIES",
+                  "VIEW_ENTITY_PAGE"
                 ],
                 "actors": {
                   "allUsers": false,
@@ -1234,7 +1282,7 @@
       "capability": "Governance (privileges)",
       "surface": "GraphQL `me.platformPrivileges`",
       "status": "VERIFIED",
-      "evidence": "authenticated as urn:li:corpuser:__datahub_system",
+      "evidence": "authenticated as urn:li:corpuser:datahub",
       "note": "",
       "answered_on": "",
       "missing_fields": [],
@@ -1242,8 +1290,8 @@
         "data": {
           "me": {
             "corpUser": {
-              "urn": "urn:li:corpuser:__datahub_system",
-              "username": "__datahub_system"
+              "urn": "urn:li:corpuser:datahub",
+              "username": "datahub"
             },
             "platformPrivileges": {
               "managePolicies": true,
@@ -1518,15 +1566,21 @@
       "capability": "Search",
       "surface": "GraphQL `searchAcrossEntities` free text + facets",
       "status": "VERIFIED",
-      "evidence": "44 entities indexed",
+      "evidence": "50 entities indexed",
       "note": "",
       "answered_on": "",
       "missing_fields": [],
       "raw": {
         "data": {
           "searchAcrossEntities": {
-            "total": 44,
+            "total": 50,
             "searchResults": [
+              {
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+                  "type": "DATASET"
+                }
+              },
               {
                 "entity": {
                   "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)",
@@ -1565,12 +1619,6 @@
               },
               {
                 "entity": {
-                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
-                  "type": "DATASET"
-                }
-              },
-              {
-                "entity": {
                   "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.orders,PROD)",
                   "type": "DATASET"
                 }
@@ -1591,6 +1639,18 @@
                 "entity": {
                   "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard,churn_training,PROD),train_churn_model)",
                   "type": "DATA_JOB"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:document:shared-354950a5-f239-4c53-b2e3-c8df975adab1",
+                  "type": "DOCUMENT"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:document:shared-5ccc356c-5b4b-4468-98c0-72ec18b9c892",
+                  "type": "DOCUMENT"
                 }
               },
               {
@@ -1634,18 +1694,6 @@
                   "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
                   "type": "DATASET"
                 }
-              },
-              {
-                "entity": {
-                  "urn": "urn:li:container:0f40c4f798ed2fe1f304eafa2896e685",
-                  "type": "CONTAINER"
-                }
-              },
-              {
-                "entity": {
-                  "urn": "urn:li:container:49c362e5df64433c720f8cb5b50cbd29",
-                  "type": "CONTAINER"
-                }
               }
             ],
             "facets": [
@@ -1675,7 +1723,7 @@
                 "aggregations": [
                   {
                     "value": "SCHEMA_FIELD",
-                    "count": 16
+                    "count": 17
                   },
                   {
                     "value": "DATASET",
@@ -1683,6 +1731,10 @@
                   },
                   {
                     "value": "CONTAINER",
+                    "count": 4
+                  },
+                  {
+                    "value": "TAG",
                     "count": 4
                   },
                   {
@@ -1698,15 +1750,23 @@
                     "count": 3
                   },
                   {
+                    "value": "DOCUMENT",
+                    "count": 3
+                  },
+                  {
                     "value": "DATASET\u241eTable",
                     "count": 3
                   },
                   {
-                    "value": "TAG",
-                    "count": 3
+                    "value": "DOCUMENT\u241eAnalysis",
+                    "count": 2
                   },
                   {
                     "value": "DATASET\u241eView",
+                    "count": 2
+                  },
+                  {
+                    "value": "CORP_USER",
                     "count": 2
                   },
                   {
@@ -1730,7 +1790,7 @@
                     "count": 1
                   },
                   {
-                    "value": "CORP_USER",
+                    "value": "DOCUMENT\u241eFolder",
                     "count": 1
                   },
                   {
@@ -1761,15 +1821,11 @@
                 "aggregations": [
                   {
                     "value": "SCHEMA_FIELD",
-                    "count": 16
+                    "count": 17
                   },
                   {
                     "value": "DATASET",
                     "count": 10
-                  },
-                  {
-                    "value": "GLOSSARY_TERM",
-                    "count": 4
                   },
                   {
                     "value": "CONTAINER",
@@ -1777,7 +1833,19 @@
                   },
                   {
                     "value": "TAG",
+                    "count": 4
+                  },
+                  {
+                    "value": "GLOSSARY_TERM",
+                    "count": 4
+                  },
+                  {
+                    "value": "DOCUMENT",
                     "count": 3
+                  },
+                  {
+                    "value": "CORP_USER",
+                    "count": 2
                   },
                   {
                     "value": "DATA_JOB",
@@ -1792,15 +1860,11 @@
                     "count": 1
                   },
                   {
-                    "value": "DOMAIN",
-                    "count": 1
-                  },
-                  {
                     "value": "GLOSSARY_NODE",
                     "count": 1
                   },
                   {
-                    "value": "CORP_USER",
+                    "value": "DOMAIN",
                     "count": 1
                   },
                   {
@@ -1832,7 +1896,11 @@
                 "aggregations": [
                   {
                     "value": "urn:li:corpuser:datahub",
-                    "count": 8
+                    "count": 9
+                  },
+                  {
+                    "value": "urn:li:corpuser:devguard_agent",
+                    "count": 2
                   },
                   {
                     "value": "urn:li:corpGroup:devguard_ml_platform",
@@ -1846,6 +1914,15 @@
                   {
                     "value": "PROD",
                     "count": 4
+                  }
+                ]
+              },
+              {
+                "field": "hasActiveIncidents",
+                "aggregations": [
+                  {
+                    "value": "true",
+                    "count": 1
                   }
                 ]
               },
@@ -1903,6 +1980,10 @@
                     "count": 3
                   },
                   {
+                    "value": "Analysis",
+                    "count": 2
+                  },
+                  {
                     "value": "View",
                     "count": 2
                   },
@@ -1912,6 +1993,10 @@
                   },
                   {
                     "value": "Database",
+                    "count": 1
+                  },
+                  {
+                    "value": "Folder",
                     "count": 1
                   }
                 ]
@@ -1930,7 +2015,7 @@
                 "aggregations": [
                   {
                     "value": "SCHEMA_FIELD",
-                    "count": 16
+                    "count": 17
                   },
                   {
                     "value": "DATASET",
@@ -1941,16 +2026,20 @@
                     "count": 4
                   },
                   {
+                    "value": "TAG",
+                    "count": 4
+                  },
+                  {
                     "value": "GLOSSARY_TERM",
                     "count": 4
                   },
                   {
-                    "value": "TAG",
+                    "value": "DOCUMENT",
                     "count": 3
                   },
                   {
                     "value": "CORP_USER",
-                    "count": 1
+                    "count": 2
                   },
                   {
                     "value": "CORP_GROUP",
@@ -1987,15 +2076,38 @@
     {
       "capability": "Business Metadata (structured properties)",
       "surface": "GraphQL `Dataset.structuredProperties`",
-      "status": "PRESENT_NO_DATA",
-      "evidence": "0 structured properties",
-      "note": "",
-      "answered_on": "",
+      "status": "VERIFIED",
+      "evidence": "2 structured properties",
+      "note": "Answered on urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD), not the URN probed first.",
+      "answered_on": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
       "missing_fields": [],
       "raw": {
         "data": {
           "dataset": {
-            "structuredProperties": null
+            "structuredProperties": {
+              "properties": [
+                {
+                  "structuredProperty": {
+                    "urn": "urn:li:structuredProperty:devguard.verified_at"
+                  },
+                  "values": [
+                    {
+                      "stringValue": "2026-08-08T10:35:19.324114+00:00"
+                    }
+                  ]
+                },
+                {
+                  "structuredProperty": {
+                    "urn": "urn:li:structuredProperty:devguard.last_incident_id"
+                  },
+                  "values": [
+                    {
+                      "stringValue": "09b0288b-ca41-4452-8640-a7211b8fe8ff"
+                    }
+                  ]
+                }
+              ]
+            }
           }
         },
         "extensions": {}
@@ -2003,17 +2115,34 @@
     },
     {
       "capability": "Business Metadata (documentation)",
-      "surface": "GraphQL `Dataset.institutionalMemory` + editable docs",
-      "status": "PRESENT_NO_DATA",
-      "evidence": "documentation surface answered",
-      "note": "",
-      "answered_on": "",
+      "surface": "GraphQL `Dataset.editableSchemaMetadata` + `institutionalMemory`",
+      "status": "VERIFIED",
+      "evidence": "1 documented column(s): user_id",
+      "note": "Includes column-level descriptions. Dataset-level docs and field-level docs are different aspects, and DevGuard writes the field-level one \u2014 a probe that checked only `editableProperties.description` reported an undocumented catalog while column documentation was plainly present. Answered on urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD), not the URN probed first.",
+      "answered_on": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
       "missing_fields": [],
       "raw": {
         "data": {
           "dataset": {
             "institutionalMemory": null,
-            "editableProperties": null
+            "editableProperties": null,
+            "editableSchemaMetadata": {
+              "editableSchemaFieldInfo": [
+                {
+                  "fieldPath": "user_id",
+                  "description": "raw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence \u2014 NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).\n\nRESOLVED. The exact signal that failed now passes.\n\nVERIFIED INCIDENT KNOWLEDGE \u2014 WRITTEN BACK BY DEVGUARD\nevidence: EV-D6103503-001, EV-D6103503-002, EV-D6103503-003, EV-D6103503-004, EV-D6103503-005, EV-D6103503-006, EV-D6103503-007, EV-D6103503-008, EV-D6103503-009, EV-D6103503-010, EV-D6103503-011, EV-D6103503-012, EV-D6103503-013, EV-D6103503-014, EV-D6103503-015, EV-D6103503-016, EV-D6103503-017, EV-D6103503-018, EV-D6103503-019, EV-D6103503-020, EV-D6103503-021, EV-D6103503-022\nevidence-chain-digest: 08eef9d7d25e56b6\nwritten_at_utc: 2026-08-08T10:35:19.059221+00:00\ndevguard_version: 2.0-d6",
+                  "globalTags": {
+                    "tags": [
+                      {
+                        "tag": {
+                          "urn": "urn:li:tag:devguard_incident_impacted"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
           }
         },
         "extensions": {}
@@ -2022,17 +2151,50 @@
     {
       "capability": "Incidents",
       "surface": "GraphQL `Dataset.incidents` (raiseIncident / updateIncidentStatus)",
-      "status": "PRESENT_NO_DATA",
-      "evidence": "0 incidents on this dataset",
-      "note": "",
-      "answered_on": "",
+      "status": "VERIFIED",
+      "evidence": "4 incidents on this dataset",
+      "note": "Answered on urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD), not the URN probed first.",
+      "answered_on": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
       "missing_fields": [],
       "raw": {
         "data": {
           "dataset": {
             "incidents": {
-              "total": 0,
-              "incidents": []
+              "total": 4,
+              "incidents": [
+                {
+                  "urn": "urn:li:incident:09b0288b-ca41-4452-8640-a7211b8fe8ff",
+                  "title": "[D6103503] user_id renamed upstream \u2014 stg_users failed to build",
+                  "status": {
+                    "state": "RESOLVED",
+                    "message": "Recovery verified: `dbt run` exited 0 (PASS=3 ERROR=0).\n\nVERIFIED INCIDENT KNOWLEDGE \u2014 WRITTEN BACK BY DEVGUARD\nevidence: EV-D6103503-001, EV-D6103503-002, EV-D6103503-003, EV-D6103503-004, EV-D6103503-005, EV-D6103503-006, EV-D6103503-007, EV-D6103503-008, EV-D6103503-009, EV-D6103503-010, EV-D6103503-011, EV-D6103503-012, EV-D6103503-013, EV-D6103503-014, EV-D6103503-015, EV-D6103503-016, EV-D6103503-017, EV-D6103503-018, EV-D6103503-019, EV-D6103503-020, EV-D6103503-021, EV-D6103503-022\nevidence-chain-digest: 08eef9d7d25e56b6\nwritten_at_utc: 2026-08-08T10:35:19.059221+00:00\ndevguard_version: 2.0-d6"
+                  }
+                },
+                {
+                  "urn": "urn:li:incident:eccfce85-ab66-403c-a07f-19ebe99c420a",
+                  "title": "[D6103314] user_id renamed upstream \u2014 stg_users failed to build",
+                  "status": {
+                    "state": "ACTIVE",
+                    "message": null
+                  }
+                },
+                {
+                  "urn": "urn:li:incident:09e9bfd3-c7c4-44fb-85df-57a58a60015b",
+                  "title": "least-privilege verification probe",
+                  "status": {
+                    "state": "ACTIVE",
+                    "message": null
+                  }
+                },
+                {
+                  "urn": "urn:li:incident:fb2ccfc9-d197-4226-8784-24efc828d955",
+                  "title": "least-privilege verification probe",
+                  "status": {
+                    "state": "ACTIVE",
+                    "message": null
+                  }
+                }
+              ]
             }
           }
         },

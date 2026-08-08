@@ -1,7 +1,7 @@
 {
   "run_id": "least-privilege",
-  "written_at": "2026-08-08T10:22:20.390111+00:00",
-  "artifact_count": 12,
+  "written_at": "2026-08-08T10:42:10.527162+00:00",
+  "artifact_count": 13,
   "artifacts": [
     {
       "name": "checks/read_in-scope_dataset.json",
@@ -9,7 +9,7 @@
       "bytes": 333,
       "truncated": false,
       "note": "Expected ALLOW, observed ALLOW.",
-      "written_at": "2026-08-08T10:22:20.387333+00:00"
+      "written_at": "2026-08-08T10:42:10.523231+00:00"
     },
     {
       "name": "checks/artifact_1_\u2014_raise_incident.json",
@@ -17,15 +17,23 @@
       "bytes": 313,
       "truncated": false,
       "note": "Expected ALLOW, observed ALLOW.",
-      "written_at": "2026-08-08T10:22:20.387655+00:00"
+      "written_at": "2026-08-08T10:42:10.523550+00:00"
+    },
+    {
+      "name": "checks/probe_incident_resolved.json",
+      "raw_ref": "evidence/proof-pack/security/least-privilege/checks/probe_incident_resolved.json",
+      "bytes": 265,
+      "truncated": false,
+      "note": "Expected ALLOW, observed ALLOW.",
+      "written_at": "2026-08-08T10:42:10.523859+00:00"
     },
     {
       "name": "checks/artifact_3_\u2014_column_tag.json",
       "raw_ref": "evidence/proof-pack/security/least-privilege/checks/artifact_3_\u2014_column_tag.json",
-      "bytes": 704,
+      "bytes": 253,
       "truncated": false,
       "note": "Expected ALLOW, observed ALLOW.",
-      "written_at": "2026-08-08T10:22:20.387891+00:00"
+      "written_at": "2026-08-08T10:42:10.524403+00:00"
     },
     {
       "name": "checks/artifact_5_\u2014_add_owner.json",
@@ -33,7 +41,7 @@
       "bytes": 251,
       "truncated": false,
       "note": "Expected ALLOW, observed ALLOW.",
-      "written_at": "2026-08-08T10:22:20.388023+00:00"
+      "written_at": "2026-08-08T10:42:10.524621+00:00"
     },
     {
       "name": "checks/delete_a_scoped_dataset.json",
@@ -41,7 +49,7 @@
       "bytes": 744,
       "truncated": false,
       "note": "Expected DENY, observed DENY.",
-      "written_at": "2026-08-08T10:22:20.388231+00:00"
+      "written_at": "2026-08-08T10:42:10.524962+00:00"
     },
     {
       "name": "checks/edit_lineage.json",
@@ -49,7 +57,7 @@
       "bytes": 790,
       "truncated": false,
       "note": "Expected DENY, observed DENY.",
-      "written_at": "2026-08-08T10:22:20.388465+00:00"
+      "written_at": "2026-08-08T10:42:10.525266+00:00"
     },
     {
       "name": "checks/write_to_an_OUT-OF-SCOPE_dataset.json",
@@ -57,7 +65,7 @@
       "bytes": 721,
       "truncated": false,
       "note": "Expected DENY, observed DENY.",
-      "written_at": "2026-08-08T10:22:20.388680+00:00"
+      "written_at": "2026-08-08T10:42:10.525564+00:00"
     },
     {
       "name": "checks/create_a_policy_(widen_its_own_grants).json",
@@ -65,7 +73,7 @@
       "bytes": 737,
       "truncated": false,
       "note": "Expected DENY, observed DENY.",
-      "written_at": "2026-08-08T10:22:20.388930+00:00"
+      "written_at": "2026-08-08T10:42:10.525831+00:00"
     },
     {
       "name": "checks/create_an_ingestion_source.json",
@@ -73,7 +81,7 @@
       "bytes": 759,
       "truncated": false,
       "note": "Expected DENY, observed DENY.",
-      "written_at": "2026-08-08T10:22:20.389136+00:00"
+      "written_at": "2026-08-08T10:42:10.526075+00:00"
     },
     {
       "name": "checks/attach_a_glossary_term.json",
@@ -81,7 +89,7 @@
       "bytes": 760,
       "truncated": false,
       "note": "Expected DENY, observed DENY.",
-      "written_at": "2026-08-08T10:22:20.389345+00:00"
+      "written_at": "2026-08-08T10:42:10.526293+00:00"
     },
     {
       "name": "checks/assign_a_domain.json",
@@ -89,17 +97,17 @@
       "bytes": 772,
       "truncated": false,
       "note": "Expected DENY, observed DENY.",
-      "written_at": "2026-08-08T10:22:20.389584+00:00"
+      "written_at": "2026-08-08T10:42:10.526544+00:00"
     },
     {
       "name": "summary.json",
       "raw_ref": "evidence/proof-pack/security/least-privilege/summary.json",
-      "bytes": 2856,
+      "bytes": 3053,
       "truncated": false,
       "note": "The least-privilege policy verification summary.",
-      "written_at": "2026-08-08T10:22:20.390105+00:00"
+      "written_at": "2026-08-08T10:42:10.527151+00:00"
     }
   ],
-  "passed": 11,
-  "total": 11
+  "passed": 12,
+  "total": 12
 }

@@ -1,0 +1,261 @@
+{
+  "run_id": "d6-live-v170",
+  "written_at": "2026-08-08T10:35:19.488160+00:00",
+  "artifact_count": 29,
+  "artifacts": [
+    {
+      "name": "watcher/dbt-run.txt",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/watcher/dbt-run.txt",
+      "bytes": 1442,
+      "truncated": false,
+      "note": "Raw output of the command the Watcher observed.",
+      "written_at": "2026-08-08T10:35:07.313756+00:00"
+    },
+    {
+      "name": "watcher/column-probe.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/watcher/column-probe.json",
+      "bytes": 181,
+      "truncated": false,
+      "note": "information_schema, read live. The catalog is stale during drift; this is the ground truth.",
+      "written_at": "2026-08-08T10:35:07.340173+00:00"
+    },
+    {
+      "name": "archivist/capabilities.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/archivist/capabilities.json",
+      "bytes": 8371,
+      "truncated": false,
+      "note": "The negotiated capability set for THIS run. Not a constant.",
+      "written_at": "2026-08-08T10:35:08.669266+00:00"
+    },
+    {
+      "name": "archivist/search_documents.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/archivist/search_documents.json",
+      "bytes": 1405,
+      "truncated": false,
+      "note": "Stage 1 \u2014 document discovery. Returns URNs and titles, not bodies.",
+      "written_at": "2026-08-08T10:35:08.749164+00:00"
+    },
+    {
+      "name": "archivist/grep_documents.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/archivist/grep_documents.json",
+      "bytes": 2442,
+      "truncated": false,
+      "note": "Stage 2 \u2014 content for the URNs stage 1 found.",
+      "written_at": "2026-08-08T10:35:08.768275+00:00"
+    },
+    {
+      "name": "archivist/document-urn_li_document_shared-5ccc356c-5b4b-4468-98c0-72ec18b9c892.txt",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/archivist/document-urn_li_document_shared-5ccc356c-5b4b-4468-98c0-72ec18b9c892.txt",
+      "bytes": 1969,
+      "truncated": false,
+      "note": "UNTRUSTED. Fenced before entering any prompt.",
+      "written_at": "2026-08-08T10:35:08.769511+00:00"
+    },
+    {
+      "name": "cartographer/search-stg_users.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/cartographer/search-stg_users.json",
+      "bytes": 3958,
+      "truncated": false,
+      "note": "Name -> URN resolution. The seam where analysis can go to the wrong asset.",
+      "written_at": "2026-08-08T10:35:08.856859+00:00"
+    },
+    {
+      "name": "cartographer/schema-stg_users.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/cartographer/schema-stg_users.json",
+      "bytes": 771,
+      "truncated": false,
+      "note": "The CATALOG's schema. During drift this deliberately disagrees with the database, and that gap is the incident.",
+      "written_at": "2026-08-08T10:35:08.932752+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage-downstream.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/pathfinder/get_lineage-downstream.json",
+      "bytes": 15292,
+      "truncated": false,
+      "note": "Dataset-level blast radius. Reaches the dataJob and the mlModel.",
+      "written_at": "2026-08-08T10:35:09.055520+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage-downstream-column.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/pathfinder/get_lineage-downstream-column.json",
+      "bytes": 13218,
+      "truncated": false,
+      "note": "Column-level blast radius. Every hit carries lineageColumns. Does NOT reach the mlModel \u2014 that edge is dataset-level (integration finding 14).",
+      "written_at": "2026-08-08T10:35:09.182309+00:00"
+    },
+    {
+      "name": "pathfinder/get_lineage_paths_between.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/pathfinder/get_lineage_paths_between.json",
+      "bytes": 2543,
+      "truncated": false,
+      "note": "Column-level path. The middle element is the real SQL.",
+      "written_at": "2026-08-08T10:35:09.325179+00:00"
+    },
+    {
+      "name": "pathfinder/get_dataset_queries.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/pathfinder/get_dataset_queries.json",
+      "bytes": 846,
+      "truncated": false,
+      "note": "Real SQL touching the column, ingested rather than authored.",
+      "written_at": "2026-08-08T10:35:09.351546+00:00"
+    },
+    {
+      "name": "diagnostician/derived-root-cause.txt",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/diagnostician/derived-root-cause.txt",
+      "bytes": 334,
+      "truncated": false,
+      "note": "DERIVED from runtime evidence. The Diagnostician could not run \u2014 see its handoff.",
+      "written_at": "2026-08-08T10:35:09.352811+00:00"
+    },
+    {
+      "name": "surgeon/proposed.patch",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/surgeon/proposed.patch",
+      "bytes": 368,
+      "truncated": false,
+      "note": "Proposed diff, committed to devguard/fix-d6103503. Working tree untouched.",
+      "written_at": "2026-08-08T10:35:09.371358+00:00"
+    },
+    {
+      "name": "sentinel/patch-scan.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/sentinel/patch-scan.json",
+      "bytes": 162,
+      "truncated": false,
+      "note": "step 12 \u2014 the proposed diff, classified.",
+      "written_at": "2026-08-08T10:35:09.371870+00:00"
+    },
+    {
+      "name": "referee/validation.txt",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/referee/validation.txt",
+      "bytes": 1267,
+      "truncated": false,
+      "note": "The proposed fix built in a throwaway schema. Working tree untouched.",
+      "written_at": "2026-08-08T10:35:13.802252+00:00"
+    },
+    {
+      "name": "magistrate/get_entities.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/magistrate/get_entities.json",
+      "bytes": 3390,
+      "truncated": false,
+      "note": "Owner lookup \u2014 read-only, from the graph.",
+      "written_at": "2026-08-08T10:35:13.949110+00:00"
+    },
+    {
+      "name": "magistrate/autonomy-decision.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/magistrate/autonomy-decision.json",
+      "bytes": 508,
+      "truncated": false,
+      "note": "The autonomy policy's policy table, as applied to this change.",
+      "written_at": "2026-08-08T10:35:13.949653+00:00"
+    },
+    {
+      "name": "magistrate/approval.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/magistrate/approval.json",
+      "bytes": 385,
+      "truncated": false,
+      "note": "step 15 \u2014 explicit, logged, identity recorded.",
+      "written_at": "2026-08-08T10:35:13.949979+00:00"
+    },
+    {
+      "name": "referee/recovery.txt",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/referee/recovery.txt",
+      "bytes": 1131,
+      "truncated": false,
+      "note": "The exact signal that failed, re-run after the fix was applied.",
+      "written_at": "2026-08-08T10:35:17.655856+00:00"
+    },
+    {
+      "name": "scribe/artifact1-raiseIncident.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/scribe/artifact1-raiseIncident.json",
+      "bytes": 115,
+      "truncated": false,
+      "note": "write-back artifact 1, raise half.",
+      "written_at": "2026-08-08T10:35:17.696119+00:00"
+    },
+    {
+      "name": "scribe/artifact3-add_tags.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/scribe/artifact3-add_tags.json",
+      "bytes": 390,
+      "truncated": false,
+      "note": "Raw write-back response.",
+      "written_at": "2026-08-08T10:35:19.132509+00:00"
+    },
+    {
+      "name": "scribe/artifact3-update_description.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/scribe/artifact3-update_description.json",
+      "bytes": 1375,
+      "truncated": false,
+      "note": "Raw write-back response.",
+      "written_at": "2026-08-08T10:35:19.186984+00:00"
+    },
+    {
+      "name": "scribe/artifact2-save_document.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/scribe/artifact2-save_document.json",
+      "bytes": 3779,
+      "truncated": false,
+      "note": "Raw write-back response.",
+      "written_at": "2026-08-08T10:35:19.324061+00:00"
+    },
+    {
+      "name": "scribe/artifact4-add_structured_properties.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/scribe/artifact4-add_structured_properties.json",
+      "bytes": 568,
+      "truncated": false,
+      "note": "Raw write-back response.",
+      "written_at": "2026-08-08T10:35:19.422418+00:00"
+    },
+    {
+      "name": "scribe/artifact1-updateIncidentStatus.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/scribe/artifact1-updateIncidentStatus.json",
+      "bytes": 72,
+      "truncated": false,
+      "note": "Incident resolved \u2014 written LAST.",
+      "written_at": "2026-08-08T10:35:19.462519+00:00"
+    },
+    {
+      "name": "scribe/write-back-summary.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/scribe/write-back-summary.json",
+      "bytes": 2504,
+      "truncated": false,
+      "note": "Per-artifact write-back outcomes.",
+      "written_at": "2026-08-08T10:35:19.463507+00:00"
+    },
+    {
+      "name": "evidence-chain.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/evidence-chain.json",
+      "bytes": 11733,
+      "truncated": false,
+      "note": "The evidence chain for the full loop.",
+      "written_at": "2026-08-08T10:35:19.483358+00:00"
+    },
+    {
+      "name": "handoff-rail.json",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/handoff-rail.json",
+      "bytes": 8414,
+      "truncated": false,
+      "note": "The envelopes, in order.",
+      "written_at": "2026-08-08T10:35:19.488087+00:00"
+    }
+  ],
+  "incident_id": "D6103503",
+  "dry_run": false,
+  "fail_the_fix": false,
+  "chain_is_sufficient": true,
+  "recovery_verified": true,
+  "write_back_performed": true,
+  "write_back_all_landed": true,
+  "incident_resolved": true,
+  "incident_urn": "urn:li:incident:09b0288b-ca41-4452-8640-a7211b8fe8ff",
+  "document_urn": "urn:li:document:shared-354950a5-f239-4c53-b2e3-c8df975adab1",
+  "handoffs": [
+    "watcher->cartographer:OK",
+    "archivist->cartographer:OK",
+    "cartographer->pathfinder:OK",
+    "pathfinder->diagnostician:OK",
+    "diagnostician->scribe:BLOCKED",
+    "surgeon->sentinel:OK",
+    "referee->magistrate:OK",
+    "magistrate->human:OK",
+    "referee->scribe:OK",
+    "scribe->auditor:OK"
+  ]
+}

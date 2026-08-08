@@ -10,9 +10,9 @@ is derived from documentation.
 | **GMS** | `http://localhost:8080` |
 | **GraphQL** | `http://localhost:8080/api/graphql` |
 | **Probe dataset** | `urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)` |
-| **Its sibling** | `urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)` |
+| **Fallbacks probed** | 5 related datasets (siblings + explicitly named) |
 | **Probe ML model** | `urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)` |
-| **Captured** | 2026-08-08T10:18:41.055890+00:00 |
+| **Captured** | 2026-08-08T10:36:55.117784+00:00 |
 | **Probes** | 27 |
 
 ## Legend
@@ -41,22 +41,22 @@ is derived from documentation.
 | **Ownership** | ✅ `VERIFIED` | GraphQL `Dataset.ownership` → owners + ownership type | 2 owners *(on the sibling entity)* |
 | **Domains** | ✅ `VERIFIED` | GraphQL `listDomains` + `Dataset.domain` | 1 domains |
 | **Glossary** | ✅ `VERIFIED` | GraphQL `getRootGlossaryNodes` + `getRootGlossaryTerms` | 1 root nodes, 0 root terms |
-| **Tags** | ✅ `VERIFIED` | GraphQL `Dataset.tags` + `searchAcrossEntities(types:[TAG])` | 3 tag entities |
+| **Tags** | ✅ `VERIFIED` | GraphQL `Dataset.tags` + `searchAcrossEntities(types:[TAG])` | 4 tag entities |
 | **Browse Paths** | ✅ `VERIFIED` | GraphQL `browseV2` | 2 browse groups at root |
 | **Assertions** | ✅ `VERIFIED` | GraphQL `Dataset.assertions` | 5 assertions on this dataset *(on the sibling entity)* |
-| **Policies** | ✅ `VERIFIED` | GraphQL `listPolicies` | 16 policies |
-| **Governance (privileges)** | ✅ `VERIFIED` | GraphQL `me.platformPrivileges` | authenticated as urn:li:corpuser:__datahub_system |
+| **Policies** | ✅ `VERIFIED` | GraphQL `listPolicies` | 18 policies |
+| **Governance (privileges)** | ✅ `VERIFIED` | GraphQL `me.platformPrivileges` | authenticated as urn:li:corpuser:datahub |
 | **Dataset Profiles** | ✅ `VERIFIED` | GraphQL `Dataset.datasetProfiles` (row/column stats) | 2 profile snapshots |
 | **Freshness / Operations** | 🟡 `PRESENT_NO_DATA` | GraphQL `Dataset.operations` (last updated) | 0 operation records |
 | **Usage Statistics** | 🟡 `PRESENT_NO_DATA` | GraphQL `Dataset.usageStats` | 0 usage buckets |
 | **ML Models** | ✅ `VERIFIED` | GraphQL `searchAcrossEntities(types:[MLMODEL])` | 1 ML models |
 | **ML Metadata** | ✅ `VERIFIED` | GraphQL `mlModel(urn:)` → training data, metrics, hyper-params | resolved urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD) |
-| **Search** | ✅ `VERIFIED` | GraphQL `searchAcrossEntities` free text + facets | 44 entities indexed |
-| **Business Metadata (structured properties)** | 🟡 `PRESENT_NO_DATA` | GraphQL `Dataset.structuredProperties` | 0 structured properties |
-| **Business Metadata (documentation)** | 🟡 `PRESENT_NO_DATA` | GraphQL `Dataset.institutionalMemory` + editable docs | documentation surface answered |
-| **Incidents** | 🟡 `PRESENT_NO_DATA` | GraphQL `Dataset.incidents` (raiseIncident / updateIncidentStatus) | 0 incidents on this dataset |
+| **Search** | ✅ `VERIFIED` | GraphQL `searchAcrossEntities` free text + facets | 50 entities indexed |
+| **Business Metadata (structured properties)** | ✅ `VERIFIED` | GraphQL `Dataset.structuredProperties` | 2 structured properties *(on the sibling entity)* |
+| **Business Metadata (documentation)** | ✅ `VERIFIED` | GraphQL `Dataset.editableSchemaMetadata` + `institutionalMemory` | 1 documented column(s): user_id *(on the sibling entity)* |
+| **Incidents** | ✅ `VERIFIED` | GraphQL `Dataset.incidents` (raiseIncident / updateIncidentStatus) | 4 incidents on this dataset *(on the sibling entity)* |
 
-**Tally** — 22 verified · 5 present but empty · 0 absent · 0 error.
+**Tally** — 25 verified · 2 present but empty · 0 absent · 0 error.
 
 ## Notes
 
@@ -64,8 +64,11 @@ is derived from documentation.
 - **Downstream Assets** — `Dataset.downstream` does not exist on this build; the one-hop neighbour list is `Dataset.lineage(input:)`.
 - **Column Lineage (fine-grained aspect)** — Read straight off the aspect DataHub's dbt source wrote from the manifest — no traversal involved.
 - **Entity Health** — DataHub derives this from assertion results, which is why it is empty until dbt test outcomes are ingested.
-- **Ownership** — Answered on the sibling entity, not the URN probed first.
+- **Ownership** — Answered on urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD), not the URN probed first.
 - **Glossary** — Terms defined under a node are not root terms — querying only `getRootGlossaryTerms` reports an empty glossary on a catalog that has one.
-- **Assertions** — Answered on the sibling entity, not the URN probed first.
+- **Assertions** — Answered on urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD), not the URN probed first.
 - **Freshness / Operations** — The API is present and answers. Operations are emitted by connectors that can read a warehouse's own query/DML history (Snowflake, BigQuery, Redshift); DataHub's Postgres source does not, so an empty result here is a fact about the connector, not about DataHub.
 - **Usage Statistics** — Same shape of gap as Freshness: usage requires a source that can read query history. Nothing in this substrate produces one, and inventing usage numbers to fill the panel is exactly what this repository refuses to do.
+- **Business Metadata (structured properties)** — Answered on urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD), not the URN probed first.
+- **Business Metadata (documentation)** — Includes column-level descriptions. Dataset-level docs and field-level docs are different aspects, and DevGuard writes the field-level one — a probe that checked only `editableProperties.description` reported an undocumented catalog while column documentation was plainly present. Answered on urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD), not the URN probed first.
+- **Incidents** — Answered on urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD), not the URN probed first.

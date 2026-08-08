@@ -37,7 +37,12 @@ OUT_DIR = REPO_ROOT / "frontend" / "public" / "replay"
 _EXCLUDE_TREES = {"ablation", "eval", "security"}
 
 #: Ordered so the picker opens on the strongest run rather than alphabetically.
+#: `d6-live-v170` leads because it is the only pack captured end to end against
+#: a live DataHub v1.7.0 with metadata-service authentication enforced, and the
+#: only one in which all five write-back artifacts landed and the *next* run
+#: retrieved the runbook the previous one wrote.
 _PREFERRED_ORDER = (
+    "d6-live-v170",
     "d6-loop-pass2",
     "d6-loop-pass1",
     "d6-dry-run",

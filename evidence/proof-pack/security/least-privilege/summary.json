@@ -1,13 +1,13 @@
 {
   "schema": "devguard.least-privilege/1",
-  "generated_at_utc": "2026-08-08T10:22:20.389593+00:00",
+  "generated_at_utc": "2026-08-08T10:42:10.526556+00:00",
   "service_account": "urn:li:corpuser:devguard_agent",
   "auth_enforced": true,
   "auth_enforcement_evidence": "a forged token was rejected with HTTP 401",
-  "total": 11,
-  "passed": 11,
-  "allow_checks": 4,
-  "allow_passed": 4,
+  "total": 12,
+  "passed": 12,
+  "allow_checks": 5,
+  "allow_passed": 5,
   "deny_checks": 7,
   "deny_passed": 7,
   "checks": [
@@ -24,6 +24,13 @@
       "observed": "ALLOW",
       "passed": true,
       "detail": "EDIT_ENTITY_INCIDENTS on a scoped dataset"
+    },
+    {
+      "name": "probe incident resolved",
+      "expectation": "ALLOW",
+      "observed": "ALLOW",
+      "passed": true,
+      "detail": "the verification probe cleans up after itself"
     },
     {
       "name": "artifact 3 \u2014 column tag",

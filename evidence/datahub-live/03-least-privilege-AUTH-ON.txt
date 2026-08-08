@@ -1,9 +1,10 @@
 auth enforcement: ON — a forged token was rejected with HTTP 401
 
-the least-privilege policy least-privilege verification — 11 checks as urn:li:corpuser:devguard_agent
+the least-privilege policy least-privilege verification — 12 checks as urn:li:corpuser:devguard_agent
 
   [PASS] ALLOW -> ALLOW  read in-scope dataset
   [PASS] ALLOW -> ALLOW  artifact 1 — raise incident
+  [PASS] ALLOW -> ALLOW  probe incident resolved
   [PASS] ALLOW -> ALLOW  artifact 3 — column tag
   [PASS] ALLOW -> ALLOW  artifact 5 — add owner
   [PASS] DENY  -> DENY   delete a scoped dataset
@@ -14,7 +15,7 @@ the least-privilege policy least-privilege verification — 11 checks as urn:li:
   [PASS] DENY  -> DENY   attach a glossary term
   [PASS] DENY  -> DENY   assign a domain
 
-ALLOW: 4/4 behaved as required
+ALLOW: 5/5 behaved as required
 DENY : 7/7 correctly refused
 
 summary: evidence/proof-pack/security/least-privilege/summary.json

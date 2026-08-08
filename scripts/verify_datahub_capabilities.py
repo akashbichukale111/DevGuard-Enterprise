@@ -197,7 +197,17 @@ class Result:
 
 
 def run_probe(probe: Probe, gql: GraphQL, schema: Schema,
-              sibling: Optional[str] = None) -> Result:
+              alternates: tuple[str, ...] = ()) -> Result:
+    """Run one probe, falling back across related entities before reporting empty.
+
+    `alternates` is every other dataset URN worth asking: the probed entity's
+    DataHub sibling, plus any other dataset the caller named. This is not
+    shopping for a flattering answer — the question a capability matrix asks is
+    *"does this catalog hold X"*, and no single dataset in a realistic catalog
+    holds all of it. Profiling lands on warehouse entities, assertions on dbt
+    ones, incidents and structured properties on whatever an agent last wrote
+    to. Every fallback records the URN that answered, so a reader can check.
+    """
     missing = tuple(
         f"{t}.{f}" for t, f in probe.requires if not schema.has_field(t, f)
     )
@@ -207,17 +217,18 @@ def run_probe(probe: Probe, gql: GraphQL, schema: Schema,
                       probe.note, missing_fields=missing)
 
     result = _execute(probe, gql, probe.variables)
+    primary = probe.variables.get("urn")
+    if result.status != PRESENT_NO_DATA or not primary:
+        return result
 
-    # Sibling retry. Only on a clean-but-empty answer, and only for probes that
-    # are actually about a dataset — a global query has no sibling.
-    if (result.status == PRESENT_NO_DATA and sibling
-            and probe.variables.get("urn")
-            and probe.variables["urn"] != sibling):
-        retry = _execute(probe, gql, {**probe.variables, "urn": sibling})
+    for candidate in alternates:
+        if candidate == primary:
+            continue
+        retry = _execute(probe, gql, {**probe.variables, "urn": candidate})
         if retry.status == VERIFIED:
-            retry.answered_on = sibling
+            retry.answered_on = candidate
             retry.note = (probe.note + " " if probe.note else "") + (
-                "Answered on the sibling entity, not the URN probed first.")
+                f"Answered on {candidate}, not the URN probed first.")
             return retry
     return result
 
@@ -251,6 +262,26 @@ def _default_extract(payload: dict) -> tuple[bool, str]:
 
 
 # ------------------------------------------------------------- probe definitions
+
+
+def _documentation(payload: dict, path) -> tuple[bool, str]:
+    """Documentation lives in three places; report which of them answered."""
+    memory = _count(path(payload, "dataset", "institutionalMemory", "elements"))
+    dataset_doc = (path(payload, "dataset", "editableProperties") or {}).get("description")
+    fields = [
+        f for f in (path(payload, "dataset", "editableSchemaMetadata",
+                         "editableSchemaFieldInfo") or [])
+        if (f or {}).get("description")
+    ]
+    parts = []
+    if fields:
+        parts.append(f"{len(fields)} documented column(s): "
+                     + ", ".join(f["fieldPath"] for f in fields[:3]))
+    if dataset_doc:
+        parts.append("dataset-level description present")
+    if memory:
+        parts.append(f"{memory} institutional-memory link(s)")
+    return bool(parts), "; ".join(parts) or "no documentation on this entity"
 
 
 def _count(node: Any) -> int:
@@ -621,17 +652,20 @@ def build_probes(dataset_urn: str, ml_model_urn: str) -> list[Probe]:
         ),
         Probe(
             capability="Business Metadata (documentation)",
-            surface="GraphQL `Dataset.institutionalMemory` + editable docs",
-            requires=(("Dataset", "institutionalMemory"),),
+            surface="GraphQL `Dataset.editableSchemaMetadata` + `institutionalMemory`",
+            requires=(("Dataset", "editableSchemaMetadata"),),
             query="""query IM($urn:String!){ dataset(urn:$urn){
                      institutionalMemory{ elements{ url description } }
-                     editableProperties{ description } } }""",
+                     editableProperties{ description }
+                     editableSchemaMetadata{ editableSchemaFieldInfo{
+                       fieldPath description globalTags{ tags{ tag{ urn } } } } } } }""",
             variables=ds,
-            extract=lambda p: (
-                bool(_count(path(p, "dataset", "institutionalMemory", "elements"))
-                     or (path(p, "dataset", "editableProperties") or {}).get("description")),
-                "documentation surface answered",
-            ),
+            extract=lambda p: _documentation(p, path),
+            note="Includes column-level descriptions. Dataset-level docs and "
+                 "field-level docs are different aspects, and DevGuard writes "
+                 "the field-level one — a probe that checked only "
+                 "`editableProperties.description` reported an undocumented "
+                 "catalog while column documentation was plainly present.",
         ),
         Probe(
             capability="Incidents",
@@ -667,7 +701,8 @@ def markdown(results: list[Result], meta: dict) -> str:
         f"| **GMS** | `{meta['gms_url']}` |",
         f"| **GraphQL** | `{meta['graphql_url']}` |",
         f"| **Probe dataset** | `{meta['dataset_urn']}` |",
-        f"| **Its sibling** | `{meta.get('sibling_urn') or 'none'}` |",
+        f"| **Fallbacks probed** | {len(meta.get('datasets_probed') or []) - 1} "
+        "related datasets (siblings + explicitly named) |",
         f"| **Probe ML model** | `{meta['ml_model_urn']}` |",
         f"| **Captured** | {meta['captured_at']} |",
         f"| **Probes** | {len(results)} |",
@@ -713,8 +748,10 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", default="evidence/datahub-live",
                     help="Directory for capability-matrix.json and CAPABILITY_MATRIX.md")
-    ap.add_argument("--dataset-urn", default=os.environ.get("DEVGUARD_PROBE_DATASET", ""),
-                    help="Dataset to probe. Defaults to the first dataset search returns.")
+    ap.add_argument("--dataset-urn", action="append", default=None,
+                    help="Dataset to probe. Repeatable: the first is the headline "
+                         "subject, the rest are fallbacks for capabilities it does "
+                         "not carry. Defaults to the first dataset search returns.")
     ap.add_argument("--ml-model-urn", default=os.environ.get("DEVGUARD_PROBE_MLMODEL", ""),
                     help="ML model to probe. Defaults to the first mlModel search returns.")
     args = ap.parse_args()
@@ -748,7 +785,10 @@ def main() -> int:
 
     # Pick probe subjects from the live catalog rather than hard-coding them, so
     # this runs against any DataHub, not only ours.
-    dataset_urn = args.dataset_urn
+    requested = args.dataset_urn or [
+        u for u in (os.environ.get("DEVGUARD_PROBE_DATASET", "") or "").split(",") if u
+    ]
+    dataset_urn = requested[0] if requested else ""
     if not dataset_urn:
         found = gql("""query{ searchAcrossEntities(input:{types:[DATASET],query:"*",
                       start:0,count:1}){ searchResults{ entity{ urn } } } }""")
@@ -768,27 +808,32 @@ def main() -> int:
               "first — a matrix built on an empty catalog says nothing.", file=sys.stderr)
         return 2
 
-    # The sibling, if DataHub has one. Not a nicety: aspects genuinely split
-    # across the pair, and a matrix that probed only one side would report
+    # Siblings, if DataHub has any. Not a nicety: aspects genuinely split across
+    # the pair, and a matrix that probed only one side would report
     # `PRESENT_NO_DATA` for ownership on a catalog that plainly has ownership.
-    sibling = None
-    sib = gql("""query S($urn:String!){ dataset(urn:$urn){
-                 siblings{ siblings{ urn } } } }""", {"urn": dataset_urn})
-    for entry in (((sib.get("data") or {}).get("dataset") or {})
-                  .get("siblings") or {}).get("siblings") or []:
-        if entry and entry.get("urn") != dataset_urn:
-            sibling = entry["urn"]
-            break
+    def siblings_of(urn: str) -> list[str]:
+        payload = gql("""query S($urn:String!){ dataset(urn:$urn){
+                         siblings{ siblings{ urn } } } }""", {"urn": urn})
+        found = (((payload.get("data") or {}).get("dataset") or {})
+                 .get("siblings") or {}).get("siblings") or []
+        return [e["urn"] for e in found if e and e.get("urn") != urn]
+
+    alternates: list[str] = []
+    for urn in requested or [dataset_urn]:
+        for candidate in [urn, *siblings_of(urn)]:
+            if candidate and candidate not in alternates:
+                alternates.append(candidate)
 
     print(f"dataset   {dataset_urn}")
-    print(f"sibling   {sibling or 'none'}")
+    for extra in alternates[1:]:
+        print(f"  also    {extra}")
     print(f"mlModel   {ml_model_urn}")
     print()
 
     probes = build_probes(dataset_urn, ml_model_urn)
     results: list[Result] = []
     for probe in probes:
-        result = run_probe(probe, gql, schema, sibling)
+        result = run_probe(probe, gql, schema, tuple(alternates))
         results.append(result)
         mark = {VERIFIED: "OK  ", PRESENT_NO_DATA: "EMPTY", ABSENT: "ABSENT", ERROR: "ERR "}
         suffix = "  [sibling]" if result.answered_on else ""
@@ -799,7 +844,7 @@ def main() -> int:
         "graphql_url": graphql_url,
         "server_version": server_version,
         "dataset_urn": dataset_urn,
-        "sibling_urn": sibling,
+        "datasets_probed": alternates,
         "ml_model_urn": ml_model_urn,
         "captured_at": datetime.now(timezone.utc).isoformat(),
         "graphql_types_introspected": len(schema.types),

@@ -1,0 +1,53 @@
+{
+  "performed": true,
+  "reason": "",
+  "incident_resolved": true,
+  "all_landed": true,
+  "artifacts": [
+    {
+      "number": 3,
+      "name": "column-level annotation",
+      "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)#user_id",
+      "outcome": "written",
+      "idempotency_key": "D6103503|column_annotation|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)#user_id",
+      "detail": "tag + description applied to the schema field",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/scribe/artifact3-update_description.json"
+    },
+    {
+      "number": 2,
+      "name": "verified post-mortem runbook (type: Analysis)",
+      "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "outcome": "written",
+      "idempotency_key": "D6103503|runbook|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "detail": "urn:li:document:shared-354950a5-f239-4c53-b2e3-c8df975adab1",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/scribe/artifact2-save_document.json"
+    },
+    {
+      "number": 4,
+      "name": "structured incident facts",
+      "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "outcome": "written",
+      "idempotency_key": "D6103503|structured_properties|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "detail": "{\"success\":true,\"message\":\"Successfully added 2 structured propert(ies) to 1 entit(ies)\"}",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/scribe/artifact4-add_structured_properties.json"
+    },
+    {
+      "number": 5,
+      "name": "ownership signal",
+      "target_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "outcome": "already_present",
+      "idempotency_key": "D6103503|ownership|urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+      "detail": "owned by DataHub; approval was routed to the existing owner",
+      "raw_ref": ""
+    },
+    {
+      "number": 1,
+      "name": "incident resolved",
+      "target_urn": "urn:li:incident:09b0288b-ca41-4452-8640-a7211b8fe8ff",
+      "outcome": "written",
+      "idempotency_key": "*|incident_resolved|urn:li:incident:09b0288b-ca41-4452-8640-a7211b8fe8ff",
+      "detail": "{\"data\": {\"updateIncidentStatus\": true}, \"extensions\": {}}",
+      "raw_ref": "evidence/proof-pack/d6-live-v170/scribe/artifact1-updateIncidentStatus.json"
+    }
+  ]
+}

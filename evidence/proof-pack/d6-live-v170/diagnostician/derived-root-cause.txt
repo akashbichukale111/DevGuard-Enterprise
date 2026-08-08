@@ -1,0 +1,1 @@
+raw.users.user_id was renamed upstream. The database now exposes customer_id, email, country, signup_ts, is_active; the dbt model stg_users still selects user_id by name, so it fails to build (exit 1). Derived deterministically from runtime evidence — NOT produced by a language model (Diagnostician verdict: REASONER_UNAVAILABLE).

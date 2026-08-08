@@ -1,6 +1,18 @@
 {
  "runs": [
   {
+   "run_id": "d6-live-v170",
+   "headline": "Full loop \u2014 5 write-back artifact(s) landed in DataHub",
+   "incident_id": "D6103503",
+   "state": "KNOWLEDGE_WRITTEN",
+   "captured_at": "2026-08-08T10:35:19.488160+00:00",
+   "evidence_count": 27,
+   "artifact_count": 29,
+   "refused": false,
+   "dry_run": false,
+   "bytes": 156719
+  },
+  {
    "run_id": "d6-loop-pass2",
    "headline": "Full loop \u2014 5 write-back artifact(s) landed in DataHub",
    "incident_id": "D6110916",
@@ -85,5 +97,5 @@
    "bytes": 78812
   }
  ],
- "default": "d6-loop-pass2"
+ "default": "d6-live-v170"
 }

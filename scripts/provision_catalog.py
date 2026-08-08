@@ -1,11 +1,30 @@
 #!/usr/bin/env python
 """
-provision_domain.py — create the substrate's Domain and attach the hero assets.
+provision_catalog.py — the catalog structures DevGuard writes *into*.
 
-    DATAHUB_GMS_URL=http://localhost:8080 python scripts/provision_domain.py
+    DATAHUB_GMS_URL=http://localhost:8080 python scripts/provision_catalog.py
 
-Why this exists, and why it does NOT change the policy scope
-------------------------------------------------------------
+Two things live here, and they are together for one reason: both must exist
+**before** an agent runs, and neither may be created by the agent itself.
+
+  1. The **Domain** the substrate's assets belong to.
+  2. The **tag vocabulary** the Scribe applies during write-back.
+
+Why the agent does not create its own tag
+-----------------------------------------
+`backend/v2/agents/scribe.py` refuses to mint a missing tag, and says why:
+*"silently minting tags from an automated agent is how a catalog's vocabulary
+rots."* DataHub agrees — `add_tags` against a tag URN that does not exist fails
+with `Failed to validate label ... Urn does not exist`, which is precisely the
+error a live run produced before this file existed.
+
+That refusal is correct and stays. The consequence is that the vocabulary is an
+**operator responsibility**, declared here, reviewable in a diff, and applied
+once at provisioning time. An agent that can invent vocabulary can invent
+meaning; an agent that can only apply a term someone already approved cannot.
+
+Why the Domain does NOT change the policy scope
+------------------------------------------------
 `scripts/setup_service_account.py` carries a deliberate, documented decision:
 the least-privilege policy is scoped to **an explicit allowlist of dataset
 URNs**, not to a domain, because "a domain would grant access to anything later
@@ -44,10 +63,23 @@ from datahub.metadata.schema_classes import (
     OwnerClass,
     OwnershipClass,
     OwnershipTypeClass,
+    TagPropertiesClass,
 )
 
 DOMAIN_ID = "devguard_substrate"
 DOMAIN_URN = f"urn:li:domain:{DOMAIN_ID}"
+
+#: The tags DevGuard is permitted to apply, and their meaning. The Scribe's
+#: `IMPACT_TAG` must appear here or artifact 3 of the write-back fails at the
+#: server — which is the designed behaviour, not a bug to route around.
+TAG_VOCABULARY: dict[str, str] = {
+    "devguard_incident_impacted": (
+        "Applied by DevGuard to a schema field that a verified incident touched. "
+        "Written only after the Referee confirms recovery, so its presence means "
+        "'this column was involved in an incident that was diagnosed and fixed' — "
+        "never 'something might be wrong here'."
+    ),
+}
 
 #: Both platform representations of each hero table. The postgres URN is the
 #: physical table; the dbt URN is the transformation node describing it. They
@@ -97,6 +129,13 @@ def build_mcps() -> list[MetadataChangeProposalWrapper]:
         )
         for urn in HERO_DATASETS
     ]
+    mcps += [
+        MetadataChangeProposalWrapper(
+            entityUrn=f"urn:li:tag:{tag_id}",
+            aspect=TagPropertiesClass(name=tag_id, description=description),
+        )
+        for tag_id, description in TAG_VOCABULARY.items()
+    ]
     return mcps
 
 
@@ -109,6 +148,7 @@ def main() -> int:
     print(f"domain   {DOMAIN_URN}")
     print(f"assets   {len(HERO_DATASETS)} dataset URNs "
           f"({len(_TABLES)} tables × postgres/dbt siblings)")
+    print(f"tags     {', '.join(sorted(TAG_VOCABULARY))}")
     print()
 
     if args.dry_run:
