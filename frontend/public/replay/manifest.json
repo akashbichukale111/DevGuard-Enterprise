@@ -10,7 +10,7 @@
    "artifact_count": 29,
    "refused": false,
    "dry_run": false,
-   "bytes": 156719
+   "bytes": 157356
   },
   {
    "run_id": "d6-loop-pass2",
@@ -22,7 +22,7 @@
    "artifact_count": 32,
    "refused": false,
    "dry_run": false,
-   "bytes": 163333
+   "bytes": 163971
   },
   {
    "run_id": "d6-loop-pass1",
@@ -34,7 +34,7 @@
    "artifact_count": 31,
    "refused": false,
    "dry_run": false,
-   "bytes": 155575
+   "bytes": 156213
   },
   {
    "run_id": "d6-dry-run",
@@ -46,7 +46,7 @@
    "artifact_count": 32,
    "refused": false,
    "dry_run": true,
-   "bytes": 169224
+   "bytes": 169859
   },
   {
    "run_id": "d6-fail-the-fix",
@@ -58,7 +58,7 @@
    "artifact_count": 24,
    "refused": false,
    "dry_run": false,
-   "bytes": 143904
+   "bytes": 144544
   },
   {
    "run_id": "d5-refusal",
@@ -70,7 +70,7 @@
    "artifact_count": 5,
    "refused": true,
    "dry_run": false,
-   "bytes": 23051
+   "bytes": 23290
   },
   {
    "run_id": "d5-full",
@@ -82,7 +82,7 @@
    "artifact_count": 13,
    "refused": false,
    "dry_run": false,
-   "bytes": 80285
+   "bytes": 80895
   },
   {
    "run_id": "d4-evidence-chain",
@@ -94,7 +94,7 @@
    "artifact_count": 12,
    "refused": false,
    "dry_run": false,
-   "bytes": 78812
+   "bytes": 79432
   }
  ],
  "default": "d6-live-v170"

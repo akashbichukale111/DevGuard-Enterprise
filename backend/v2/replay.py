@@ -200,6 +200,7 @@ class ReplayBundleBuilder:
                 "datahub_error": chain.get("datahub_error"),
             },
             "prior_knowledge": self._prior_knowledge(rail_records),
+            "catalog": self._catalog(rail_records),
             "blast_radius": self._blast_radius(),
             "root_cause": self._root_cause(chain, rail_records),
             "policy": self._policy(autonomy, approval),
@@ -502,6 +503,60 @@ class ReplayBundleBuilder:
             "time_to_root_cause_s": None,
             "capabilities_ref": self._ref("archivist/capabilities.json")
             if caps is not None else None,
+        }
+
+    def _catalog(self, rail: list) -> dict:
+        """The catalog surface this run negotiated, and the part of it it used.
+
+        Capability negotiation is a headline design property of this system —
+        the tool list is what the server offered *on the day*, not a constant —
+        and until now it was captured as evidence and then never shown. A
+        reviewer had to open `archivist/capabilities.json` in the repository to
+        find out that the set changes between runs.
+
+        It changes for a reason worth seeing. `search_documents` and
+        `grep_documents` are absent from a catalog with no documents, so the
+        first run against a clean instance negotiates six tools and degrades;
+        the next run — after that first one has written a runbook — negotiates
+        eight and retrieves it. Two numbers on a panel make the loop closing
+        visible in a way a prose claim does not.
+
+        Everything here is read from the pack. `offered` is the server's own
+        `tools/list` response; `used` is counted from the handoff records'
+        `tool_calls`, which is what the agents actually invoked. Nothing is
+        inferred about tools the server did not mention.
+        """
+        caps = self._json_or_none("archivist/capabilities.json")
+        used: dict[str, int] = {}
+        for record in rail:
+            for call in record.get("tool_calls") or []:
+                name = call.get("tool")
+                if name:
+                    used[name] = used.get(name, 0) + 1
+
+        if caps is None:
+            self._note_missing(
+                "catalog",
+                "the Archivist did not run, so no capability set was negotiated "
+                "for this run")
+            return {"server": None, "protocol_version": None, "offered": [],
+                    "offered_count": None, "used": used, "capabilities_ref": None}
+
+        server = caps.get("serverInfo") or {}
+        offered = sorted(caps.get("tools") or [])
+        return {
+            "server": {
+                "name": server.get("name"),
+                # Deliberately reported as-is. This disagrees with the MCP
+                # package version on PyPI, and the disagreement is a fact about
+                # the server rather than a parsing mistake to normalise away.
+                "version": server.get("version"),
+            },
+            "protocol_version": caps.get("protocolVersion"),
+            "offered": offered,
+            "offered_count": len(offered),
+            "used": used,
+            "capabilities_ref": self._ref("archivist/capabilities.json"),
         }
 
     @staticmethod

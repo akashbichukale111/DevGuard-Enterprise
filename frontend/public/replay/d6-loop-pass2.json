@@ -1,7 +1,7 @@
 {
  "schema_version": 1,
  "run_id": "d6-loop-pass2",
- "built_at": "2026-08-08T10:46:48.813121+00:00",
+ "built_at": "2026-08-08T11:00:38.029049+00:00",
  "source_pack": "evidence/proof-pack/d6-loop-pass2",
  "pack_written_at": "2026-08-01T11:09:34.625980+00:00",
  "artifact_count": 32,
@@ -915,6 +915,35 @@
   ],
   "document_count": 4,
   "time_to_root_cause_s": null,
+  "capabilities_ref": "evidence/proof-pack/d6-loop-pass2/archivist/capabilities.json"
+ },
+ "catalog": {
+  "server": {
+   "name": "datahub",
+   "version": "3.4.5"
+  },
+  "protocol_version": "2024-11-05",
+  "offered": [
+   "get_dataset_queries",
+   "get_entities",
+   "get_lineage",
+   "get_lineage_paths_between",
+   "grep_documents",
+   "list_schema_fields",
+   "search",
+   "search_documents"
+  ],
+  "offered_count": 8,
+  "used": {
+   "search_documents": 1,
+   "grep_documents": 1,
+   "search": 1,
+   "list_schema_fields": 1,
+   "get_lineage": 2,
+   "get_lineage_paths_between": 1,
+   "get_dataset_queries": 1,
+   "get_entities": 1
+  },
   "capabilities_ref": "evidence/proof-pack/d6-loop-pass2/archivist/capabilities.json"
  },
  "blast_radius": {

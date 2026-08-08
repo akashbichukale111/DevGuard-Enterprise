@@ -1,7 +1,7 @@
 {
  "schema_version": 1,
  "run_id": "d5-refusal",
- "built_at": "2026-08-08T10:46:48.837012+00:00",
+ "built_at": "2026-08-08T11:00:38.046280+00:00",
  "source_pack": "evidence/proof-pack/d5-refusal",
  "pack_written_at": "2026-08-01T09:50:31.727726+00:00",
  "artifact_count": 5,
@@ -265,6 +265,14 @@
   "capabilities_ref": null,
   "document_count": null
  },
+ "catalog": {
+  "server": null,
+  "protocol_version": null,
+  "offered": [],
+  "offered_count": null,
+  "used": {},
+  "capabilities_ref": null
+ },
  "blast_radius": null,
  "root_cause": {
   "refused": true,
@@ -393,6 +401,7 @@
  "missing": {
   "incident.severity": "the run stopped before the Magistrate classified risk",
   "prior_knowledge": "the Archivist did not run in this pack",
+  "catalog": "the Archivist did not run, so no capability set was negotiated for this run",
   "blast_radius": "the Pathfinder did not run in this pack",
   "policy": "the run stopped before remediation",
   "write_back": "the run stopped before the Scribe",
