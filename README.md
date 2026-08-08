@@ -20,8 +20,9 @@ related asset starts from more knowledge than the last one.
 
 [![CI](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-1041%20passing-brightgreen.svg)](tests/)
-[![DataHub](https://img.shields.io/badge/DataHub-v1.6.0-1890FF.svg)](https://datahubproject.io/)
+[![Tests](https://img.shields.io/badge/tests-1096%20passing-brightgreen.svg)](tests/)
+[![DataHub](https://img.shields.io/badge/DataHub-v1.7.0%20verified%20live-1890FF.svg)](evidence/datahub-live/)
+[![Capabilities](https://img.shields.io/badge/capabilities-25%20verified%20%C2%B7%200%20absent-1890FF.svg)](evidence/datahub-live/CAPABILITY_MATRIX.md)
 [![MCP](https://img.shields.io/badge/MCP-mcp--server--datahub%400.6.0-6E56CF.svg)](https://modelcontextprotocol.io/)
 [![SigNoz](https://img.shields.io/badge/SigNoz-v0.135.0-E75536.svg)](https://signoz.io/)
 [![Python](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/)
@@ -38,6 +39,7 @@ related asset starts from more knowledge than the last one.
 > | **60 s** | `cd frontend && npm ci && npm run dev` → <http://localhost:3000/command> | A real recorded incident replaying end to end. No DataHub, no database, no API key, no backend, no Python. |
 > | **5 min** | **[docs/JUDGE_WALKTHROUGH.md](docs/JUDGE_WALKTHROUGH.md)** | The four runs worth your time, and how to check any claim on screen against a file on disk. |
 > | **15 min** | **[docs/JUDGING_MATRIX.md](docs/JUDGING_MATRIX.md)** | Every shipped capability mapped to the artifact that proves it — **including where each row is weaker than it looks**. Its paths and numbers are build-enforced by [`tests/test_judging_matrix.py`](tests/test_judging_matrix.py). |
+> | **want the live catalog?** | **[evidence/datahub-live/](evidence/datahub-live/)** | DataHub **v1.7.0** stood up from the official quickstart, then interrogated: **25 of 27 capabilities verified, 0 absent, 0 error**, authentication enforced, least privilege **ALLOW 5/5 DENY 7/7**, and the full incident loop run end to end. Plus [**23 real screenshots**](docs/screenshots/datahub/). |
 >
 > **The three things worth knowing before you score, stated up front rather than buried:**
 > no recorded run reached a model, so model reasoning quality is unproven ([why](docs/LLM_EGRESS_BLOCKED.md));
@@ -51,7 +53,7 @@ related asset starts from more knowledge than the last one.
 
 **Start here** &nbsp; [See it in 60 seconds](#see-it-in-60-seconds) &nbsp;·&nbsp; [The platform](#the-platform--three-modules-one-evidence-model) &nbsp;·&nbsp; [Quick start](#quick-start) &nbsp;·&nbsp; [Installation](#installation) &nbsp;·&nbsp; [Documentation map](#documentation-map)  
 **What it does** &nbsp; [Overview](#overview) &nbsp;·&nbsp; [The problem](#the-problem) &nbsp;·&nbsp; [How it works](#how-it-works) &nbsp;·&nbsp; [What it writes back to DataHub](#what-it-writes-back-to-datahub) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Architecture](#architecture)  
-**DataHub** &nbsp; [How DataHub is reached](#how-datahub-is-reached--mcp-over-stdio) &nbsp;·&nbsp; [Catalog reasoning matrix](#what-devguard-reasons-about-from-the-catalog) &nbsp;·&nbsp; [Write-back](#the-write-back)  
+**DataHub** &nbsp; [Live instance, verified](#live-datahub--what-was-verified-against-a-running-instance) &nbsp;·&nbsp; [Capability matrix](#the-capability-matrix) &nbsp;·&nbsp; [How DataHub is reached](#how-datahub-is-reached--mcp-over-stdio) &nbsp;·&nbsp; [Catalog reasoning matrix](#what-devguard-reasons-about-from-the-catalog) &nbsp;·&nbsp; [Write-back](#the-write-back) &nbsp;·&nbsp; [Catalog surface](#capability-negotiation-is-visible-in-the-ui)  
 **AI** &nbsp; [Agent inventory](#how-it-works) &nbsp;·&nbsp; [Model-backed vs deterministic](#model-backed-vs-deterministic--and-why-the-split-is-the-design) &nbsp;·&nbsp; [Evidence model](#the-evidence-model)  
 **The modules** &nbsp; [Code Scanner](#code-scanner) &nbsp;·&nbsp; [Nexus Commander](#nexus-commander) &nbsp;·&nbsp; [Demo](#demo--replay-a-real-recorded-run)  
 **Proof** &nbsp; [Evidence](#evidence) &nbsp;·&nbsp; [Replay system](#the-replay-system) &nbsp;·&nbsp; [Evaluation](#evaluation) &nbsp;·&nbsp; [Benchmarks](#benchmarks) &nbsp;·&nbsp; [Examples](#examples) &nbsp;·&nbsp; [Testing](#testing) &nbsp;·&nbsp; [Reproducibility](#reproducibility) &nbsp;·&nbsp; [Screenshots](#screenshots)  
@@ -330,6 +332,120 @@ Nothing is written before recovery is verified. When it is, the Scribe lands fiv
 
 Writes are idempotent on `(incident_id, artifact_type, target_urn)`, and every artifact is stamped with the evidence IDs and chain digest that justified it. A dry run records the exact payloads it *would* send and sends nothing.
 
+### Live DataHub — what was verified against a running instance
+
+A claim about DataHub is worth exactly as much as the run that produced it. So the
+whole stack was provisioned from **the official `datahub docker quickstart`**,
+interrogated, driven end to end, and photographed. Everything in this section is
+regenerable by the scripts named beside it.
+
+| | Verified |
+|---|---|
+| **DataHub Core** | `v1.7.0`, commit `7f81ccb` — read back from `GET /config`, not from documentation |
+| **Services healthy** | GMS · GraphQL · frontend · OpenSearch 2.19.3 · Kafka (9 topics) · MySQL 8.2.0 |
+| **Authentication** | `METADATA_SERVICE_AUTH_ENABLED=true`. Forged token → **401**, no token → **401**, service-account token → `urn:li:corpuser:devguard_agent` |
+| **Least privilege** | **ALLOW 5/5, DENY 7/7** as the scoped service account, with `managePolicies`, `manageIngestion` and `manageDomains` all `false` |
+| **Capabilities** | **25 verified · 2 present-but-empty · 0 absent · 0 error** across 27 probes |
+| **MCP** | `uvx mcp-server-datahub@0.6.0` over stdio; server reports itself as `datahub 3.4.6`, protocol `2024-11-05` |
+| **Incident loop** | Run end to end. All **5 write-back artifacts landed**; the next run **retrieved the runbook the previous one wrote** |
+
+Evidence: **[`evidence/datahub-live/`](evidence/datahub-live/)** — service checks, the
+auth-off/auth-on A/B, the resolved configuration table, and the capability matrix
+with every raw GraphQL response kept verbatim.
+
+**Two claims stopped carrying a caveat.** Both `ml_impact.py` and the ownership
+path were implemented, tested, and honestly marked *"not yet executed against a
+live catalog"*. They have now been executed:
+
+- **Blast radius reaches the ML model.** Pathfinder walked `dataset → dataJob →
+  mlModel` on a real graph and returned `reaches_ml_model=True` over 7 impacted
+  assets. This required registering the trained model
+  ([`substrate/ml/register_model.py`](substrate/ml/register_model.py)) — and the
+  obvious modelling is wrong: `MLModelProperties.trainingData` produces **no
+  traversable graph edge**, so a radius walked from `raw.users` stops at the mart
+  and never reaches the model. The walkable path runs through a `dataJob`.
+- **Ownership resolves from the graph.** The Magistrate returned `NAMED_OWNER`
+  with an owner read from the catalog. Before this session nothing in the
+  substrate had an owner, so the only truthful answer it could have given was
+  `UNOWNED`.
+
+Ownership, tags and glossary terms are now declared in the **dbt project** and
+mapped in by DataHub's own `meta_mapping` ([`recipes/dbt.yml`](recipes/dbt.yml)),
+so catalog governance is reproducible from a clone and reviewable in a diff. An
+owner clicked into a UI vanishes on the next `datahub docker nuke`.
+
+**dbt test results now reach DataHub as Assertions.** `test_results_path` in the
+dbt recipe turns each dbt test into a first-class `Assertion` entity with run
+events. That is what lets the Referee corroborate a recovery against a verdict
+**it did not produce**: dbt decides whether `user_id` is still unique and
+non-null, DataHub records the decision, DevGuard reads it back. A system grading
+its own homework is not verification, and this is the seam that stops it being
+that.
+
+#### The capability matrix
+
+Full table: **[`evidence/datahub-live/CAPABILITY_MATRIX.md`](evidence/datahub-live/CAPABILITY_MATRIX.md)**.
+It is generated by [`scripts/verify_datahub_capabilities.py`](scripts/verify_datahub_capabilities.py),
+which asks the live server **two separate questions** per capability — *is the
+field in the introspected GraphQL schema*, and *did it return data* — because
+collapsing those into one "supported" column is how a capability matrix starts
+lying:
+
+| Status | Meaning |
+|---|---|
+| ✅ `VERIFIED` | API present **and** this instance returned data. Only these may be called working. |
+| 🟡 `PRESENT_NO_DATA` | API present and answered cleanly; the catalog holds no such data. |
+| ⬜ `ABSENT` | Not in this server's schema. Not implemented in this build. |
+| ❌ `ERROR` | The query failed. Message recorded verbatim. |
+
+✅ Dataset · Schema · Lineage · Column Lineage (both by traversal *and* as the
+`fineGrainedLineages` aspect) · Upstream Assets · Downstream Assets · Graph
+Traversal · Relationships · Entity Health · Ownership · Domains · Glossary · Tags
+· Browse Paths · Assertions · Policies · Governance privileges · Dataset Profiles
+· ML Models · ML Metadata · Search · Structured Properties · Documentation ·
+Incidents
+
+🟡 **Freshness / Operations** and **Usage Statistics** — the APIs are present and
+answer, but both need a source that can read a warehouse's own query history.
+Snowflake, BigQuery and Redshift connectors emit it; DataHub's Postgres source
+does not, so nothing in this substrate produces one. Inventing numbers to fill
+those two panels is precisely what this repository refuses to do elsewhere.
+
+⬜ Nothing. ❌ Nothing.
+
+> **One finding shaped the prober itself.** DataHub models a physical table and
+> the dbt node describing it as **siblings**, and merges them in the UI. GraphQL
+> does not: profiling lands on the warehouse URN, ownership and assertions on the
+> dbt one. A prober that asked only one side reported `PRESENT_NO_DATA` for
+> ownership on a catalog that plainly had ownership. It now follows siblings and
+> records **which URN answered** — the `[sibling]` markers in the matrix are that
+> honesty made visible.
+
+#### Capability negotiation is visible in the UI
+
+The Command Center gained one panel, **Catalog surface**
+([`CatalogSurface.tsx`](frontend/components/command/CatalogSurface.tsx)). The
+DataHub tool list is what the server answered *for that run*, not a constant
+compiled into the client — and that was captured as evidence and then never
+shown.
+
+It matters because the number changes for a reason: `search_documents` and
+`grep_documents` are **absent from a catalog with no documents**, so the first run
+against a clean instance negotiates **six** tools and the Archivist correctly
+reports `DEGRADED`; after that run writes a runbook, the next negotiates
+**eight** and retrieves it. Two numbers on a panel are the loop closing, and
+unlike a sentence claiming it closed, they come out of the proof pack.
+
+[![The Catalog surface panel: eight negotiated DataHub tools, all used, nine calls](docs/screenshots/command-center/02-catalog-surface.png)](docs/screenshots/command-center/02-catalog-surface.png)
+
+Tools that were offered and never called render dimmed rather than hidden — the
+gap between *available* and *needed* is information about the agents, and hiding
+it would turn the panel into a feature list. A tool called that the server never
+offered would be a contract violation between the allowlist and the negotiated
+set; it gets a red row, and
+[`tests/test_replay_catalog_surface.py`](tests/test_replay_catalog_surface.py)
+asserts it never happens.
+
 ### How DataHub is reached — MCP over stdio
 
 `backend/v2/datahub_client.py` spawns the official server as a subprocess and speaks
@@ -382,19 +498,28 @@ reasoning tasks that read the catalog, what each one is for, and where to check 
 | **Recovery corroboration** | Referee | DataHub assertions, read-only | An independent second opinion on "is it actually fixed", from the catalog rather than from DevGuard's own test run | [`assertions.py`](backend/v2/assertions.py) · [`test_assertion_corroboration.py`](tests/test_assertion_corroboration.py) (27 tests) |
 | **Write-back** — five artifacts | Scribe | 5 mutation tools + GraphQL incidents | The loop only closes if what was learned becomes catalog state the next incident can read | [`scribe.py`](backend/v2/agents/scribe.py) · [`test_writeback_rules.py`](tests/test_writeback_rules.py) (35 tests) |
 
-Two rows carry an honest caveat: **ML impact** and **recovery corroboration** are
-implemented, tested and read-only, but **have not yet been executed against a
-live catalog** — the [judging matrix](docs/JUDGING_MATRIX.md) says so on the same
-rows, and DataHub OSS has no `reportAssertionResult` mutation, so DevGuard
-corroborates assertions without ever authoring one.
+**Two of these rows used to carry a caveat, and no longer do.** **ML impact** and
+**ownership** were implemented, tested and marked *"not yet executed against a
+live catalog"*. Both ran against DataHub v1.7.0 this session —
+`reaches_ml_model=True` over 7 impacted assets, and `NAMED_OWNER` with an owner
+read from the graph. See [Live DataHub](#live-datahub--what-was-verified-against-a-running-instance).
 
-**Three live-server behaviours shaped this code**, and they are worth reading as
+**One caveat remains, and it is about DataHub rather than about DevGuard.**
+Assertions are now real: dbt's test results are ingested as first-class
+`Assertion` entities with run events, and the Referee reads them. But DataHub OSS
+has **no `reportAssertionResult` mutation**, so DevGuard *corroborates* assertions
+without ever authoring one. That asymmetry is deliberate on DataHub's side and
+recorded here rather than worked around.
+
+**Five live-server behaviours shaped this code**, and they are worth reading as
 integration findings rather than trivia — each one is a place where the obvious
 implementation is wrong:
 
 1. There is no `Runbook` document type, so the runbook is written as `Analysis` — the nearest honest alternative, rather than inventing a type.
-2. A tag must exist before it can be applied, so the Scribe creates it first instead of assuming `add_tags` will.
+2. **A tag must exist before it can be applied**, and the Scribe deliberately does *not* create one: `add_tags` against an unknown tag URN fails with `Failed to validate label … Urn does not exist`, and an agent that can invent vocabulary can invent meaning. The vocabulary is therefore an operator responsibility, declared in [`scripts/provision_catalog.py`](scripts/provision_catalog.py). The first live run failed artifact 3 for exactly this reason, which is how the gap was found.
 3. A string property whose value parses as a URN **breaks `searchAcrossLineage`** — which is why `devguard.last_incident_id` stores a bare id and not a URN.
+4. **`MLModelProperties.trainingData` produces no traversable graph edge.** Model the training run as a `dataJob` instead, or a blast radius walked from the source table stops at the mart and silently never reaches the model it breaks.
+5. **Aspects split across sibling entities.** DataHub treats a warehouse table and the dbt node describing it as siblings and merges them in the UI; GraphQL does not. Profiling lands on one, ownership and assertions on the other. Code that reads one URN and concludes "no owner" is reading half the entity.
 
 Two of the findings encountered along the way were verified against DataHub
 `master` and written up for upstream in [`docs/upstream/`](docs/upstream/).
@@ -497,25 +622,48 @@ that tokens and cost read `N/A` with the reason attached — never `0`.
 | [![The DevGuard dashboard rendering in SigNoz](docs/screenshots/signoz/03-dashboard.png)](docs/screenshots/signoz/03-dashboard.png) | [![Three DevGuard alert rules loaded in SigNoz, all showing OK](docs/screenshots/signoz/04-alert-rules.png)](docs/screenshots/signoz/04-alert-rules.png) |
 | The committed dashboard definition, rendering against SigNoz v0.135.0. | All three rules the repository ships, loaded and healthy: `devguard-circuit-breaker-flapping` (critical), `devguard-llm-cost-budget` and `devguard-llm-error-burst` (warning) — one file each in [`signoz/alerts/`](signoz/alerts/), installed and verified by [`scripts/apply_signoz_assets.sh`](scripts/apply_signoz_assets.sh). |
 
-**DataHub — the substrate as the catalog holds it**
+**DataHub v1.7.0 — the catalog this project stood up**
 
-| `user_order_features` — the ML feature table, ingested | The same entity's Lineage tab |
+All 23 images in [`docs/screenshots/datahub/`](docs/screenshots/datahub/) were
+captured by [`scripts/capture_datahub_screenshots.py`](scripts/capture_datahub_screenshots.py)
+driving a real browser against the live instance. Full index with a caption per
+shot: [`docs/screenshots/datahub/README.md`](docs/screenshots/datahub/README.md).
+
+| The ML feature table, as ingested | Lineage — the whole hero path, ML terminus included |
 |---|---|
-| [![The user_order_features model in DataHub Core, showing seven ingested columns and the dbt view definition](evidence/d2/screenshots/02-schema.png)](evidence/d2/screenshots/02-schema.png) | [![The DataHub lineage explorer open on user_order_features](evidence/d2/screenshots/01-lineage.png)](evidence/d2/screenshots/01-lineage.png) |
-| Seven columns and the dbt view definition, ingested by the recipes in [`recipes/`](recipes/) — not authored by hand. This is the terminus of the blast radius. | The lineage explorer on the same entity. **These two were captured on a clean catalog before any write-back**, which is why the side panel reads *No tags yet* and the graph is unpopulated. |
+| [![The user_order_features entity in DataHub v1.7.0 showing seven columns, business and technical owners, the DevGuard Substrate domain, and two tags](docs/screenshots/datahub/05-dataset.png)](docs/screenshots/datahub/05-dataset.png) | [![The DataHub lineage graph: stg_orders and stg_users into user_order_features, through the train_churn_model job, to the devguard_churn_risk ML model](docs/screenshots/datahub/07-dataset-lineage.png)](docs/screenshots/datahub/07-dataset-lineage.png) |
+| 1.7k rows, 7 columns, **Business and Technical Owners**, the **DevGuard Substrate** domain, and the `devguard_hero_path` / `ml_feature_table` tags — every one of them declared in the dbt project and ingested, none clicked in. *Composed of* shows DataHub's two sibling entities for the same table. | `stg_orders` + `stg_users` → `user_order_features` → **`train_churn_model`** → **`devguard_churn_risk` (ML Model)**. The edges are ingested from the running stack; the `dataJob` hop in the middle is what makes the model reachable at all. |
 
-> **Read those two honestly.** They show the *substrate*, not the write-back —
-> and the lineage canvas did not render its edges at capture time. The proof of
-> column-level lineage is not this screenshot; it is the ingested aspect itself,
-> where `fineGrainedLineages` carries `downstreamType: FIELD`:
+| Column lineage, expanded | Assertions — dbt's verdicts, in the catalog |
+|---|---|
+| [![The same lineage graph with the feature table's seven columns expanded inside the node](docs/screenshots/datahub/08-column-lineage.png)](docs/screenshots/datahub/08-column-lineage.png) | [![The Quality tab on user_order_features showing ingested dbt assertions](docs/screenshots/datahub/11-dataset-quality.png)](docs/screenshots/datahub/11-dataset-quality.png) |
+| Field-level detail, derived by DataHub's dbt source from the manifest dbt itself produced. Note the sidebar's **"Some upstreams are unhealthy"** — that is a live health signal DataHub computes from assertion results. | The 13 dbt tests, ingested as first-class `Assertion` entities with run events. This is the independent second opinion the Referee reads: dbt's verdict, not DevGuard's. |
+
+**And what DevGuard wrote back** — the same UI a human would use, showing the
+agent's output after a verified recovery:
+
+| Artifact 1 — the incident, raised and resolved | Artifact 4 — structured incident facts |
+|---|---|
+| [![The Incidents tab on raw.users filtered to Resolved, showing the DevGuard incident](docs/screenshots/datahub/19-writeback-incident.png)](docs/screenshots/datahub/19-writeback-incident.png) | [![The Properties tab showing the devguard structured-property group expanded](docs/screenshots/datahub/21-writeback-properties.png)](docs/screenshots/datahub/21-writeback-properties.png) |
+| Raised on detection, resolved **only** after the Referee verified the fix. Filtered to *Resolved* on purpose: a completed run leaves nothing active, so the default view of a run that worked is an empty table. | `devguard.verified_at` and `devguard.last_incident_id` as typed catalog values under their own namespace — definitions registered first, from [`recipes/structured_properties.yaml`](recipes/structured_properties.yaml). |
+
+> **The gap this closes.** Until this session the two DataHub screenshots in this
+> README showed a clean catalog *before* any write-back — no tags, no owners, and
+> a lineage canvas that had not rendered its edges — and a post-write-back capture
+> was listed in [Limitations](#limitations) as the one screenshot the repository
+> was missing. It is no longer missing. The earlier captures are kept at
+> [`evidence/d2/screenshots/`](evidence/d2/screenshots/) because they are the
+> provenance of the v1.6.0-era artifacts, not because they are the best available
+> picture.
+>
+> The underlying aspect is still the stronger proof of column-level lineage, and
+> it is still where a sceptic should look — `fineGrainedLineages` carrying
+> `downstreamType: FIELD`:
 > [`02-upstreamLineage-features.json`](evidence/d2/02-upstreamLineage-features.json) ·
 > [`03-upstreamLineage-dbt-features.json`](evidence/d2/03-upstreamLineage-dbt-features.json) ·
 > [`04-lineage-chain.json`](evidence/d2/04-lineage-chain.json).
-> For **written** tags and descriptions, the artifact the server returned is
-> [`artifact3-add_tags.json`](evidence/proof-pack/d6-loop-pass2/scribe/artifact3-add_tags.json),
-> and the rendered result is the write-back panel in the Command Center capture above.
 
-<sub>Screenshots live in [`evidence/d10/screenshots/`](evidence/d10/screenshots/), [`evidence/d2/screenshots/`](evidence/d2/screenshots/) and [`docs/screenshots/signoz/`](docs/screenshots/signoz/). Click any image for the full-resolution capture. The Command Center images are reproducible on any machine — `make demo`, then open the run picker; the SigNoz and DataHub images need their respective stacks running, which is why they are captured rather than regenerated in CI. A post-write-back catalog capture is the one screenshot this repository is missing, and it is listed in [Limitations](#limitations) rather than substituted for.</sub>
+<sub>Screenshots live in [`docs/screenshots/datahub/`](docs/screenshots/datahub/) (23, DataHub v1.7.0), [`docs/screenshots/command-center/`](docs/screenshots/command-center/), [`evidence/d10/screenshots/`](evidence/d10/screenshots/), [`evidence/d2/screenshots/`](evidence/d2/screenshots/) and [`docs/screenshots/signoz/`](docs/screenshots/signoz/). Click any image for the full-resolution capture. The Command Center images are reproducible on any machine — `make demo`, then open the run picker. The DataHub and SigNoz images need their respective stacks running, which is why they are captured rather than regenerated in CI; both capture scripts are committed, and `MANIFEST.json` in the DataHub directory records the outcome of every attempt including any that failed.</sub>
 
 ---
 
@@ -576,7 +724,7 @@ pip install -r requirements.txt
 cd frontend && npm ci && cd ..
 
 make doctor    # reports exactly what is present and what is missing
-make test      # 1041 tests — no key, no collector, no network
+make test      # 1096 tests — no key, no collector, no network
 make replay    # build replay bundles from the committed proof packs
 ```
 
@@ -623,6 +771,8 @@ than cross-published.
 | [docs/LLM_EGRESS_BLOCKED.md](docs/LLM_EGRESS_BLOCKED.md) | Proof that the missing model runs are a network-egress cause, not a missing credential. |
 | [docs/DEVPOST.md](docs/DEVPOST.md) | The submission copy. |
 | [DISCLOSURE.md](DISCLOSURE.md) | What was authored when, and what the evidence does and does not show. |
+| [evidence/datahub-live/](evidence/datahub-live/) | **DataHub v1.7.0, stood up and interrogated.** The capability matrix, the auth-off/auth-on A/B, the resolved configuration, the service checks. |
+| [docs/screenshots/datahub/](docs/screenshots/datahub/) | 23 captures of the live instance, one caption each, `MANIFEST.json` recording every attempt. |
 
 **Understanding the engineering**
 
@@ -685,7 +835,7 @@ than cross-published.
 - Hash-chained, tamper-evident audit trail
 
 **Engineering**
-- 1041 tests running in CI on every push with no key, no collector and no network
+- 1096 tests running in CI on every push with no key, no collector and no network
 - Secret scanning over the working tree *and* the full git history
 - Dependency advisory reporting on every push
 - `make doctor` preflight that names every missing prerequisite and how to satisfy it
@@ -796,19 +946,28 @@ before you press anything — that is the honest state, not a loading bug.
 
 ## Technology stack
 
-| Layer | Technology | Version |
-|---|---|---|
-| Catalog | DataHub Core | `v1.6.0` |
-| Catalog protocol | DataHub MCP server | `0.6.0` (18 tools) |
-| Catalog SDK / CLI | `acryl-datahub` | `1.6.0.16` |
-| Observability | SigNoz | `v0.135.0` |
-| Telemetry | OpenTelemetry (traces, metrics, logs) over OTLP/gRPC | `1.20.0` |
-| Backend | FastAPI, Python, async throughout | `3.11` |
-| Frontend | Next.js App Router, TypeScript, Tailwind, Framer Motion, Monaco | `16` |
-| Transformation | dbt over PostgreSQL | — |
-| Inference | Groq (Llama 3.3 70B / 3.1 8B, severity- and telemetry-routed) | — |
+| Layer | Technology | Version | How it was established |
+|---|---|---|---|
+| Catalog | DataHub Core | `v1.7.0` (commit `7f81ccb`) | Read back from the running instance's `GET /config` |
+| Catalog search | OpenSearch | `2.19.3` | `GET :9200` on the live instance |
+| Catalog event bus | Kafka (`confluentinc/cp-kafka`) | `8.2.2` | 9 topics listed on the live broker |
+| Catalog store | MySQL | `8.2.0` | `SELECT VERSION()` on the live instance |
+| Catalog protocol | DataHub MCP server | `0.6.0` — reports itself as `3.4.6` | `initialize` handshake over stdio |
+| Catalog SDK / CLI | `acryl-datahub` | `1.7.0` | `datahub version` |
+| Observability | SigNoz | `v0.135.0` | Verified in an earlier session; see [Screenshots](#screenshots) |
+| Telemetry | OpenTelemetry (traces, metrics, logs) over OTLP/gRPC | `1.20.0` | — |
+| Backend | FastAPI, Python, async throughout | `3.11` | — |
+| Frontend | Next.js App Router, TypeScript, Tailwind, Framer Motion, Monaco | `16` | — |
+| Transformation | dbt Core over PostgreSQL | `1.12.0` / adapter `1.11.0` / PG `16` | `dbt --version` against the live substrate |
+| Browser automation | Playwright + Chromium (screenshot capture) | Chromium `141` | `browser.version` at capture time |
+| Inference | Groq (Llama 3.3 70B / 3.1 8B, severity- and telemetry-routed) | — | **Never reached** in any recorded run ([why](docs/LLM_EGRESS_BLOCKED.md)) |
 
-Every version above is pinned in [`versions.env`](versions.env) and resolved, not floating.
+Every version above is pinned in [`versions.env`](versions.env) and resolved, not
+floating. That file records **two DataHub generations on purpose**: `v1.6.0` is
+the stack the committed `d4`/`d5`/`d6-loop` proof packs were captured against, and
+deleting it would make those artifacts unreproducible; `v1.7.0` is what a
+reviewer gets from `datahub docker quickstart` today and what
+[`evidence/datahub-live/`](evidence/datahub-live/) was produced against.
 
 ---
 
@@ -822,7 +981,11 @@ evidence/
 │   ├── ablation/        10 runs, 5 per arm
 │   ├── eval/            per-fault dbt output, including the green baseline
 │   ├── security/        injection demo, least-privilege ALLOW/DENY checks
+│   ├── d6-live-v170/    the loop run end to end against DataHub v1.7.0
 │   └── d4…d6-*/         the evidence chain, the refusal, and the full loop
+├── datahub-live/        DataHub v1.7.0 provisioned and interrogated:
+│                        capability matrix (25/27 verified), the auth-off vs
+│                        auth-on A/B, the resolved configuration table
 └── d0…d10/              per-stage capture: MCP tool schemas, lineage JSON,
                          write-back responses, blast-radius payloads, screenshots
 ```
@@ -830,6 +993,24 @@ evidence/
 A proof pack contains, for every agent in the run: the exact request and response of each tool call, the evidence items produced with their type and provenance, the handoff record, and — for the Scribe — the write-back payload and the catalog's response to it.
 
 The replay UI is built from exactly these files, so what a reviewer sees on screen and what is on disk cannot diverge.
+
+**Two generations, both kept.** `d0`–`d10` were captured against DataHub v1.6.0
+and are the provenance of the committed proof packs and of the findings in
+[`docs/upstream/`](docs/upstream/). `datahub-live/` and `d6-live-v170` were
+captured against v1.7.0 this session. Neither supersedes the other: deleting the
+older set would make its artifacts unreproducible, and presenting only the older
+set would understate what has been verified. [`versions.env`](versions.env) pins
+both.
+
+**The failure that is kept on purpose.**
+[`02-least-privilege-AUTH-OFF.txt`](evidence/datahub-live/02-least-privilege-AUTH-OFF.txt)
+is a **failed** verification run — ALLOW 4/4, DENY 0/7 — against the stock
+quickstart, and it is more informative than the passing run beside it. It is what
+happens when `METADATA_SERVICE_AUTH_ENABLED=false`: nothing evaluates policy, so
+the seven DENY probes are not refused, they *land*. That run soft-deleted the hero
+dataset, added a cycle to its lineage, and left a policy granting the agent
+`MANAGE_POLICIES`. All of it was repaired, and the verifier now refuses to run
+against an unenforcing server. See [Security model](#security-model).
 
 ---
 
@@ -959,10 +1140,17 @@ Open any of them in the Command Center with the run picker in the top right.
 
 ## Testing
 
-**1041 tests, 52 files, no API key, no collector, no network, no database.** That
+**1096 tests, 54 files, no API key, no collector, no network, no database.** That
 constraint is not a convenience — it is what makes the suite a reviewer's tool
 rather than the author's. CI runs it on every push in exactly the state a clean
 clone is in.
+
+Note what that means for the DataHub work: the **live** verification in
+[`evidence/datahub-live/`](evidence/datahub-live/) needs a running catalog, but
+every test that *consumes* its output does not. The proof packs are committed, so
+[`test_replay_catalog_surface.py`](tests/test_replay_catalog_surface.py) can assert
+that no agent ever called a tool the server did not offer — on a machine with no
+DataHub at all.
 
 ```bash
 make test          # the whole suite
@@ -972,7 +1160,7 @@ python -m pytest tests/test_agent_allowlists.py -v    # one area
 | Area | What it pins down | Tests |
 |---|---|---|
 | **Scanner pipeline** | Reflection-loop convergence, language routing, hostile ZIP/repo input, response contracts, cache round-trip, state eviction, failure diagnosis surfacing | **196** |
-| **DataHub integration** | MCP tool contract, paginated cycle-safe lineage, ML-model impact, assertion corroboration, write-back rules and idempotency, preflight states, mutation scoping | **189** |
+| **DataHub integration** | MCP tool contract, paginated cycle-safe lineage, ML-model impact, assertion corroboration, write-back rules and idempotency, preflight states, mutation scoping, negotiated capability surface | **209** |
 | **Evaluation, replay & doc integrity** | Replay-bundle compilation, judging-matrix paths and figures, fault-injection scoring, ablation harness, upstream-claim honesty | **187** |
 | **Security** | Least-privilege claims, API-key auth, Sentinel fencing, prompt-injection boundary, proof-pack redaction, rate limiting, hash-chained audit | **178** |
 | **Observability & resilience** | Telemetry fail-safe, circuit breaker, fallback, cost accounting, adaptive routing floor, measured-vs-synthetic provenance | **152** |
@@ -988,6 +1176,7 @@ properties** rather than behaviour — a category most suites do not have:
 | [`test_measured_error_rate.py`](tests/test_measured_error_rate.py) (21) | An unmeasured value must render `N/A` with a reason; it may not become a plausible zero. |
 | [`test_least_privilege_claims.py`](tests/test_least_privilege_claims.py) (7) | The docs may not claim more privilege denials than the committed artifact proves. This test exists because the docs once claimed seven and the artifact showed four. |
 | [`test_god_mode_provenance.py`](tests/test_god_mode_provenance.py) (10) | A payload mixing measured and synthetic fields must badge `partial` — never `live`. |
+| [`test_replay_catalog_surface.py`](tests/test_replay_catalog_surface.py) (20) | The negotiated tool list shown in the UI must come from the server's own handshake, never a hard-coded fallback — otherwise a run that degraded to six tools would render an identical panel to one that got eight. A pack with no handshake must report `offered_count: null`, because `0` would claim the server offered nothing. |
 | [`test_replay_bundle.py`](tests/test_replay_bundle.py) (48) | What the UI renders and what is on disk cannot diverge. |
 
 To regenerate the per-area figures after adding tests:
@@ -1004,7 +1193,7 @@ Everything below runs on a clean clone with **no API key, no catalog, no collect
 
 ```bash
 make doctor              # what is present, what is missing, what to do about it
-make test                # 1041 tests
+make test                # 1096 tests
 make replay              # replay bundles from the committed proof packs
 make replay-build        # static export of the Command Center
 make verify-replay-ui    # drive the built site in a real browser and assert
@@ -1036,6 +1225,9 @@ DevGuard-Enterprise/
 │   └── v2/
 │       ├── agents/          the nine agents
 │       ├── datahub_client.py    MCP client and allowlist enforcement
+│       ├── datahub_preflight.py detect + validate config before a run needs it
+│       ├── assertions.py    dbt assertions read as recovery corroboration
+│       ├── ml_impact.py     the mlModel at the end of the blast radius
 │       ├── evidence.py      typed evidence and chain validation
 │       ├── handoff.py       inter-agent handoff contract
 │       ├── proofpack.py     proof-pack writer
@@ -1047,15 +1239,29 @@ DevGuard-Enterprise/
 │   ├── app/command/         Command Center (replay UI)
 │   ├── app/scanner/         scanner UI
 │   ├── app/nexus/           operations panels
-│   └── components/
-├── evidence/                proof packs and captured artifacts
+│   └── components/command/  the twelve Command Center panels
+├── evidence/
+│   ├── proof-pack/          one directory per recorded run
+│   ├── datahub-live/        DataHub v1.7.0: capability matrix, auth A/B, config
+│   └── d0 … d10/            the v1.6.0-era capture trail
 ├── examples/                ablation study, evaluation results
-├── tests/                   1041 tests
-├── scripts/                 verification, reproduction and demo scripts
-├── substrate/               PostgreSQL seed, dbt project, ML model
-├── recipes/                 DataHub ingestion recipes
+├── tests/                   1096 tests
+├── scripts/
+│   ├── verify_datahub_capabilities.py   probe every capability, four statuses
+│   ├── verify_least_privilege.py        ALLOW/DENY proof; refuses if auth is off
+│   ├── capture_datahub_screenshots.py   drive the real UI, record every attempt
+│   ├── provision_catalog.py             the domain + tag vocabulary DevGuard writes into
+│   ├── setup_service_account.py         the least-privilege account and its policies
+│   ├── run_d6_loop.py                   the full incident loop, end to end
+│   └── build_replay.py                  proof packs to replay bundles
+├── substrate/               PostgreSQL seed, dbt project, ML model + registration
+├── recipes/                 DataHub ingestion: postgres, dbt, glossary, properties
 ├── signoz/                  dashboard, alert rules, deployment
-├── docs/                    API, installation, reproducibility, design decisions
+├── docs/
+│   ├── screenshots/datahub/         23 captures of the live instance
+│   ├── screenshots/command-center/  the replay UI rendering the live run
+│   ├── screenshots/signoz/          telemetry, dashboard, alert rules
+│   └── upstream/                    findings prepared for DataHub
 └── .github/workflows/       CI
 ```
 
@@ -1199,15 +1405,54 @@ Full detail in **[SECURITY.md](SECURITY.md)**. In summary:
 
 Reads are deliberately unrestricted — the blast radius of reading an asset DevGuard does not own is nil, and narrowing reads would break lineage traversal.
 
-**Least privilege.** A dedicated service account (`urn:li:corpuser:devguard_agent`) holds exactly the privileges the five artifacts require. `DELETE_ENTITY`, `EDIT_LINEAGE`, `MANAGE_POLICIES`, `MANAGE_INGESTION`, `EDIT_ENTITY_GLOSSARY_TERMS`, `EDIT_DOMAINS_PRIVILEGE` and `EDIT_ENTITY_STATUS` are never granted. Four of those are **proven denied** against a live server in the committed artifact, plus a fifth case proving the URN scope independently; glossary and domain probes are in the verifier but not yet executed, and `EDIT_ENTITY_STATUS` has no probeable mutation in DataHub's GraphQL. The exact status of each is in [SECURITY.md](SECURITY.md#least-privilege) — this README does not claim more than the artifact shows:
+**Least privilege.** A dedicated service account (`urn:li:corpuser:devguard_agent`) holds exactly the privileges the five artifacts require. `DELETE_ENTITY`, `EDIT_LINEAGE`, `MANAGE_POLICIES`, `MANAGE_INGESTION`, `EDIT_ENTITY_GLOSSARY_TERMS`, `EDIT_DOMAINS_PRIVILEGE` and `EDIT_ENTITY_STATUS` are never granted. **All seven denial cases are now proven against a live server** — the glossary and domain probes, previously written but never executed, ran this session:
 
 ```
 $ python scripts/verify_least_privilege.py
-ALLOW: 4/4 behaved as required
-DENY : 5/5 correctly refused
+auth enforcement: ON — a forged token was rejected with HTTP 401
+
+ALLOW: 5/5 behaved as required
+DENY : 7/7 correctly refused
 ```
 
-> **Prerequisite worth stating loudly:** the DataHub quickstart ships with `METADATA_SERVICE_AUTH_ENABLED=false`, under which Access Policies **are not enforced at all** and every DENY case silently passes. Enabling it is mandatory. The verifier above is what surfaced this.
+Artifact: [`evidence/datahub-live/03-least-privilege-AUTH-ON.txt`](evidence/datahub-live/03-least-privilege-AUTH-ON.txt).
+`EDIT_ENTITY_STATUS` still has no probeable mutation in DataHub's GraphQL and is
+therefore asserted rather than proven; per-privilege status is in
+[SECURITY.md](SECURITY.md#least-privilege). Independently, the account's own
+`me.platformPrivileges` reports `managePolicies`, `manageIngestion` and
+`manageDomains` all `false`.
+
+> **The prerequisite, and the trap inside it.** The DataHub quickstart still
+> ships `METADATA_SERVICE_AUTH_ENABLED=false` as of **v1.7.0**, under which
+> Access Policies are **not evaluated at all**. Enabling it is mandatory.
+>
+> The trap is worse than a test passing for the wrong reason. Every DENY probe is
+> a real mutation — a soft-delete, a lineage edit, a policy creation — and the
+> design rests on the server refusing them. With nothing enforcing, they are not
+> refused: **they land.** Running the suite against a stock quickstart
+> soft-deleted the hero dataset, added a cycle to its lineage, and left behind a
+> policy granting the agent `MANAGE_POLICIES`, while correctly reporting the deny
+> half as failed. The report was accurate and the damage was already done.
+>
+> So the verifier now **fails closed**. It asks the server whether auth is
+> enforced by presenting a forged token — a server that accepts one is not
+> checking — and refuses to run otherwise, naming the fix rather than offering a
+> flag that sounds harmless. The override is spelled
+> `--i-understand-the-deny-probes-will-mutate` and exists only to reproduce the
+> demonstration. `auth_enforced` is written into the summary artifact too,
+> because a DENY row reading "refused" means nothing if nothing was checking.
+> Both runs are kept: [auth off](evidence/datahub-live/02-least-privilege-AUTH-OFF.txt) ·
+> [auth on](evidence/datahub-live/03-least-privilege-AUTH-ON.txt).
+
+**Vocabulary is an operator responsibility, not the agent's.** The Scribe applies
+the `devguard_incident_impacted` tag and deliberately will **not** create it —
+`add_tags` against an unknown tag URN fails, and an agent that can invent
+vocabulary can invent meaning. The tag is declared in
+[`scripts/provision_catalog.py`](scripts/provision_catalog.py) and applied once at
+provisioning time. The first live run failed artifact 3 on exactly this, which is
+how the gap was found; the same run also demonstrated the write-back's
+partial-failure policy holding — the incident stayed **ACTIVE** rather than
+asserting a verified state whose supporting knowledge was missing.
 
 **Autonomy policy.** The published table and the enforced policy are the same object in code, so they cannot drift:
 
@@ -1242,7 +1487,10 @@ Stated plainly, because a claim a reviewer can disprove costs more than the feat
 - **The scanner's accuracy benchmark has never been run to an artifact**, so no accuracy figure is published anywhere. The UI shows "accuracy not measured" until one exists, and that artifact is the only route by which a number can reach the API or the UI.
 - **Container images are defined but not built end to end** in the capture environment, whose egress policy blocks the Debian and PyPI mirrors the builds need. Run the backend and frontend directly if you hit the same.
 - **The RAG store falls back to lexical overlap.** The pinned `chromadb` and `sentence-transformers` backends are not importable in this environment; retrieval remains deterministic and relevant but is not semantic.
-- **There is no post-write-back catalog screenshot.** The two DataHub UI captures in [Screenshots](#screenshots) were taken on a clean catalog before any write-back, which is why they show *No tags yet*. The write-back is proven by the server's own responses in [`d6-loop-pass2/scribe/`](evidence/proof-pack/d6-loop-pass2/scribe/) and by the Command Center's write-back panel — but the catalog UI showing the landed tag is a capture that was never taken, and a screenshot of the substrate is not a substitute for one.
+- **Freshness and usage statistics are empty, and cannot be filled here.** Both DataHub APIs are present and answer cleanly — they are `PRESENT_NO_DATA` in the [capability matrix](evidence/datahub-live/CAPABILITY_MATRIX.md), not `ABSENT` — but both need a connector that can read a warehouse's own query history. Snowflake, BigQuery and Redshift emit it; DataHub's Postgres source does not, and this substrate is Postgres. Nothing in DevGuard reasons about freshness as a result.
+- **DataHub OSS cannot be *told* an assertion passed.** Assertions are ingested and read: 13 dbt tests are first-class `Assertion` entities and the Referee corroborates recovery against them. But there is no `reportAssertionResult` mutation in OSS, so DevGuard can never author an assertion result of its own. The corroboration is genuinely one-directional.
+- **The live verification ran against a single-node quickstart, not a cluster.** OpenSearch reports `yellow` throughout because replica shards cannot be assigned on one node, and the disk watermarks had to be calibrated to absolute sizes rather than percentages ([why](DEPLOYMENT.md)). Nothing about horizontal scale, upgrade paths or multi-tenant behaviour was tested.
+- **One screenshot gap is closed and worth recording as such.** This list previously said there was no post-write-back catalog capture. There now are five, in [`docs/screenshots/datahub/`](docs/screenshots/datahub/), showing the incident, the column annotation, the structured properties, the governance tab and the dataset overview after a completed run.
 
 ---
 

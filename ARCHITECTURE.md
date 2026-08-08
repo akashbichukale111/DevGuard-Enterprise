@@ -204,6 +204,36 @@ This is the structure the Command Center's handoff rail renders, the structure t
 
 ## DataHub integration
 
+### What the deployment actually supports, and how that is established
+
+The integration is written against a **negotiated** surface, not an assumed one.
+Two mechanisms establish what is available, at two different scopes:
+
+| Scope | Mechanism | Where it lands |
+|---|---|---|
+| **Per run** | The MCP `initialize` + `tools/list` handshake. The result is captured as evidence in its own right, because what the server offers on the day is a fact about the run rather than a constant of the system. | `archivist/capabilities.json` in every proof pack → the `catalog` section of the replay bundle → the **Catalog surface** panel |
+| **Per deployment** | GraphQL schema introspection plus a real query per capability, run by [`scripts/verify_datahub_capabilities.py`](scripts/verify_datahub_capabilities.py) | [`evidence/datahub-live/CAPABILITY_MATRIX.md`](evidence/datahub-live/CAPABILITY_MATRIX.md) |
+
+The per-deployment prober keeps *"is the field in this build's schema"* and *"did
+this catalog return data"* apart, because collapsing them into one "supported"
+column is how a capability matrix starts lying. Four statuses, of which only
+`VERIFIED` may be described as working: `VERIFIED`, `PRESENT_NO_DATA`, `ABSENT`,
+`ERROR`. Against DataHub v1.7.0: **25 · 2 · 0 · 0** over 27 probes.
+
+The per-run set is visible because it *changes*. `search_documents` and
+`grep_documents` are absent from a catalog holding no documents, so the first run
+against a clean instance negotiates six tools and the Archivist degrades; after it
+writes a runbook the next run negotiates eight and retrieves it. That is the loop
+closing, expressed as two numbers a reviewer can read off a panel.
+
+> **Siblings are a load-bearing detail of the read path.** DataHub models a
+> warehouse table and the dbt node describing it as sibling entities and merges
+> them in the UI; GraphQL does not merge them. Profiling lands on the warehouse
+> URN, ownership and assertions on the dbt one. Code that reads a single URN and
+> concludes "no owner" is reading half the entity — which is why the Cartographer's
+> parsers are shape-tolerant and the prober follows siblings and records which URN
+> answered.
+
 ### Read path
 
 | Tool | Used by | Purpose |
@@ -230,6 +260,20 @@ scope         five named dataset URNs
 ```
 
 Enforced in `DataHubMCPClient.call` before the request is serialised. This duplicates the server-side Access Policy on purpose — defence in depth that proved its worth when the server-side control turned out to be disabled by default (see [SECURITY.md](SECURITY.md)).
+
+**What the write path deliberately cannot do: create vocabulary.** The Scribe
+applies the `devguard_incident_impacted` tag and will not create it. DataHub
+rejects `add_tags` against a tag URN that does not exist, and rather than minting
+one the artifact fails and reports why. An agent that can invent vocabulary can
+invent meaning — it can label an asset with a term nobody defined and no reviewer
+approved. So the vocabulary is an operator-provisioned input
+([`scripts/provision_catalog.py`](scripts/provision_catalog.py)), sitting outside
+the agent's authority in the same way the Access Policy does.
+
+This is a real constraint with a real cost, paid once: the first live run against
+v1.7.0 failed artifact 3 on exactly this. The write ordering below then did the
+right thing — the incident stayed ACTIVE rather than claiming a verified state
+whose supporting knowledge was missing.
 
 ### Write ordering
 

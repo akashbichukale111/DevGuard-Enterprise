@@ -14,7 +14,7 @@ No API key, no catalog, no collector, no network. These run on a clean clone.
 | Command | What it proves | Time |
 |---|---|---|
 | `make doctor` | What is present and what is missing | seconds |
-| `make test` | 1041 tests across agents, evidence, security, replay | ~2.5 min |
+| `make test` | 1096 tests across agents, evidence, security, replay | ~2.5 min |
 | `make replay` | Replay bundles build from the committed proof packs | seconds |
 | `make replay-build` | The Command Center exports as a static site | ~1 min |
 | `make verify-replay-ui` | The built site behaves as claimed, in a real browser | ~1 min |
@@ -26,7 +26,7 @@ No API key, no catalog, no collector, no network. These run on a clean clone.
 
 ```
 $ make test
-1041 passed
+1096 passed
 
 $ make replay
 [ok]   d6-loop-pass2         30 evidence   32 artifacts    159.5 KiB
@@ -111,20 +111,64 @@ Set `DATAHUB_TOKEN_FILE` to a `chmod 600` file outside the repository.
 Everything is resolved, not floating. See [`versions.env`](../versions.env):
 
 ```
-DATAHUB_VERSION=v1.6.0
-DATAHUB_COMMIT=059a36c0b035a6057de00114ccac0ea9003d6bc2
-MCP_SERVER_VERSION=0.6.0
-DATAHUB_SDK_VERSION=1.6.0.16
-DATAHUB_CLI_VERSION=1.6.0.16
+DATAHUB_VERSION=v1.7.0
+DATAHUB_COMMIT=7f81ccbfe27b9acc947f5f600fcf9ddb72138a80
+MCP_SERVER_VERSION=0.6.0                 # the running server reports 3.4.6
+DATAHUB_SDK_VERSION=1.7.0
+DATAHUB_CLI_VERSION=1.7.0
+DBT_CORE_VERSION=1.12.0
+
+DATAHUB_VERSION_PRIOR=v1.6.0             # what the committed proof packs used
+DATAHUB_COMMIT_PRIOR=059a36c0b035a6057de00114ccac0ea9003d6bc2
 ```
+
+**Two generations are pinned on purpose.** `v1.6.0` is the stack the committed
+`d4`/`d5`/`d6-loop` proof packs were captured against — deleting it would make
+those artifacts unreproducible. `v1.7.0` is what `datahub docker quickstart` gives
+a reviewer today, and what [`evidence/datahub-live/`](../evidence/datahub-live/)
+and the `d6-live-v170` proof pack were produced against.
 
 SigNoz images are pinned in [DEPLOYMENT.md](../DEPLOYMENT.md#option-b--self-hosted).
 Python dependencies are pinned in `requirements.txt`; frontend dependencies in
 `frontend/package-lock.json`.
 
-The DataHub version was read back from the **running instance**
-(`GET /config`), not taken from documentation. The capture is in
-[`evidence/d0/datahub-config.json`](../evidence/d0/datahub-config.json).
+Both DataHub versions were read back from the **running instance**
+(`GET /config`), not taken from documentation. Captures:
+[`evidence/d0/datahub-config.json`](../evidence/d0/datahub-config.json) (v1.6.0) ·
+[`evidence/datahub-live/01-service-verification.md`](../evidence/datahub-live/01-service-verification.md) (v1.7.0).
+
+### Reproducing the live DataHub verification
+
+Needs Docker and roughly 15 GB of free disk. Each step writes an artifact you can
+diff against the committed one.
+
+```bash
+DATAHUB_TELEMETRY_ENABLED=false datahub docker quickstart
+# then enable METADATA_SERVICE_AUTH_ENABLED — mandatory, see DEPLOYMENT.md
+
+docker compose -f substrate/docker-compose.yml up -d
+cd substrate/dbt && dbt build && dbt docs generate && cd ../..
+python substrate/ml/train_churn_model.py
+
+datahub ingest -c recipes/business_glossary.yml
+datahub ingest -c recipes/postgres.yml
+datahub ingest -c recipes/dbt.yml
+datahub properties upsert -f recipes/structured_properties.yaml
+python substrate/ml/register_model.py
+python scripts/provision_catalog.py
+python scripts/setup_service_account.py
+
+python scripts/verify_datahub_capabilities.py --out evidence/datahub-live
+python scripts/verify_least_privilege.py         # ALLOW 5/5 · DENY 7/7
+python scripts/run_d6_loop.py --run-id d6-live-v170
+```
+
+> Ordering matters in two places. The glossary must be ingested **before** the dbt
+> recipe, whose `meta_mapping` references its terms. And
+> `provision_catalog.py` must run **before** the loop: the Scribe applies
+> `devguard_incident_impacted` and deliberately will not create it, so without
+> this step write-back artifact 3 fails — which is exactly what happened on the
+> first live run.
 
 ---
 

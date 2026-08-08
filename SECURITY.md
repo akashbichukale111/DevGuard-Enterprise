@@ -165,29 +165,43 @@ table now distinguishes the three cases.
 | `EDIT_LINEAGE` | **Proven denied** | `updateLineage` |
 | `MANAGE_POLICIES` | **Proven denied** | `createPolicy` |
 | `MANAGE_INGESTION` | **Proven denied** | `createIngestionSource` |
-| `EDIT_ENTITY_GLOSSARY_TERMS` | Probe added, **not yet executed** | `addTerms` |
-| `EDIT_DOMAINS_PRIVILEGE` | Probe added, **not yet executed** | `setDomain` |
+| `EDIT_ENTITY_GLOSSARY_TERMS` | **Proven denied** — executed against DataHub v1.7.0 | `addTerms` |
+| `EDIT_DOMAINS_PRIVILEGE` | **Proven denied** — executed against DataHub v1.7.0 | `setDomain` |
 | `EDIT_ENTITY_STATUS` | **Asserted, not probeable** | DataHub's GraphQL exposes no dataset-status mutation — only `updateUserStatus`, which targets corp users. The grant is absent from the policy; there is no way to demonstrate the refusal through this surface. |
 
-A fifth DENY case in the artifact is not a privilege at all: it writes to a real,
-ingested dbt dataset that sits **outside the five-URN scope**, proving the scope
-axis independently of the privilege axis.
+A further DENY case in the artifact is not a privilege at all: it writes to a
+real, ingested dbt dataset that sits **outside the five-URN scope**, proving the
+scope axis independently of the privilege axis.
 
-The committed evidence records the state at its capture:
+Current state, against DataHub v1.7.0 with authentication enforced —
+[`evidence/datahub-live/03-least-privilege-AUTH-ON.txt`](evidence/datahub-live/03-least-privilege-AUTH-ON.txt):
 
 ```
 $ python scripts/verify_least_privilege.py
-ALLOW: 4/4 behaved as required
-DENY : 5/5 correctly refused
+auth enforcement: ON — a forged token was rejected with HTTP 401
+
+ALLOW: 5/5 behaved as required
+DENY : 7/7 correctly refused
 ```
 
-The two new probes take that to `DENY : 7/7` on the next run against a live
-DataHub. They are in the verifier now so the next capture proves them; until
-that capture exists this document does not claim they passed.
+The fifth ALLOW case is new and is a cleanup: the verifier now **resolves the
+incident it raises**. Every previous run left an ACTIVE incident on a production
+dataset — a verifier that degraded the catalog a little each time it proved the
+catalog was safe.
 
-### Why that verifier exists
+Independent corroboration from the server's own view of the account:
 
-On its first run the account passed all four ALLOW cases **and all five DENY
+```
+$ curl … -H "Authorization: Bearer <agent token>" \
+    -d '{"query":"query { me { corpUser { urn } platformPrivileges { … } } }"}'
+{"data":{"me":{"corpUser":{"urn":"urn:li:corpuser:devguard_agent"},
+  "platformPrivileges":{"managePolicies":false,"manageIngestion":false,
+                        "manageDomains":false}}}}
+```
+
+### Why that verifier exists, and why it now refuses to run
+
+On its first ever run the account passed all four ALLOW cases **and all five DENY
 cases also succeeded** — a failed verification in which nothing errored. The
 account could delete datasets, rewrite lineage, write anywhere in the catalog,
 and grant itself further privileges. The policies existed and looked correct in
@@ -195,15 +209,63 @@ the UI.
 
 **Cause: the DataHub quickstart ships with
 `METADATA_SERVICE_AUTH_ENABLED=false`, under which Access Policies are not
-enforced at all.** Until this check existed, the server-side authorization
-control was silently absent and creating policies gave a false sense of security.
+enforced at all.** This is still the default in **v1.7.0** — re-confirmed this
+session by reading the quickstart's own compose file.
+
+**And there is a second, sharper problem, found by running it again.** Every DENY
+probe is a *real mutation*: a soft-delete, a lineage edit, a policy creation, a
+domain reassignment. The whole design rests on the server refusing them. When
+nothing is enforcing, they are not refused — **they land.**
+
+The auth-off run kept at
+[`evidence/datahub-live/02-least-privilege-AUTH-OFF.txt`](evidence/datahub-live/02-least-privilege-AUTH-OFF.txt)
+reported `ALLOW 4/4, DENY 0/7`, which was accurate. By then it had also:
+
+- soft-deleted `raw.users`, the hero dataset,
+- added a cycle to its lineage (`raw.users ← user_order_features`),
+- attached a nonexistent glossary term and reassigned its domain,
+- created an ingestion source, and
+- created a policy named `devguard-escalation-probe` granting the agent
+  `MANAGE_POLICIES`.
+
+All of it was repaired. But a security verifier that damages the system it is
+verifying is a defect in the verifier, so it now **fails closed**: it asks the
+server whether authentication is enforced by presenting a token that could not
+possibly be valid — a server that accepts one is not checking — and refuses to
+proceed otherwise, naming the fix rather than offering a flag that sounds
+harmless. The override exists only to reproduce the demonstration above and is
+spelled `--i-understand-the-deny-probes-will-mutate`.
+
+`auth_enforced` and the evidence for it are written into the summary artifact,
+because a DENY row reading "refused" means nothing if nothing was checking.
 
 > **Enabling `METADATA_SERVICE_AUTH_ENABLED=true` is a hard prerequisite for
-> anyone reproducing this.** Preserve the token signing key when you do, so
-> existing tokens stay valid.
+> anyone reproducing this.** Preserve `DATAHUB_TOKEN_SERVICE_SIGNING_KEY` when
+> you do, so existing tokens stay valid. Exact commands:
+> [DEPLOYMENT.md](DEPLOYMENT.md#the-datahub-catalog).
 
 A control you have not tried to violate is a control you have not verified. Full
-record in [`evidence/d9/`](evidence/d9/).
+record in [`evidence/d9/`](evidence/d9/) (v1.6.0) and
+[`evidence/datahub-live/`](evidence/datahub-live/) (v1.7.0).
+
+### One privilege the agent deliberately does not have: creating vocabulary
+
+`EDIT_ENTITY_GLOSSARY_TERMS` and `EDIT_DOMAINS_PRIVILEGE` are denied on purpose,
+and the same principle extends to tags even though applying one *is* granted. The
+Scribe applies `urn:li:tag:devguard_incident_impacted` and will **not create it**:
+DataHub rejects `add_tags` against a tag URN that does not exist, and rather than
+minting one, the write-back fails and says so.
+
+That is a security property, not an inconvenience. An agent that can invent
+vocabulary can invent meaning — it can label an asset with a term nobody defined
+and no reviewer approved. The vocabulary is therefore declared by an operator in
+[`scripts/provision_catalog.py`](scripts/provision_catalog.py), reviewable in a
+diff, and applied once at provisioning time.
+
+The first live run on v1.7.0 failed write-back artifact 3 for exactly this reason.
+The correct behaviour followed: the incident stayed **ACTIVE** rather than being
+marked resolved, because the write-back's partial-failure policy forbids
+asserting a verified state whose supporting knowledge is missing.
 
 ---
 
