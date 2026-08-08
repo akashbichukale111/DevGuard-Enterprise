@@ -101,23 +101,23 @@ def test_the_quoted_suite_total_is_not_overstated():
     )
 
 
-#: Markdown that makes claims to a reader, as opposed to generated reports.
-#: Documents that quote the suite size as a current fact. SECURITY.md,
-#: DISCLOSURE.md and DEMO.md were added after all three were found sitting at
-#: 1041 against a suite of 1101 — they drifted precisely because nothing
-#: checked them. CHANGELOG.md is deliberately absent: its release sections
-#: record what was true at each release and must be allowed to say 1041
-#: forever. Same for the numbers inside evidence/, which are capture records.
+#: Markdown that quotes the suite size as a current fact, as opposed to
+#: generated reports. SECURITY.md, DISCLOSURE.md and DEMO.md were added after
+#: all three were found sitting at 1041 against a suite of 1101; DEVPOST.md
+#: after it was found at 1,039. Each drifted precisely because nothing checked
+#: it. CHANGELOG.md is deliberately absent: its release sections record what was
+#: true at each release and must be allowed to say 1041 forever. Same for the
+#: numbers inside evidence/, which are capture records, not claims.
 _CLAIM_DOCS = ["README.md", "ARCHITECTURE.md", "docs/JUDGING_MATRIX.md",
                "docs/ARCHITECTURE_REVIEW.md", "docs/REPRODUCIBILITY.md",
                "SECURITY.md", "DISCLOSURE.md", "DEMO.md",
-               "docs/INSTALLATION.md"]
+               "docs/INSTALLATION.md", "docs/DEVPOST.md"]
 
 
 def test_no_document_claims_more_tests_than_exist():
     """
-    Test counts are quoted in five places and every one of them drifts as the
-    suite grows. Understating is harmless; overstating is a reviewer running
+    Test counts are quoted across the documents in _CLAIM_DOCS and every one of
+    them drifts as the suite grows. Understating is harmless; overstating is a reviewer running
     `make test`, seeing a smaller number than the README promised, and
     reasonably concluding the rest of the document is padded too.
     """

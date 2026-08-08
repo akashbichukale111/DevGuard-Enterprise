@@ -91,7 +91,7 @@ most flattering.
 
 ## Technical highlights
 
-- **1,039 tests**, no API key, no network, no catalog required
+- **1,104 tests**, no API key, no network, no catalog required
 - **Zero-infrastructure replay** — seven recorded runs, committed as proof packs
 - **Hash-chained tamper-evident audit trail**
 - **Least privilege proven, not asserted** — four privilege denials verified live
@@ -224,7 +224,7 @@ feature was worth:
 | 5 | 1:20–1:45 | `d6-fail-the-fix` | "Validation fails. Nothing is written back. A bad fix reaches no human and touches no catalog." |
 | 6 | 1:45–2:20 | Back to pass 2, write-back panel | "Incident raised then resolved, runbook as a Context Document, column-level tag, structured properties, ownership. Idempotent, all-or-nothing." |
 | 7 | 2:20–2:40 | Archivist on pass 2 | "**The loop closes.** Pass 2 retrieves the runbook pass 1 wrote — straight out of the catalog." |
-| 8 | 2:40–3:00 | Terminal: `make test` | "1,039 tests, no API key, no network. And the limitations are in the README — no recorded run invoked a model, and the ablation is a published negative result." |
+| 8 | 2:40–3:00 | Terminal: `make test` | "1,104 tests, no API key, no network. And the limitations are in the README — no recorded run invoked a model, and the ablation is a published negative result." |
 
 **Lead with DataHub. Do not open with the Scanner.** Scene 7 is the one judges
 remember — put it before the test count, never after.
