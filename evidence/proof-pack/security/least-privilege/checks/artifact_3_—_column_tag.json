@@ -5,27 +5,8 @@
   "passed": true,
   "detail": "EDIT_DATASET_COL_TAGS on a scoped dataset",
   "response": {
-    "errors": [
-      {
-        "message": "Failed to validate label with urn urn:li:tag:devguard_incident_impacted. Urn does not exist.",
-        "locations": [
-          {
-            "line": 1,
-            "column": 36
-          }
-        ],
-        "path": [
-          "addTags"
-        ],
-        "extensions": {
-          "code": 400,
-          "type": "BAD_REQUEST",
-          "classification": "DataFetchingException"
-        }
-      }
-    ],
     "data": {
-      "addTags": null
+      "addTags": true
     },
     "extensions": {}
   }

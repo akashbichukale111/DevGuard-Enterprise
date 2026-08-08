@@ -1,0 +1,5 @@
+search_documents and grep_documents are absent from the negotiated tool set.
+
+By documented behaviour these tools are hidden automatically when the catalog holds no documents. This is expected on incident #1 and is reported as DEGRADED, never as a clean 'no prior incidents'.
+
+negotiated tools (6): ['get_dataset_queries', 'get_entities', 'get_lineage', 'get_lineage_paths_between', 'list_schema_fields', 'search']

@@ -1,0 +1,8 @@
+{
+  "arguments": {
+    "query": "user_id"
+  },
+  "ok": true,
+  "text": "{\"start\":0,\"count\":10,\"total\":1,\"searchResults\":[{\"entity\":{\"urn\":\"urn:li:document:shared-5ccc356c-5b4b-4468-98c0-72ec18b9c892\",\"subType\":\"Analysis\",\"platform\":{\"urn\":\"urn:li:dataPlatform:datahub\",\"name\":\"datahub\"},\"info\":{\"title\":\"DevGuard runbook \u2014 user_id drift on devguard.raw.users\",\"source\":{\"sourceType\":\"NATIVE\"},\"lastModified\":{\"time\":1786185211648,\"actor\":{\"urn\":\"urn:li:corpuser:__ingestion\"}},\"created\":{\"time\":1786185211648,\"actor\":{\"urn\":\"urn:li:corpuser:__ingestion\"}}}}}],\"facets\":[{\"field\":\"_entityType\u241etypeNames\",\"displayName\":\"Type\u241eSub Type\",\"aggregations\":[{\"value\":\"DOCUMENT\u241eAnalysis\",\"count\":1},{\"value\":\"DOCUMENT\",\"count\":1}]},{\"field\":\"typeNames\",\"displayName\":\"Sub Type\",\"aggregations\":[{\"value\":\"Analysis\",\"count\":1}]},{\"field\":\"_entityType\",\"displayName\":\"Type\",\"aggregations\":[{\"value\":\"DOCUMENT\",\"count\":1}]},{\"field\":\"owners\",\"displayName\":\"Owned By\",\"aggregations\":[{\"value\":\"urn:li:corpuser:devguard_agent\",\"count\":1}]},{\"field\":\"removed\",\"displayName\":\"removed\",\"aggregations\":[{\"value\":\"true\",\"count\":0}]},{\"field\":\"entity\",\"displayName\":\"Type\",\"aggregations\":[{\"value\":\"DOCUMENT\",\"count\":1}]}]}",
+  "error": null
+}

@@ -1,0 +1,10 @@
+{
+  "incident_id": "D6103503",
+  "risk": "LOW",
+  "mode": "NAMED_OWNER",
+  "approver_urn": "urn:li:corpuser:datahub",
+  "approver_name": "DataHub Admin (local operator)",
+  "decided_at_utc": "2026-08-08T10:35:13.949791+00:00",
+  "note": "Reviewed the diff on devguard/fix-d6103503; validated in analytics_devguard_check before approval.",
+  "branch_reviewed": "devguard/fix-d6103503"
+}

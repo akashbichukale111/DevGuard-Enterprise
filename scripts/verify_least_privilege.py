@@ -94,15 +94,33 @@ def run_checks(agent: str) -> list[Check]:
            gql("query d($urn:String!){ dataset(urn:$urn){ urn } }",
                {"urn": IN_SCOPE}, agent))
 
+    raised = gql("mutation r($input: RaiseIncidentInput!){ raiseIncident(input:$input) }",
+                 {"input": {"type": "OPERATIONAL",
+                            "title": "least-privilege verification probe",
+                            "description": (
+                                "Raised by scripts/verify_least_privilege.py to prove "
+                                "the service account holds EDIT_ENTITY_INCIDENTS. Not a "
+                                "real incident — resolved by the same run."),
+                            "resourceUrn": IN_SCOPE}}, agent)
     record("artifact 1 — raise incident", "ALLOW",
-           "EDIT_ENTITY_INCIDENTS on a scoped dataset",
-           gql("mutation r($input: RaiseIncidentInput!){ raiseIncident(input:$input) }",
-               {"input": {"type": "OPERATIONAL",
-                          "title": "least-privilege verification probe",
-                          "description": ("Raised by scripts/verify_least_privilege.py "
-                                          "to prove the service account holds "
-                                          "EDIT_ENTITY_INCIDENTS. Not a real incident."),
-                          "resourceUrn": IN_SCOPE}}, agent))
+           "EDIT_ENTITY_INCIDENTS on a scoped dataset", raised)
+
+    # Resolve what we just raised. Without this every run leaves an ACTIVE
+    # incident on a production dataset forever — a verifier that degrades the
+    # catalog a little each time it proves the catalog is safe. DataHub
+    # incidents are never deleted (see reset_demo.py), so resolving is the
+    # honest cleanup: the probe really happened, and it is really over.
+    probe_urn = (raised.get("data") or {}).get("raiseIncident")
+    if probe_urn:
+        record("probe incident resolved", "ALLOW",
+               "the verification probe cleans up after itself",
+               gql("mutation u($urn:String!, $input: IncidentStatusInput!)"
+                   "{ updateIncidentStatus(urn:$urn, input:$input) }",
+                   {"urn": probe_urn,
+                    "input": {"state": "RESOLVED",
+                              "message": ("Least-privilege verification completed. "
+                                          "This incident existed only to prove the "
+                                          "service account can raise one.")}}, agent))
 
     record("artifact 3 — column tag", "ALLOW",
            "EDIT_DATASET_COL_TAGS on a scoped dataset",

@@ -1,0 +1,371 @@
+{
+  "serverInfo": {
+    "name": "datahub",
+    "version": "3.4.6"
+  },
+  "protocolVersion": "2024-11-05",
+  "tool_count": 8,
+  "tools": [
+    "get_dataset_queries",
+    "get_entities",
+    "get_lineage",
+    "get_lineage_paths_between",
+    "grep_documents",
+    "list_schema_fields",
+    "search",
+    "search_documents"
+  ],
+  "input_schemas": {
+    "get_dataset_queries": {
+      "additionalProperties": false,
+      "properties": {
+        "urn": {
+          "type": "string"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "MANUAL",
+                "SYSTEM"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "start": {
+          "default": 0,
+          "type": "integer"
+        },
+        "count": {
+          "default": 10,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "urn"
+      ],
+      "type": "object"
+    },
+    "get_entities": {
+      "additionalProperties": false,
+      "properties": {
+        "urns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "urns"
+      ],
+      "type": "object"
+    },
+    "get_lineage": {
+      "additionalProperties": false,
+      "properties": {
+        "urn": {
+          "type": "string"
+        },
+        "column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "upstream": {
+          "default": true,
+          "type": "boolean"
+        },
+        "max_hops": {
+          "default": 1,
+          "type": "integer"
+        },
+        "max_results": {
+          "default": 30,
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "urn"
+      ],
+      "type": "object"
+    },
+    "get_lineage_paths_between": {
+      "additionalProperties": false,
+      "properties": {
+        "source_urn": {
+          "type": "string",
+          "description": "URN of the source dataset"
+        },
+        "target_urn": {
+          "type": "string",
+          "description": "URN of the target dataset"
+        },
+        "source_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional column name in source dataset"
+        },
+        "target_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional column name in target dataset (required if source_column provided)"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "upstream",
+                "downstream"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional direction to search. If None (default), automatically discovers\n      the path by trying downstream first, then upstream. Specify \"downstream\" or\n      \"upstream\" explicitly for better performance if you know the direction."
+        }
+      },
+      "required": [
+        "source_urn",
+        "target_urn"
+      ],
+      "type": "object"
+    },
+    "grep_documents": {
+      "additionalProperties": false,
+      "properties": {
+        "urns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "context_chars": {
+          "default": 200,
+          "type": "integer"
+        },
+        "max_matches_per_doc": {
+          "default": 5,
+          "type": "integer"
+        },
+        "start_offset": {
+          "default": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "urns",
+        "pattern"
+      ],
+      "type": "object"
+    },
+    "list_schema_fields": {
+      "additionalProperties": false,
+      "properties": {
+        "urn": {
+          "type": "string",
+          "description": "Dataset URN"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional list of keywords to filter schema fields (OR matching).\n     - Single keyword: Treated as one keyword (NOT split on whitespace). Use for field names or exact phrases.\n     - Multiple keywords: Multiple keywords, matches any (OR logic).\n     - None or empty list: Returns all fields in priority order (same as get_entities).\n     Matches against fieldPath, description, label, tags, and glossary terms.\n     Matching fields are returned first, sorted by match count."
+        },
+        "limit": {
+          "default": 100,
+          "type": "integer",
+          "description": "Maximum number of fields to return (default: 100)"
+        },
+        "offset": {
+          "default": 0,
+          "type": "integer",
+          "description": "Number of fields to skip for pagination (default: 0)"
+        }
+      },
+      "required": [
+        "urn"
+      ],
+      "type": "object"
+    },
+    "search": {
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "default": "*",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "num_results": {
+          "default": 10,
+          "type": "integer"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "desc"
+        },
+        "offset": {
+          "default": 0,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "search_documents": {
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "default": "*",
+          "type": "string"
+        },
+        "semantic_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "num_results": {
+          "default": 10,
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    }
+  }
+}

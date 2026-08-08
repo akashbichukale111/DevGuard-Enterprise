@@ -1,8 +1,9 @@
 {
-  "captured_at": "2026-08-08T10:31:29.559053+00:00",
+  "captured_at": "2026-08-08T10:46:21.482657+00:00",
   "frontend": "http://localhost:9002",
   "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
-  "ml_model_urn": "urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)",
+  "ml_model_urn": "",
+  "writeback_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
   "viewport": {
     "width": 1680,
     "height": 1050
@@ -20,41 +21,15 @@
       "console_errors": []
     },
     {
-      "slug": "07-dataset-lineage",
-      "title": "Lineage graph",
-      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.analytics_marts.user_order_features%2CPROD%29/Lineage",
-      "shows": "The lineage graph: stg_users and stg_orders into the feature table, then through the training job to the churn model. Every edge was ingested from the running stack; none was hand-authored.",
+      "slug": "21-writeback-properties",
+      "title": "Write-back \u2014 structured properties",
+      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.raw.users%2CPROD%29/Properties",
+      "shows": "Artifact 4: structured incident facts \u2014 verified_at and last_incident_id \u2014 written as typed catalog values rather than prose, under the `devguard` namespace.",
       "captured": true,
-      "file": "07-dataset-lineage.png",
-      "bytes": 112158,
+      "file": "21-writeback-properties.png",
+      "bytes": 142940,
       "reason": "",
       "console_errors": []
-    },
-    {
-      "slug": "08-column-lineage",
-      "title": "Column lineage",
-      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.analytics_marts.user_order_features%2CPROD%29/Lineage",
-      "shows": "The same graph with column detail expanded \u2014 the field-level mapping DataHub's dbt source derived from the manifest dbt itself produced.",
-      "captured": true,
-      "file": "08-column-lineage.png",
-      "bytes": 172578,
-      "reason": "",
-      "console_errors": [
-        "Failed to load resource: net::ERR_CONNECTION_RESET"
-      ]
-    },
-    {
-      "slug": "09-impact-analysis",
-      "title": "Impact analysis",
-      "url": "http://localhost:9002/dataset/urn%3Ali%3Adataset%3A%28urn%3Ali%3AdataPlatform%3Apostgres%2Cdevguard.analytics_marts.user_order_features%2CPROD%29/Lineage",
-      "shows": "DataHub's own impact analysis over the same graph DevGuard's Pathfinder walks for blast radius.",
-      "captured": true,
-      "file": "09-impact-analysis.png",
-      "bytes": 166763,
-      "reason": "",
-      "console_errors": [
-        "Failed to load resource: net::ERR_CONNECTION_RESET"
-      ]
     }
   ]
 }

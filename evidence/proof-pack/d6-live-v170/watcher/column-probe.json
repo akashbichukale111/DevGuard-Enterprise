@@ -1,0 +1,11 @@
+{
+  "table": "raw.users",
+  "columns": [
+    "customer_id",
+    "email",
+    "country",
+    "signup_ts",
+    "is_active"
+  ],
+  "probed_at_utc": "2026-08-08T10:35:07.339839+00:00"
+}

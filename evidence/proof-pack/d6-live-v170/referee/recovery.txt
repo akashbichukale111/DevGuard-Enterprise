@@ -1,0 +1,21 @@
+$ dbt run   (AFTER remediation)
+exit code: 0
+
+10:35:15  Running with dbt=1.12.0
+10:35:15  Registered adapter: postgres=1.11.0
+10:35:16  Found 3 models, 13 data tests, 2 sources, 477 macros
+10:35:16  
+10:35:16  Concurrency: 4 threads (target='dev')
+10:35:16  
+10:35:16  1 of 3 START sql view model analytics_staging.stg_orders ....................... [RUN]
+10:35:16  2 of 3 START sql view model analytics_staging.stg_users ........................ [RUN]
+10:35:16  2 of 3 OK created sql view model analytics_staging.stg_users ................... [CREATE VIEW in 0.16s]
+10:35:16  1 of 3 OK created sql view model analytics_staging.stg_orders .................. [CREATE VIEW in 0.16s]
+10:35:16  3 of 3 START sql table model analytics_marts.user_order_features ............... [RUN]
+10:35:17  3 of 3 OK created sql table model analytics_marts.user_order_features .......... [SELECT 1715 in 0.14s]
+10:35:17  
+10:35:17  Finished running 1 table model, 2 view models in 0 hours 0 minutes and 0.44 seconds (0.44s).
+10:35:17  
+10:35:17  Completed successfully
+10:35:17  
+10:35:17  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=3

@@ -63,8 +63,10 @@ class Shot:
     #: Extra settle time in ms for graph canvases that animate into place.
     settle_ms: int = 2500
     full_page: bool = True
-    #: Optional selector to click before shooting (tab switches, toggles).
+    #: Optional selectors to click before shooting, in order (tab switches,
+    #: toggles, filter menus). A failed click is recorded, never fatal.
     click: Optional[str] = None
+    clicks: tuple[str, ...] = ()
 
 
 @dataclass
@@ -160,8 +162,10 @@ def shots() -> list[Shot]:
              wait_for="text=/Glossary|Term/i"),
         Shot("14-tags", "Tags",
              "/search?query=%2A&filter__entityType___false___EQUAL___0=TAG",
-             "Tag entities — including any tag DevGuard's Scribe created, since "
-             "a tag must exist before `add_tags` can apply it.",
+             "Tag entities, including `devguard_incident_impacted`. That one is "
+             "provisioned by scripts/provision_catalog.py, not minted by the "
+             "agent: `add_tags` fails against a tag URN that does not exist, and "
+             "the Scribe deliberately does not create one.",
              wait_for="text=/Tag|result/i"),
         Shot("15-policies", "Policies",
              "/settings/permissions/policies",
@@ -183,6 +187,52 @@ def shots() -> list[Shot]:
              "/analytics",
              "DataHub's built-in usage analytics over this instance.",
              wait_for="text=/Analytic|Chart|Section/i", settle_ms=4000),
+
+        # --- what DevGuard wrote back -------------------------------------
+        # These five are the other half of the integration. Everything above is
+        # DataHub showing what was ingested; these are DataHub showing what the
+        # agent put there after a verified recovery — the loop's output, read
+        # from the catalog by the same UI a human would use.
+        # The Resolved filter is opened deliberately. DataHub's Incidents tab
+        # defaults to ACTIVE only, and a correctly-finished DevGuard run leaves
+        # nothing active — so the default view of a *successful* run is an empty
+        # table, which is the least informative possible screenshot of the thing
+        # that worked.
+        Shot("19-writeback-incident", "Write-back — incident",
+             "/dataset/{wb}/Incidents",
+             "Artifact 1: the incident DevGuard raised on detection and resolved "
+             "only after the Referee verified the fix. Filtered to Resolved, "
+             "because a completed run leaves no active incident behind.",
+             wait_for="text=/Incident/i",
+             clicks=("text=/^Filter/", "text=/^State$/", "text=/^Resolved$/"),
+             settle_ms=4000),
+        Shot("20-writeback-column", "Write-back — column annotation",
+             "/dataset/{wb}/Schema",
+             "Artifact 3: the column-level tag and description written back to "
+             "the exact field the incident was about.",
+             wait_for="text=/user_id|customer_id/i", settle_ms=4000),
+        # The `devguard` group renders collapsed, and it is the only part of
+        # this page the write-back produced — the rest is dbt's own manifest
+        # metadata. Expanding it is the difference between a screenshot of
+        # artifact 4 and a screenshot of dbt.
+        Shot("21-writeback-properties", "Write-back — structured properties",
+             "/dataset/{wb}/Properties",
+             "Artifact 4: structured incident facts — verified_at and "
+             "last_incident_id — written as typed catalog values rather than "
+             "prose, under the `devguard` namespace.",
+             wait_for="text=/Propert/i",
+             # The row-expand chevron, not the group's label — clicking the text
+             # selects it and leaves the group collapsed.
+             clicks=(".anticon-right",), settle_ms=4000),
+        Shot("22-writeback-governance", "Write-back — governance tab",
+             "/dataset/{wb}/Governance",
+             "The governance surface of the dataset the agent wrote to, showing "
+             "owners, terms and domain alongside the agent's own annotations.",
+             wait_for="text=/Owner|Domain|Governance/i", settle_ms=4000),
+        Shot("23-writeback-dataset", "Write-back — dataset overview",
+             "/dataset/{wb}/",
+             "The whole picture on the incident's dataset after a complete run.",
+             wait_for="text=/Schema|Lineage/i", settle_ms=4000),
     ]
 
 
@@ -237,6 +287,10 @@ def main() -> int:
     ap.add_argument("--out", default="docs/screenshots/datahub")
     ap.add_argument("--dataset-urn", default=os.environ.get("DEVGUARD_PROBE_DATASET", ""))
     ap.add_argument("--ml-model-urn", default=os.environ.get("DEVGUARD_PROBE_MLMODEL", ""))
+    ap.add_argument("--writeback-urn", default=os.environ.get("DEVGUARD_WRITEBACK_DATASET", ""),
+                    help="The dataset DevGuard wrote back to. Its shots are skipped "
+                         "when absent rather than pointed at a dataset the agent "
+                         "never touched.")
     ap.add_argument("--only", default="", help="Comma-separated slugs to capture")
     args = ap.parse_args()
 
@@ -260,6 +314,7 @@ def main() -> int:
 
     ds = urllib.parse.quote(args.dataset_urn, safe="")
     ml = urllib.parse.quote(args.ml_model_urn, safe="")
+    wb = urllib.parse.quote(args.writeback_urn, safe="")
 
     wanted = {s.strip() for s in args.only.split(",") if s.strip()}
     plan = [s for s in shots() if not wanted or s.slug in wanted]
@@ -267,6 +322,8 @@ def main() -> int:
         plan = [s for s in plan if "{ds}" not in s.path]
     if not args.ml_model_urn:
         plan = [s for s in plan if "{ml}" not in s.path]
+    if not args.writeback_urn:
+        plan = [s for s in plan if "{wb}" not in s.path]
 
     captures: list[Capture] = []
 
@@ -321,7 +378,8 @@ def main() -> int:
         for shot in plan:
             if shot.slug == "01-login":
                 continue
-            url = base + shot.path.replace("{ds}", ds).replace("{ml}", ml)
+            url = base + (shot.path.replace("{ds}", ds)
+                          .replace("{ml}", ml).replace("{wb}", wb))
             errors.clear()
             try:
                 page.goto(url, wait_until="domcontentloaded", timeout=60000)
@@ -332,11 +390,12 @@ def main() -> int:
                         # A missing marker is not fatal — the page may render the
                         # same information under different copy. It is recorded.
                         errors.append(f"marker not found: {shot.wait_for}")
-                if shot.click:
+                for selector in ([shot.click] if shot.click else []) + list(shot.clicks):
                     try:
-                        page.click(shot.click, timeout=8000)
+                        page.click(selector, timeout=8000)
+                        page.wait_for_timeout(1200)
                     except Exception as exc:  # noqa: BLE001
-                        errors.append(f"click failed: {exc}")
+                        errors.append(f"click {selector!r} failed: {exc}")
                 page.wait_for_timeout(shot.settle_ms)
                 dismiss_overlays(page)
                 page.wait_for_timeout(600)
@@ -360,6 +419,7 @@ def main() -> int:
         "frontend": base,
         "dataset_urn": args.dataset_urn,
         "ml_model_urn": args.ml_model_urn,
+        "writeback_urn": args.writeback_urn,
         "viewport": DEFAULT_VIEWPORT,
         "captures": [c.__dict__ for c in captures],
     }
