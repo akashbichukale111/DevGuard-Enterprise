@@ -42,12 +42,16 @@ cd frontend && NEXT_OUTPUT=export npm run build && npx --yes serve out
 
 Select **`d6-loop-pass2`** in the run picker.
 
-Point at the handoff rail. Nine agents, left to right.
+Point at the handoff rail. Eleven nodes, left to right — the nine loop agents,
+plus the **Sentinel** (the injection boundary, which produces artifacts without
+owning a handoff edge, so it renders `ran_no_record`) and the **Auditor** (a
+`to_agent`-only terminal). Say the number you can see on screen; a viewer
+counting along is the fastest way to lose them.
 
 > "Detection is deterministic — an LLM cannot make an exit code more true. The
 > Cartographer resolves the failing artifact to real DataHub URNs. The Pathfinder
-> walks column-level lineage and terminates at the ML model. Six of these nine
-> agents use no model at all."
+> walks column-level lineage and terminates at the ML model. Eight of these nine
+> agents use no model at all — and the one that reasons holds zero tools."
 
 Click any evidence chip.
 

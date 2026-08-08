@@ -65,8 +65,9 @@ the tick.
 
 ## Conventions
 
-**Determinism where determinism is available.** Six of the nine agents use no
-model. If you are adding logic that a deterministic implementation could handle,
+**Determinism where determinism is available.** Eight of the nine agents use no
+model — `backend/v2/agents/diagnostician.py` is the only agent module that
+imports an inference client at all. If you are adding logic that a deterministic implementation could handle,
 implement it deterministically. "We did not put a model where a model was not
 needed" is a design property worth keeping.
 
