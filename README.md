@@ -14,7 +14,9 @@ related asset starts from more knowledge than the last one.
 
 `Agents That Do Real Work` &nbsp;·&nbsp; `Production ML Agents`
 
-[**Live demo**](#see-it-in-60-seconds) &nbsp;·&nbsp; [**Evidence**](evidence/) &nbsp;·&nbsp; [**Architecture**](ARCHITECTURE.md) &nbsp;·&nbsp; [**Security**](SECURITY.md) &nbsp;·&nbsp; [**Disclosure**](DISCLOSURE.md) &nbsp;·&nbsp; [**Judge walkthrough**](docs/JUDGE_WALKTHROUGH.md) &nbsp;·&nbsp; [**Devpost copy**](docs/DEVPOST.md)
+[**Hosted Command Center**](https://dev-guard-enterprise.vercel.app/command) &nbsp;·&nbsp; [**Run it in 60s**](#see-it-in-60-seconds) &nbsp;·&nbsp; [**Judge walkthrough**](docs/JUDGE_WALKTHROUGH.md) &nbsp;·&nbsp; [**Judging matrix**](docs/JUDGING_MATRIX.md) &nbsp;·&nbsp; [**Evidence**](evidence/) &nbsp;·&nbsp; [**Architecture**](ARCHITECTURE.md) &nbsp;·&nbsp; [**Security**](SECURITY.md) &nbsp;·&nbsp; [**Disclosure**](DISCLOSURE.md) &nbsp;·&nbsp; [**Devpost copy**](docs/DEVPOST.md)
+
+<sub>The hosted link serves the Command Center only — Scanner and Nexus need a backend. Everything else on this page runs from a clone with no key and no infrastructure.</sub>
 
 [![CI](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
