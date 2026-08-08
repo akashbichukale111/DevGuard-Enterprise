@@ -1,21 +1,21 @@
 {
-  "name": "edit lineage",
+  "name": "attach a glossary term",
   "expectation": "DENY",
   "observed": "DENY",
   "passed": true,
-  "detail": "EDIT_LINEAGE was never granted \u2014 lineage is ingested, never authored (the design thesis)",
+  "detail": "EDIT_ENTITY_GLOSSARY_TERMS was never granted \u2014 an agent must not author business vocabulary, only reference it",
   "response": {
     "errors": [
       {
-        "message": "Unauthorized to edit urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD) lineage for dataset",
+        "message": "Unauthorized to perform this action. Please contact your DataHub administrator.",
         "locations": [
           {
             "line": 1,
-            "column": 42
+            "column": 37
           }
         ],
         "path": [
-          "updateLineage"
+          "addTerms"
         ],
         "extensions": {
           "code": 403,
@@ -25,7 +25,7 @@
       }
     ],
     "data": {
-      "updateLineage": null
+      "addTerms": null
     },
     "extensions": {}
   }

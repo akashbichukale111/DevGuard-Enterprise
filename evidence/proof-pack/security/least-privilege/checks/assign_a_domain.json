@@ -1,21 +1,21 @@
 {
-  "name": "edit lineage",
+  "name": "assign a domain",
   "expectation": "DENY",
   "observed": "DENY",
   "passed": true,
-  "detail": "EDIT_LINEAGE was never granted \u2014 lineage is ingested, never authored (the design thesis)",
+  "detail": "EDIT_DOMAINS_PRIVILEGE was never granted \u2014 domain membership decides who else inherits access, so an agent must not reassign it",
   "response": {
     "errors": [
       {
-        "message": "Unauthorized to edit urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD) lineage for dataset",
+        "message": "Unauthorized to perform this action. Please contact your DataHub administrator.",
         "locations": [
           {
             "line": 1,
-            "column": 42
+            "column": 53
           }
         ],
         "path": [
-          "updateLineage"
+          "setDomain"
         ],
         "extensions": {
           "code": 403,
@@ -25,7 +25,7 @@
       }
     ],
     "data": {
-      "updateLineage": null
+      "setDomain": null
     },
     "extensions": {}
   }

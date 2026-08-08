@@ -1,0 +1,27 @@
+the least-privilege policy least-privilege verification — 11 checks as urn:li:corpuser:devguard_agent
+
+  [PASS] ALLOW -> ALLOW  read in-scope dataset
+  [PASS] ALLOW -> ALLOW  artifact 1 — raise incident
+  [PASS] ALLOW -> ALLOW  artifact 3 — column tag
+  [PASS] ALLOW -> ALLOW  artifact 5 — add owner
+  [FAIL] DENY  -> ALLOW  delete a scoped dataset
+         DELETE_ENTITY was never granted — an agent must not remove assets
+  [FAIL] DENY  -> ALLOW  edit lineage
+         EDIT_LINEAGE was never granted — lineage is ingested, never authored (the design thesis)
+  [FAIL] DENY  -> ALLOW  write to an OUT-OF-SCOPE dataset
+         the dbt sibling is real and ingested, but outside the five-URN scope
+  [FAIL] DENY  -> ALLOW  create a policy (widen its own grants)
+         MANAGE_POLICIES was never granted — it must not escalate itself
+  [FAIL] DENY  -> ALLOW  create an ingestion source
+         MANAGE_INGESTION was never granted — it must not change what enters the catalog
+  [FAIL] DENY  -> ALLOW  attach a glossary term
+         EDIT_ENTITY_GLOSSARY_TERMS was never granted — an agent must not author business vocabulary, only reference it
+  [FAIL] DENY  -> ALLOW  assign a domain
+         EDIT_DOMAINS_PRIVILEGE was never granted — domain membership decides who else inherits access, so an agent must not reassign it
+
+ALLOW: 4/4 behaved as required
+DENY : 0/7 correctly refused
+
+summary: evidence/proof-pack/security/least-privilege/summary.json
+
+VERIFICATION FAILED — the account is not scoped as documented.
