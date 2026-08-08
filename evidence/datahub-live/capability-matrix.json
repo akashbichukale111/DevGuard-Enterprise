@@ -1,0 +1,2043 @@
+{
+  "meta": {
+    "gms_url": "http://localhost:8080",
+    "graphql_url": "http://localhost:8080/api/graphql",
+    "server_version": "v1.7.0",
+    "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+    "sibling_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+    "ml_model_urn": "urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)",
+    "captured_at": "2026-08-08T10:18:41.055890+00:00",
+    "graphql_types_introspected": 935,
+    "graphql_calls": 37,
+    "token_source": null
+  },
+  "results": [
+    {
+      "capability": "Dataset",
+      "surface": "GraphQL `dataset(urn:)` \u2192 name, platform, properties",
+      "status": "VERIFIED",
+      "evidence": "resolved urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+            "name": "user_order_features",
+            "platform": {
+              "name": "postgres"
+            },
+            "properties": {
+              "name": "user_order_features",
+              "description": null,
+              "qualifiedName": null,
+              "customProperties": []
+            }
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Schema",
+      "surface": "GraphQL `Dataset.schemaMetadata` \u2192 fields, native types",
+      "status": "VERIFIED",
+      "evidence": "7 schema fields",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "schemaMetadata": {
+              "name": "devguard.analytics_marts.user_order_features",
+              "fields": [
+                {
+                  "fieldPath": "user_id",
+                  "type": "NUMBER",
+                  "nativeDataType": "BIGINT",
+                  "nullable": true,
+                  "description": null
+                },
+                {
+                  "fieldPath": "country",
+                  "type": "STRING",
+                  "nativeDataType": "TEXT",
+                  "nullable": true,
+                  "description": null
+                },
+                {
+                  "fieldPath": "order_count",
+                  "type": "NUMBER",
+                  "nativeDataType": "BIGINT",
+                  "nullable": true,
+                  "description": null
+                },
+                {
+                  "fieldPath": "lifetime_value_cents",
+                  "type": "NUMBER",
+                  "nativeDataType": "BIGINT",
+                  "nullable": true,
+                  "description": null
+                },
+                {
+                  "fieldPath": "avg_order_cents",
+                  "type": "NUMBER",
+                  "nativeDataType": "NUMERIC",
+                  "nullable": true,
+                  "description": null
+                },
+                {
+                  "fieldPath": "refund_count",
+                  "type": "NUMBER",
+                  "nativeDataType": "BIGINT",
+                  "nullable": true,
+                  "description": null
+                },
+                {
+                  "fieldPath": "last_order_at",
+                  "type": "TIME",
+                  "nativeDataType": "TIMESTAMP WITH TIME ZONE",
+                  "nullable": true,
+                  "description": null
+                }
+              ]
+            }
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Lineage (table-level)",
+      "surface": "GraphQL `searchAcrossLineage` DOWNSTREAM",
+      "status": "VERIFIED",
+      "evidence": "2 downstream results",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "searchAcrossLineage": {
+            "total": 2,
+            "searchResults": [
+              {
+                "degree": 2,
+                "entity": {
+                  "urn": "urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)",
+                  "type": "MLMODEL"
+                }
+              },
+              {
+                "degree": 1,
+                "entity": {
+                  "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard,churn_training,PROD),train_churn_model)",
+                  "type": "DATA_JOB"
+                }
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Column Lineage",
+      "surface": "GraphQL `Dataset.lineage` fine-grained / `schemaFieldEntity`",
+      "status": "VERIFIED",
+      "evidence": "fine-grained paths present",
+      "note": "Column lineage travels as `paths` on lineage search results.",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "searchAcrossLineage": {
+            "searchResults": [
+              {
+                "degree": 2,
+                "paths": [
+                  {
+                    "path": [
+                      {
+                        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+                        "type": "DATASET"
+                      },
+                      {
+                        "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard,churn_training,PROD),train_churn_model)",
+                        "type": "DATA_JOB"
+                      },
+                      {
+                        "urn": "urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)",
+                        "type": "MLMODEL"
+                      }
+                    ]
+                  }
+                ],
+                "entity": {
+                  "urn": "urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)",
+                  "type": "MLMODEL"
+                }
+              },
+              {
+                "degree": 1,
+                "paths": [
+                  {
+                    "path": [
+                      {
+                        "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+                        "type": "DATASET"
+                      },
+                      {
+                        "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard,churn_training,PROD),train_churn_model)",
+                        "type": "DATA_JOB"
+                      }
+                    ]
+                  }
+                ],
+                "entity": {
+                  "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard,churn_training,PROD),train_churn_model)",
+                  "type": "DATA_JOB"
+                }
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Upstream Assets",
+      "surface": "GraphQL `searchAcrossLineage` UPSTREAM",
+      "status": "VERIFIED",
+      "evidence": "9 upstream results",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "searchAcrossLineage": {
+            "total": 9,
+            "searchResults": [
+              {
+                "degree": 3,
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "degree": 1,
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "degree": 3,
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_orders,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "degree": 3,
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.orders,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "degree": 3,
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "degree": 4,
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.orders,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "degree": 4,
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "degree": 2,
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_orders,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "degree": 2,
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+                  "type": "DATASET"
+                }
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Downstream Assets",
+      "surface": "GraphQL `Dataset.lineage(direction: DOWNSTREAM)`",
+      "status": "VERIFIED",
+      "evidence": "2 direct downstream edges",
+      "note": "`Dataset.downstream` does not exist on this build; the one-hop neighbour list is `Dataset.lineage(input:)`.",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "lineage": {
+              "total": 2,
+              "relationships": [
+                {
+                  "type": "Consumes",
+                  "entity": {
+                    "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard,churn_training,PROD),train_churn_model)",
+                    "type": "DATA_JOB"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Column Lineage (fine-grained aspect)",
+      "surface": "GraphQL `Dataset.fineGrainedLineages`",
+      "status": "VERIFIED",
+      "evidence": "7 fine-grained column mappings on the entity itself",
+      "note": "Read straight off the aspect DataHub's dbt source wrote from the manifest \u2014 no traversal involved.",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "fineGrainedLineages": [
+              {
+                "upstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ],
+                "downstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ]
+              },
+              {
+                "upstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ],
+                "downstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ]
+              },
+              {
+                "upstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ],
+                "downstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ]
+              },
+              {
+                "upstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ],
+                "downstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ]
+              },
+              {
+                "upstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ],
+                "downstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ]
+              },
+              {
+                "upstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ],
+                "downstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ]
+              },
+              {
+                "upstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ],
+                "downstreams": [
+                  {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Entity Health",
+      "surface": "GraphQL `Dataset.health` (assertion-derived status)",
+      "status": "VERIFIED",
+      "evidence": "health: INCIDENTS=PASS",
+      "note": "DataHub derives this from assertion results, which is why it is empty until dbt test outcomes are ingested.",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "health": [
+              {
+                "type": "INCIDENTS",
+                "status": "PASS",
+                "message": null
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Relationships",
+      "surface": "GraphQL `Dataset.relationships(input:)` typed edges",
+      "status": "VERIFIED",
+      "evidence": "8 typed edges",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "relationships": {
+              "total": 8,
+              "relationships": [
+                {
+                  "type": "DownstreamOf",
+                  "entity": {
+                    "urn": "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),order_count)",
+                    "type": "SCHEMA_FIELD"
+                  }
+                },
+                {
+                  "type": "DownstreamOf",
+                  "entity": {
+                    "urn": "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),refund_count)",
+                    "type": "SCHEMA_FIELD"
+                  }
+                },
+                {
+                  "type": "DownstreamOf",
+                  "entity": {
+                    "urn": "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),last_order_at)",
+                    "type": "SCHEMA_FIELD"
+                  }
+                },
+                {
+                  "type": "DownstreamOf",
+                  "entity": {
+                    "urn": "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),avg_order_cents)",
+                    "type": "SCHEMA_FIELD"
+                  }
+                },
+                {
+                  "type": "DownstreamOf",
+                  "entity": {
+                    "urn": "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),country)",
+                    "type": "SCHEMA_FIELD"
+                  }
+                },
+                {
+                  "type": "DownstreamOf",
+                  "entity": {
+                    "urn": "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),lifetime_value_cents)",
+                    "type": "SCHEMA_FIELD"
+                  }
+                },
+                {
+                  "type": "DownstreamOf",
+                  "entity": {
+                    "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+                    "type": "DATASET"
+                  }
+                },
+                {
+                  "type": "DownstreamOf",
+                  "entity": {
+                    "urn": "urn:li:schemaField:(urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD),user_id)",
+                    "type": "SCHEMA_FIELD"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Graph Traversal (paths)",
+      "surface": "GraphQL `searchAcrossLineage` degree>1 hop walk",
+      "status": "VERIFIED",
+      "evidence": "multi-hop degrees observed: 1,2",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "searchAcrossLineage": {
+            "searchResults": [
+              {
+                "degree": 2,
+                "entity": {
+                  "urn": "urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)",
+                  "type": "MLMODEL"
+                }
+              },
+              {
+                "degree": 1,
+                "entity": {
+                  "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard,churn_training,PROD),train_churn_model)",
+                  "type": "DATA_JOB"
+                }
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Ownership",
+      "surface": "GraphQL `Dataset.ownership` \u2192 owners + ownership type",
+      "status": "VERIFIED",
+      "evidence": "2 owners",
+      "note": "Answered on the sibling entity, not the URN probed first.",
+      "answered_on": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "ownership": {
+              "owners": [
+                {
+                  "owner": {
+                    "urn": "urn:li:corpuser:datahub",
+                    "username": "datahub"
+                  },
+                  "ownershipType": {
+                    "urn": "urn:li:ownershipType:__system__business_owner",
+                    "info": {
+                      "name": "Business Owner"
+                    }
+                  }
+                },
+                {
+                  "owner": {
+                    "urn": "urn:li:corpuser:datahub",
+                    "username": "datahub"
+                  },
+                  "ownershipType": {
+                    "urn": "urn:li:ownershipType:__system__technical_owner",
+                    "info": {
+                      "name": "Technical Owner"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Domains",
+      "surface": "GraphQL `listDomains` + `Dataset.domain`",
+      "status": "VERIFIED",
+      "evidence": "1 domains",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "listDomains": {
+            "total": 1,
+            "domains": [
+              {
+                "urn": "urn:li:domain:devguard_substrate",
+                "properties": {
+                  "name": "DevGuard Substrate",
+                  "description": "The demonstration data platform DevGuard reasons over: a real PostgreSQL, real dbt models built from it, and the churn model trained on the resulting feature table. Created by scripts/provision_domain.py. This domain groups assets for browse and governance; it is deliberately NOT the scope of the agent's write policy, which is an explicit URN allowlist."
+                }
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Glossary",
+      "surface": "GraphQL `getRootGlossaryNodes` + `getRootGlossaryTerms`",
+      "status": "VERIFIED",
+      "evidence": "1 root nodes, 0 root terms",
+      "note": "Terms defined under a node are not root terms \u2014 querying only `getRootGlossaryTerms` reports an empty glossary on a catalog that has one.",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "getRootGlossaryNodes": {
+            "total": 1,
+            "nodes": [
+              {
+                "urn": "urn:li:glossaryNode:DevGuard",
+                "properties": {
+                  "name": "DevGuard"
+                }
+              }
+            ]
+          },
+          "getRootGlossaryTerms": {
+            "total": 0,
+            "terms": []
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Tags",
+      "surface": "GraphQL `Dataset.tags` + `searchAcrossEntities(types:[TAG])`",
+      "status": "VERIFIED",
+      "evidence": "3 tag entities",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "searchAcrossEntities": {
+            "total": 3,
+            "searchResults": [
+              {
+                "entity": {
+                  "urn": "urn:li:tag:devguard_hero_path",
+                  "properties": null
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:tag:ml_feature_table",
+                  "properties": null
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:tag:pii",
+                  "properties": null
+                }
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Browse Paths",
+      "surface": "GraphQL `browseV2`",
+      "status": "VERIFIED",
+      "evidence": "2 browse groups at root",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "browseV2": {
+            "total": 2,
+            "groups": [
+              {
+                "name": "devguard",
+                "count": 5
+              },
+              {
+                "name": "urn:li:container:8d3dc4b5c7247ab608bb7d89d8dfa0d7",
+                "count": 5
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Assertions",
+      "surface": "GraphQL `Dataset.assertions`",
+      "status": "VERIFIED",
+      "evidence": "5 assertions on this dataset",
+      "note": "Answered on the sibling entity, not the URN probed first.",
+      "answered_on": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "assertions": {
+              "total": 5,
+              "assertions": [
+                {
+                  "urn": "urn:li:assertion:8264083228407a2821a71cb55abacd86",
+                  "info": {
+                    "type": "DATASET",
+                    "description": null
+                  }
+                },
+                {
+                  "urn": "urn:li:assertion:c0408985ce5a4e2f27f0a2b4a595f5c9",
+                  "info": {
+                    "type": "DATASET",
+                    "description": null
+                  }
+                },
+                {
+                  "urn": "urn:li:assertion:d7fbd7bd1f36729ecc6ea2b64c851dc0",
+                  "info": {
+                    "type": "DATASET",
+                    "description": null
+                  }
+                },
+                {
+                  "urn": "urn:li:assertion:3657d7159667d0b03eff4f1888066a60",
+                  "info": {
+                    "type": "DATASET",
+                    "description": null
+                  }
+                },
+                {
+                  "urn": "urn:li:assertion:41179b7ad7ee75f4fb73dcb52da399fa",
+                  "info": {
+                    "type": "DATASET",
+                    "description": null
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Policies",
+      "surface": "GraphQL `listPolicies`",
+      "status": "VERIFIED",
+      "evidence": "16 policies",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "listPolicies": {
+            "total": 16,
+            "policies": [
+              {
+                "urn": "urn:li:dataHubPolicy:0",
+                "type": "PLATFORM",
+                "state": "ACTIVE",
+                "name": "Root User - All Platform Privileges",
+                "privileges": [
+                  "CREATE_LOGICAL_MODELS",
+                  "MANAGE_POLICIES",
+                  "MANAGE_INGESTION",
+                  "MANAGE_SECRETS",
+                  "MANAGE_USERS_AND_GROUPS",
+                  "VIEW_ANALYTICS",
+                  "GENERATE_PERSONAL_ACCESS_TOKENS",
+                  "MANAGE_ACCESS_TOKENS",
+                  "MANAGE_SERVICE_ACCOUNTS",
+                  "MANAGE_DOMAINS",
+                  "MANAGE_GLOBAL_ANNOUNCEMENTS",
+                  "MANAGE_TESTS",
+                  "MANAGE_GLOSSARIES",
+                  "MANAGE_USER_CREDENTIALS",
+                  "MANAGE_TAGS",
+                  "MANAGE_GLOBAL_VIEWS",
+                  "MANAGE_GLOBAL_SETTINGS",
+                  "RESTORE_INDICES_PRIVILEGE",
+                  "GET_TIMESERIES_INDEX_SIZES_PRIVILEGE",
+                  "TRUNCATE_TIMESERIES_INDEX_PRIVILEGE",
+                  "GET_ES_TASK_STATUS_PRIVILEGE",
+                  "SET_WRITEABLE_PRIVILEGE",
+                  "APPLY_RETENTION_PRIVILEGE",
+                  "MANAGE_GLOBAL_OWNERSHIP_TYPES",
+                  "GET_ANALYTICS_PRIVILEGE",
+                  "CREATE_BUSINESS_ATTRIBUTE",
+                  "MANAGE_BUSINESS_ATTRIBUTE",
+                  "MANAGE_STRUCTURED_PROPERTIES",
+                  "VIEW_STRUCTURED_PROPERTIES_PAGE",
+                  "MANAGE_DOCUMENTATION_FORMS",
+                  "MANAGE_FEATURES",
+                  "MANAGE_SYSTEM_OPERATIONS",
+                  "GET_PLATFORM_EVENTS",
+                  "MANAGE_HOME_PAGE_TEMPLATES",
+                  "GET_METADATA_CHANGE_LOG_EVENTS",
+                  "MANAGE_DOCUMENTS",
+                  "GET_TOPIC_EVENTS"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:1",
+                "type": "METADATA",
+                "state": "ACTIVE",
+                "name": "Root User - Edit and View All Resources",
+                "privileges": [
+                  "EDIT_ENTITY",
+                  "VIEW_ENTITY_PAGE",
+                  "VIEW_DATASET_USAGE",
+                  "VIEW_DATASET_PROFILE",
+                  "VIEW_DATASET_OPERATIONS",
+                  "EDIT_LINEAGE",
+                  "EDIT_ENTITY_ASSERTIONS",
+                  "SEARCH_PRIVILEGE",
+                  "GET_COUNTS_PRIVILEGE",
+                  "GET_TIMESERIES_ASPECT_PRIVILEGE",
+                  "GET_ENTITY_PRIVILEGE",
+                  "GET_TIMELINE_PRIVILEGE",
+                  "PRODUCE_PLATFORM_EVENT_PRIVILEGE",
+                  "MANAGE_DATA_PRODUCTS",
+                  "MANAGE_GLOBAL_OWNERSHIP_TYPES",
+                  "DELETE_ENTITY",
+                  "ES_EXPLAIN_QUERY_PRIVILEGE",
+                  "EXECUTE_ENTITY",
+                  "MANAGE_ASSET_SUMMARY"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:7",
+                "type": "PLATFORM",
+                "state": "ACTIVE",
+                "name": "All Users - Base Platform Privileges",
+                "privileges": [
+                  "VIEW_ANALYTICS",
+                  "GENERATE_PERSONAL_ACCESS_TOKENS"
+                ],
+                "actors": {
+                  "allUsers": true,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:admin-domain-manage-data-products-policy",
+                "type": "METADATA",
+                "state": "ACTIVE",
+                "name": "Admins - Manage Data Products on All Domains",
+                "privileges": [
+                  "MANAGE_DATA_PRODUCTS"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:admin-metadata-policy",
+                "type": "METADATA",
+                "state": "ACTIVE",
+                "name": "Admins - Metadata Policy",
+                "privileges": [
+                  "VIEW_ENTITY_PAGE",
+                  "EDIT_ENTITY_TAGS",
+                  "EDIT_ENTITY_GLOSSARY_TERMS",
+                  "EDIT_ENTITY_OWNERS",
+                  "EDIT_ENTITY_DOCS",
+                  "EDIT_ENTITY_DOC_LINKS",
+                  "EDIT_ENTITY_STATUS",
+                  "EDIT_DOMAINS_PRIVILEGE",
+                  "EDIT_ENTITY_DATA_PRODUCTS",
+                  "EDIT_DEPRECATION_PRIVILEGE",
+                  "EDIT_ENTITY_ASSERTIONS",
+                  "EDIT_ENTITY_INCIDENTS",
+                  "EDIT_ENTITY",
+                  "EDIT_DATASET_COL_TAGS",
+                  "EDIT_DATASET_COL_GLOSSARY_TERMS",
+                  "EDIT_DATASET_COL_DESCRIPTION",
+                  "EDIT_DATASET_COL_BUSINESS_ATTRIBUTE_PRIVILEGE",
+                  "VIEW_DATASET_USAGE",
+                  "VIEW_DATASET_PROFILE",
+                  "VIEW_DATASET_OPERATIONS",
+                  "EDIT_TAG_COLOR",
+                  "EDIT_GROUP_MEMBERS",
+                  "EDIT_USER_PROFILE",
+                  "EDIT_CONTACT_INFO",
+                  "EDIT_LINEAGE",
+                  "EDIT_ENTITY_QUERIES",
+                  "SEARCH_PRIVILEGE",
+                  "GET_COUNTS_PRIVILEGE",
+                  "GET_TIMESERIES_ASPECT_PRIVILEGE",
+                  "GET_ENTITY_PRIVILEGE",
+                  "GET_TIMELINE_PRIVILEGE",
+                  "PRODUCE_PLATFORM_EVENT_PRIVILEGE",
+                  "MANAGE_DATA_PRODUCTS",
+                  "DELETE_ENTITY",
+                  "ES_EXPLAIN_QUERY_PRIVILEGE",
+                  "EDIT_ENTITY_PROPERTIES",
+                  "EXECUTE_ENTITY",
+                  "MANAGE_ASSET_SUMMARY"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:admin-platform-policy",
+                "type": "PLATFORM",
+                "state": "ACTIVE",
+                "name": "Admins - Platform Policy",
+                "privileges": [
+                  "CREATE_LOGICAL_MODELS",
+                  "MANAGE_POLICIES",
+                  "MANAGE_INGESTION",
+                  "MANAGE_SECRETS",
+                  "MANAGE_USERS_AND_GROUPS",
+                  "VIEW_ANALYTICS",
+                  "GENERATE_PERSONAL_ACCESS_TOKENS",
+                  "MANAGE_ACCESS_TOKENS",
+                  "MANAGE_SERVICE_ACCOUNTS",
+                  "MANAGE_DOMAINS",
+                  "MANAGE_GLOBAL_ANNOUNCEMENTS",
+                  "MANAGE_TESTS",
+                  "MANAGE_GLOSSARIES",
+                  "MANAGE_USER_CREDENTIALS",
+                  "MANAGE_TAGS",
+                  "MANAGE_GLOBAL_VIEWS",
+                  "MANAGE_GLOBAL_SETTINGS",
+                  "RESTORE_INDICES_PRIVILEGE",
+                  "GET_TIMESERIES_INDEX_SIZES_PRIVILEGE",
+                  "TRUNCATE_TIMESERIES_INDEX_PRIVILEGE",
+                  "GET_ES_TASK_STATUS_PRIVILEGE",
+                  "SET_WRITEABLE_PRIVILEGE",
+                  "APPLY_RETENTION_PRIVILEGE",
+                  "MANAGE_GLOBAL_OWNERSHIP_TYPES",
+                  "GET_ANALYTICS_PRIVILEGE",
+                  "CREATE_BUSINESS_ATTRIBUTE",
+                  "MANAGE_BUSINESS_ATTRIBUTE",
+                  "MANAGE_STRUCTURED_PROPERTIES",
+                  "VIEW_STRUCTURED_PROPERTIES_PAGE",
+                  "MANAGE_DOCUMENTATION_FORMS",
+                  "MANAGE_FEATURES",
+                  "MANAGE_SYSTEM_OPERATIONS",
+                  "GET_PLATFORM_EVENTS",
+                  "MANAGE_HOME_PAGE_TEMPLATES",
+                  "GET_METADATA_CHANGE_LOG_EVENTS",
+                  "MANAGE_DOCUMENTS",
+                  "GET_TOPIC_EVENTS"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:asset-owners-metadata-policy",
+                "type": "METADATA",
+                "state": "ACTIVE",
+                "name": "Asset Owners - Metadata Policy",
+                "privileges": [
+                  "VIEW_ENTITY_PAGE",
+                  "EDIT_ENTITY_TAGS",
+                  "EDIT_ENTITY_GLOSSARY_TERMS",
+                  "EDIT_ENTITY_OWNERS",
+                  "EDIT_ENTITY_DOCS",
+                  "EDIT_ENTITY_DOC_LINKS",
+                  "EDIT_ENTITY_STATUS",
+                  "EDIT_DOMAINS_PRIVILEGE",
+                  "EDIT_ENTITY_DATA_PRODUCTS",
+                  "EDIT_DEPRECATION_PRIVILEGE",
+                  "EDIT_ENTITY_ASSERTIONS",
+                  "EDIT_ENTITY_INCIDENTS",
+                  "EDIT_ENTITY",
+                  "EDIT_DATASET_COL_TAGS",
+                  "EDIT_DATASET_COL_GLOSSARY_TERMS",
+                  "EDIT_DATASET_COL_DESCRIPTION",
+                  "EDIT_DATASET_COL_BUSINESS_ATTRIBUTE_PRIVILEGE",
+                  "VIEW_DATASET_USAGE",
+                  "VIEW_DATASET_PROFILE",
+                  "VIEW_DATASET_OPERATIONS",
+                  "EDIT_TAG_COLOR",
+                  "EDIT_GROUP_MEMBERS",
+                  "EDIT_USER_PROFILE",
+                  "EDIT_CONTACT_INFO",
+                  "EDIT_LINEAGE",
+                  "EDIT_ENTITY_QUERIES",
+                  "GET_TIMELINE_PRIVILEGE",
+                  "GET_ENTITY_PRIVILEGE",
+                  "GET_TIMESERIES_ASPECT_PRIVILEGE",
+                  "GET_COUNTS_PRIVILEGE",
+                  "MANAGE_DATA_PRODUCTS",
+                  "ES_EXPLAIN_QUERY_PRIVILEGE",
+                  "EDIT_ENTITY_PROPERTIES",
+                  "MANAGE_ASSET_SUMMARY"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": true
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:editor-domain-manage-data-products-policy",
+                "type": "METADATA",
+                "state": "ACTIVE",
+                "name": "Editors - Manage Data Products on All Domains",
+                "privileges": [
+                  "MANAGE_DATA_PRODUCTS"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:editor-metadata-policy",
+                "type": "METADATA",
+                "state": "ACTIVE",
+                "name": "Editors - Metadata Policy",
+                "privileges": [
+                  "VIEW_ENTITY_PAGE",
+                  "EDIT_ENTITY_TAGS",
+                  "EDIT_ENTITY_GLOSSARY_TERMS",
+                  "EDIT_ENTITY_DOCS",
+                  "EDIT_ENTITY_DOC_LINKS",
+                  "EDIT_ENTITY_STATUS",
+                  "EDIT_DOMAINS_PRIVILEGE",
+                  "EDIT_ENTITY_DATA_PRODUCTS",
+                  "EDIT_DEPRECATION_PRIVILEGE",
+                  "EDIT_ENTITY_ASSERTIONS",
+                  "EDIT_ENTITY_INCIDENTS",
+                  "EDIT_DATASET_COL_TAGS",
+                  "EDIT_DATASET_COL_GLOSSARY_TERMS",
+                  "EDIT_DATASET_COL_DESCRIPTION",
+                  "EDIT_DATASET_COL_BUSINESS_ATTRIBUTE_PRIVILEGE",
+                  "VIEW_DATASET_USAGE",
+                  "VIEW_DATASET_PROFILE",
+                  "VIEW_DATASET_OPERATIONS",
+                  "EDIT_TAG_COLOR",
+                  "EDIT_LINEAGE",
+                  "EDIT_ENTITY_QUERIES",
+                  "SEARCH_PRIVILEGE",
+                  "GET_COUNTS_PRIVILEGE",
+                  "GET_TIMESERIES_ASPECT_PRIVILEGE",
+                  "GET_ENTITY_PRIVILEGE",
+                  "GET_TIMELINE_PRIVILEGE",
+                  "PRODUCE_PLATFORM_EVENT_PRIVILEGE",
+                  "MANAGE_DATA_PRODUCTS",
+                  "ES_EXPLAIN_QUERY_PRIVILEGE",
+                  "EDIT_ENTITY_PROPERTIES",
+                  "VIEW_STRUCTURED_PROPERTIES_PAGE",
+                  "MANAGE_ASSET_SUMMARY"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:editor-metadata-policy-entities",
+                "type": "METADATA",
+                "state": "ACTIVE",
+                "name": "Editors - Edit Metadata Entities",
+                "privileges": [
+                  "EDIT_ENTITY"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:editor-platform-policy",
+                "type": "PLATFORM",
+                "state": "ACTIVE",
+                "name": "Editors - Platform Policy",
+                "privileges": [
+                  "GENERATE_PERSONAL_ACCESS_TOKENS",
+                  "MANAGE_DOMAINS",
+                  "MANAGE_GLOBAL_ANNOUNCEMENTS",
+                  "MANAGE_GLOSSARIES",
+                  "MANAGE_TAGS",
+                  "MANAGE_BUSINESS_ATTRIBUTE",
+                  "MANAGE_STRUCTURED_PROPERTIES",
+                  "VIEW_STRUCTURED_PROPERTIES_PAGE",
+                  "MANAGE_DOCUMENTATION_FORMS",
+                  "MANAGE_FEATURES",
+                  "MANAGE_DOCUMENTS"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:reader-metadata-policy",
+                "type": "METADATA",
+                "state": "ACTIVE",
+                "name": "Readers - Metadata Policy",
+                "privileges": [
+                  "VIEW_ENTITY_PAGE",
+                  "VIEW_DATASET_USAGE",
+                  "VIEW_DATASET_PROFILE",
+                  "VIEW_DATASET_OPERATIONS",
+                  "SEARCH_PRIVILEGE",
+                  "GET_COUNTS_PRIVILEGE",
+                  "GET_TIMESERIES_ASPECT_PRIVILEGE",
+                  "GET_ENTITY_PRIVILEGE",
+                  "GET_TIMELINE_PRIVILEGE",
+                  "ES_EXPLAIN_QUERY_PRIVILEGE",
+                  "VIEW_STRUCTURED_PROPERTIES_PAGE"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:reader-platform-policy",
+                "type": "PLATFORM",
+                "state": "ACTIVE",
+                "name": "Readers - Platform Policy",
+                "privileges": [],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:root-domain-manage-data-products-policy",
+                "type": "METADATA",
+                "state": "ACTIVE",
+                "name": "Root User - Manage Data Products on All Domains",
+                "privileges": [
+                  "MANAGE_DATA_PRODUCTS"
+                ],
+                "actors": {
+                  "allUsers": false,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:view-dataset-sensitive",
+                "type": "METADATA",
+                "state": "ACTIVE",
+                "name": "All Users - View Dataset Sensitive Information",
+                "privileges": [
+                  "VIEW_DATASET_USAGE",
+                  "VIEW_DATASET_PROFILE",
+                  "VIEW_DATASET_OPERATIONS"
+                ],
+                "actors": {
+                  "allUsers": true,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              },
+              {
+                "urn": "urn:li:dataHubPolicy:view-entity-page-all",
+                "type": "METADATA",
+                "state": "ACTIVE",
+                "name": "All Users - View Entity Page",
+                "privileges": [
+                  "VIEW_ENTITY_PAGE",
+                  "SEARCH_PRIVILEGE",
+                  "GET_COUNTS_PRIVILEGE",
+                  "GET_TIMESERIES_ASPECT_PRIVILEGE",
+                  "GET_ENTITY_PRIVILEGE",
+                  "GET_TIMELINE_PRIVILEGE",
+                  "ES_EXPLAIN_QUERY_PRIVILEGE"
+                ],
+                "actors": {
+                  "allUsers": true,
+                  "allGroups": false,
+                  "resourceOwners": false
+                }
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Governance (privileges)",
+      "surface": "GraphQL `me.platformPrivileges`",
+      "status": "VERIFIED",
+      "evidence": "authenticated as urn:li:corpuser:__datahub_system",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "me": {
+            "corpUser": {
+              "urn": "urn:li:corpuser:__datahub_system",
+              "username": "__datahub_system"
+            },
+            "platformPrivileges": {
+              "managePolicies": true,
+              "manageIngestion": true,
+              "manageDomains": true,
+              "manageGlossaries": true,
+              "manageTags": true,
+              "viewAnalytics": true
+            }
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Dataset Profiles",
+      "surface": "GraphQL `Dataset.datasetProfiles` (row/column stats)",
+      "status": "VERIFIED",
+      "evidence": "2 profile snapshots",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "datasetProfiles": [
+              {
+                "timestampMillis": 1786184113899,
+                "rowCount": 1715,
+                "columnCount": 7,
+                "fieldProfiles": [
+                  {
+                    "fieldPath": "user_id",
+                    "uniqueCount": 1715,
+                    "nullCount": 0,
+                    "min": "1",
+                    "max": "2000"
+                  },
+                  {
+                    "fieldPath": "country",
+                    "uniqueCount": 5,
+                    "nullCount": 0,
+                    "min": null,
+                    "max": null
+                  },
+                  {
+                    "fieldPath": "order_count",
+                    "uniqueCount": 1,
+                    "nullCount": 0,
+                    "min": "10",
+                    "max": "10"
+                  },
+                  {
+                    "fieldPath": "lifetime_value_cents",
+                    "uniqueCount": 1715,
+                    "nullCount": 0,
+                    "min": "161160",
+                    "max": "340740"
+                  },
+                  {
+                    "fieldPath": "avg_order_cents",
+                    "uniqueCount": 1715,
+                    "nullCount": 0,
+                    "min": "16116.000000000000",
+                    "max": "34074.000000000000"
+                  },
+                  {
+                    "fieldPath": "refund_count",
+                    "uniqueCount": 2,
+                    "nullCount": 0,
+                    "min": "0",
+                    "max": "10"
+                  },
+                  {
+                    "fieldPath": "last_order_at",
+                    "uniqueCount": 1715,
+                    "nullCount": 0,
+                    "min": "2026-02-13T12:01:00+00:00",
+                    "max": "2026-02-14T21:20:00+00:00"
+                  }
+                ]
+              },
+              {
+                "timestampMillis": 1786183779080,
+                "rowCount": 1715,
+                "columnCount": 7,
+                "fieldProfiles": [
+                  {
+                    "fieldPath": "user_id",
+                    "uniqueCount": 1715,
+                    "nullCount": 0,
+                    "min": "1",
+                    "max": "2000"
+                  },
+                  {
+                    "fieldPath": "country",
+                    "uniqueCount": 5,
+                    "nullCount": 0,
+                    "min": null,
+                    "max": null
+                  },
+                  {
+                    "fieldPath": "order_count",
+                    "uniqueCount": 1,
+                    "nullCount": 0,
+                    "min": "10",
+                    "max": "10"
+                  },
+                  {
+                    "fieldPath": "lifetime_value_cents",
+                    "uniqueCount": 1715,
+                    "nullCount": 0,
+                    "min": "161160",
+                    "max": "340740"
+                  },
+                  {
+                    "fieldPath": "avg_order_cents",
+                    "uniqueCount": 1715,
+                    "nullCount": 0,
+                    "min": "16116.000000000000",
+                    "max": "34074.000000000000"
+                  },
+                  {
+                    "fieldPath": "refund_count",
+                    "uniqueCount": 2,
+                    "nullCount": 0,
+                    "min": "0",
+                    "max": "10"
+                  },
+                  {
+                    "fieldPath": "last_order_at",
+                    "uniqueCount": 1715,
+                    "nullCount": 0,
+                    "min": "2026-02-13T12:01:00+00:00",
+                    "max": "2026-02-14T21:20:00+00:00"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Freshness / Operations",
+      "surface": "GraphQL `Dataset.operations` (last updated)",
+      "status": "PRESENT_NO_DATA",
+      "evidence": "0 operation records",
+      "note": "The API is present and answers. Operations are emitted by connectors that can read a warehouse's own query/DML history (Snowflake, BigQuery, Redshift); DataHub's Postgres source does not, so an empty result here is a fact about the connector, not about DataHub.",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "operations": []
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Usage Statistics",
+      "surface": "GraphQL `Dataset.usageStats`",
+      "status": "PRESENT_NO_DATA",
+      "evidence": "0 usage buckets",
+      "note": "Same shape of gap as Freshness: usage requires a source that can read query history. Nothing in this substrate produces one, and inventing usage numbers to fill the panel is exactly what this repository refuses to do.",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "usageStats": {
+              "buckets": []
+            }
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "ML Models",
+      "surface": "GraphQL `searchAcrossEntities(types:[MLMODEL])`",
+      "status": "VERIFIED",
+      "evidence": "1 ML models",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "searchAcrossEntities": {
+            "total": 1,
+            "searchResults": [
+              {
+                "entity": {
+                  "urn": "urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)",
+                  "name": "devguard_churn_risk",
+                  "properties": {
+                    "description": "scikit-learn LogisticRegression predicting `refund_count > 0` from 3 features of analytics_marts.user_order_features. Trained by substrate/ml/train_churn_model.py against the substrate Postgres; every metric below is from that run. The model artifact is a local file \u2014 it is registered under the mlflow platform because DataHub knows that platform, not because an MLflow server exists."
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "ML Metadata",
+      "surface": "GraphQL `mlModel(urn:)` \u2192 training data, metrics, hyper-params",
+      "status": "VERIFIED",
+      "evidence": "resolved urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "mlModel": {
+            "urn": "urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)",
+            "name": "devguard_churn_risk",
+            "properties": {
+              "description": "scikit-learn LogisticRegression predicting `refund_count > 0` from 3 features of analytics_marts.user_order_features. Trained by substrate/ml/train_churn_model.py against the substrate Postgres; every metric below is from that run. The model artifact is a local file \u2014 it is registered under the mlflow platform because DataHub knows that platform, not because an MLflow server exists.",
+              "trainingMetrics": [
+                {
+                  "name": "test_accuracy",
+                  "value": "0.7995"
+                },
+                {
+                  "name": "rows_total",
+                  "value": "1715"
+                },
+                {
+                  "name": "rows_train",
+                  "value": "1286"
+                },
+                {
+                  "name": "rows_test",
+                  "value": "429"
+                }
+              ],
+              "hyperParams": [
+                {
+                  "name": "estimator",
+                  "value": "LogisticRegression"
+                },
+                {
+                  "name": "framework",
+                  "value": "scikit-learn"
+                },
+                {
+                  "name": "id_column",
+                  "value": "user_id"
+                },
+                {
+                  "name": "label",
+                  "value": "refund_count > 0"
+                },
+                {
+                  "name": "features",
+                  "value": "order_count, lifetime_value_cents, avg_order_cents"
+                }
+              ],
+              "externalUrl": null
+            }
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Search",
+      "surface": "GraphQL `searchAcrossEntities` free text + facets",
+      "status": "VERIFIED",
+      "evidence": "44 entities indexed",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "searchAcrossEntities": {
+            "total": 44,
+            "searchResults": [
+              {
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_users,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_marts.user_order_features,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.analytics_staging.stg_orders,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:domain:devguard_substrate",
+                  "type": "DOMAIN"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)",
+                  "type": "MLMODEL"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.orders,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.raw.users,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.orders,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,devguard.raw.users,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:dataFlow:(devguard,churn_training,PROD)",
+                  "type": "DATA_FLOW"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:dataJob:(urn:li:dataFlow:(devguard,churn_training,PROD),train_churn_model)",
+                  "type": "DATA_JOB"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:glossaryNode:DevGuard",
+                  "type": "GLOSSARY_NODE"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:glossaryTerm:DevGuard.HeroPathAsset",
+                  "type": "GLOSSARY_TERM"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:glossaryTerm:DevGuard.MLFeatureTable",
+                  "type": "GLOSSARY_TERM"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:glossaryTerm:DevGuard.PersonalData",
+                  "type": "GLOSSARY_TERM"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_marts.user_order_features,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_orders,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,devguard.analytics_staging.stg_users,PROD)",
+                  "type": "DATASET"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:container:0f40c4f798ed2fe1f304eafa2896e685",
+                  "type": "CONTAINER"
+                }
+              },
+              {
+                "entity": {
+                  "urn": "urn:li:container:49c362e5df64433c720f8cb5b50cbd29",
+                  "type": "CONTAINER"
+                }
+              }
+            ],
+            "facets": [
+              {
+                "field": "container",
+                "aggregations": [
+                  {
+                    "value": "urn:li:container:8d3dc4b5c7247ab608bb7d89d8dfa0d7",
+                    "count": 3
+                  },
+                  {
+                    "value": "urn:li:container:49c362e5df64433c720f8cb5b50cbd29",
+                    "count": 2
+                  },
+                  {
+                    "value": "urn:li:container:0f40c4f798ed2fe1f304eafa2896e685",
+                    "count": 2
+                  },
+                  {
+                    "value": "urn:li:container:f9adf01d7f1f656e17d2728821a5273d",
+                    "count": 1
+                  }
+                ]
+              },
+              {
+                "field": "_entityType\u241etypeNames",
+                "aggregations": [
+                  {
+                    "value": "SCHEMA_FIELD",
+                    "count": 16
+                  },
+                  {
+                    "value": "DATASET",
+                    "count": 10
+                  },
+                  {
+                    "value": "CONTAINER",
+                    "count": 4
+                  },
+                  {
+                    "value": "GLOSSARY_TERM",
+                    "count": 4
+                  },
+                  {
+                    "value": "DATASET\u241eModel",
+                    "count": 3
+                  },
+                  {
+                    "value": "CONTAINER\u241eSchema",
+                    "count": 3
+                  },
+                  {
+                    "value": "DATASET\u241eTable",
+                    "count": 3
+                  },
+                  {
+                    "value": "TAG",
+                    "count": 3
+                  },
+                  {
+                    "value": "DATASET\u241eView",
+                    "count": 2
+                  },
+                  {
+                    "value": "DATASET\u241eSource",
+                    "count": 2
+                  },
+                  {
+                    "value": "DATA_JOB",
+                    "count": 1
+                  },
+                  {
+                    "value": "DATA_FLOW",
+                    "count": 1
+                  },
+                  {
+                    "value": "MLMODEL",
+                    "count": 1
+                  },
+                  {
+                    "value": "GLOSSARY_NODE",
+                    "count": 1
+                  },
+                  {
+                    "value": "CORP_USER",
+                    "count": 1
+                  },
+                  {
+                    "value": "DOMAIN",
+                    "count": 1
+                  },
+                  {
+                    "value": "CONTAINER\u241eDatabase",
+                    "count": 1
+                  },
+                  {
+                    "value": "CORP_GROUP",
+                    "count": 1
+                  }
+                ]
+              },
+              {
+                "field": "hasSiblings",
+                "aggregations": [
+                  {
+                    "value": "true",
+                    "count": 10
+                  }
+                ]
+              },
+              {
+                "field": "_entityType",
+                "aggregations": [
+                  {
+                    "value": "SCHEMA_FIELD",
+                    "count": 16
+                  },
+                  {
+                    "value": "DATASET",
+                    "count": 10
+                  },
+                  {
+                    "value": "GLOSSARY_TERM",
+                    "count": 4
+                  },
+                  {
+                    "value": "CONTAINER",
+                    "count": 4
+                  },
+                  {
+                    "value": "TAG",
+                    "count": 3
+                  },
+                  {
+                    "value": "DATA_JOB",
+                    "count": 1
+                  },
+                  {
+                    "value": "DATA_FLOW",
+                    "count": 1
+                  },
+                  {
+                    "value": "MLMODEL",
+                    "count": 1
+                  },
+                  {
+                    "value": "DOMAIN",
+                    "count": 1
+                  },
+                  {
+                    "value": "GLOSSARY_NODE",
+                    "count": 1
+                  },
+                  {
+                    "value": "CORP_USER",
+                    "count": 1
+                  },
+                  {
+                    "value": "CORP_GROUP",
+                    "count": 1
+                  }
+                ]
+              },
+              {
+                "field": "origin",
+                "aggregations": [
+                  {
+                    "value": "PROD",
+                    "count": 11
+                  }
+                ]
+              },
+              {
+                "field": "domains",
+                "aggregations": [
+                  {
+                    "value": "urn:li:domain:devguard_substrate",
+                    "count": 10
+                  }
+                ]
+              },
+              {
+                "field": "owners",
+                "aggregations": [
+                  {
+                    "value": "urn:li:corpuser:datahub",
+                    "count": 8
+                  },
+                  {
+                    "value": "urn:li:corpGroup:devguard_ml_platform",
+                    "count": 1
+                  }
+                ]
+              },
+              {
+                "field": "env",
+                "aggregations": [
+                  {
+                    "value": "PROD",
+                    "count": 4
+                  }
+                ]
+              },
+              {
+                "field": "platform",
+                "aggregations": [
+                  {
+                    "value": "urn:li:dataPlatform:postgres",
+                    "count": 9
+                  },
+                  {
+                    "value": "urn:li:dataPlatform:dbt",
+                    "count": 5
+                  },
+                  {
+                    "value": "urn:li:dataPlatform:devguard",
+                    "count": 2
+                  },
+                  {
+                    "value": "urn:li:dataPlatform:mlflow",
+                    "count": 1
+                  }
+                ]
+              },
+              {
+                "field": "tags",
+                "aggregations": [
+                  {
+                    "value": "urn:li:tag:devguard_hero_path",
+                    "count": 3
+                  },
+                  {
+                    "value": "urn:li:tag:pii",
+                    "count": 1
+                  },
+                  {
+                    "value": "urn:li:tag:ml_feature_table",
+                    "count": 1
+                  }
+                ]
+              },
+              {
+                "field": "typeNames",
+                "aggregations": [
+                  {
+                    "value": "Table",
+                    "count": 3
+                  },
+                  {
+                    "value": "Schema",
+                    "count": 3
+                  },
+                  {
+                    "value": "Model",
+                    "count": 3
+                  },
+                  {
+                    "value": "View",
+                    "count": 2
+                  },
+                  {
+                    "value": "Source",
+                    "count": 2
+                  },
+                  {
+                    "value": "Database",
+                    "count": 1
+                  }
+                ]
+              },
+              {
+                "field": "glossaryTerms",
+                "aggregations": [
+                  {
+                    "value": "urn:li:glossaryTerm:PersonalData",
+                    "count": 1
+                  }
+                ]
+              },
+              {
+                "field": "entity",
+                "aggregations": [
+                  {
+                    "value": "SCHEMA_FIELD",
+                    "count": 16
+                  },
+                  {
+                    "value": "DATASET",
+                    "count": 10
+                  },
+                  {
+                    "value": "CONTAINER",
+                    "count": 4
+                  },
+                  {
+                    "value": "GLOSSARY_TERM",
+                    "count": 4
+                  },
+                  {
+                    "value": "TAG",
+                    "count": 3
+                  },
+                  {
+                    "value": "CORP_USER",
+                    "count": 1
+                  },
+                  {
+                    "value": "CORP_GROUP",
+                    "count": 1
+                  },
+                  {
+                    "value": "MLMODEL",
+                    "count": 1
+                  },
+                  {
+                    "value": "DATA_FLOW",
+                    "count": 1
+                  },
+                  {
+                    "value": "GLOSSARY_NODE",
+                    "count": 1
+                  },
+                  {
+                    "value": "DATA_JOB",
+                    "count": 1
+                  },
+                  {
+                    "value": "DOMAIN",
+                    "count": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Business Metadata (structured properties)",
+      "surface": "GraphQL `Dataset.structuredProperties`",
+      "status": "PRESENT_NO_DATA",
+      "evidence": "0 structured properties",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "structuredProperties": null
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Business Metadata (documentation)",
+      "surface": "GraphQL `Dataset.institutionalMemory` + editable docs",
+      "status": "PRESENT_NO_DATA",
+      "evidence": "documentation surface answered",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "institutionalMemory": null,
+            "editableProperties": null
+          }
+        },
+        "extensions": {}
+      }
+    },
+    {
+      "capability": "Incidents",
+      "surface": "GraphQL `Dataset.incidents` (raiseIncident / updateIncidentStatus)",
+      "status": "PRESENT_NO_DATA",
+      "evidence": "0 incidents on this dataset",
+      "note": "",
+      "answered_on": "",
+      "missing_fields": [],
+      "raw": {
+        "data": {
+          "dataset": {
+            "incidents": {
+              "total": 0,
+              "incidents": []
+            }
+          }
+        },
+        "extensions": {}
+      }
+    }
+  ]
+}

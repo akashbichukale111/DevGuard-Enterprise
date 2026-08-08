@@ -1,0 +1,51 @@
+version: 2
+
+# The mart layer's contract.
+#
+# This file exists for the same reason `staging/schema.yml` does — a model with
+# no tests produces no failure signal — but it carries one thing staging does
+# not: `user_order_features` is the **terminus of the blast radius**. It is the
+# table `substrate/ml/train_churn_model.py` reads, and the reason a renamed
+# column in `raw.users` is an ML incident rather than a cosmetic one.
+#
+# `not_null` on `user_id` is therefore not a routine test. It is the assertion
+# that fails when the reference incident lands, and DevGuard's Referee reads its
+# result back out of DataHub as an **independent** second opinion on whether the
+# fix worked — independent because it is dbt's verdict recorded in the catalog,
+# not DevGuard's own test run reporting on itself.
+#
+# The owner declared here is deliberately not the staging owner. A renamed
+# column upstream breaks a model whose owner may never see the staging alert,
+# and routing an incident only to the dataset owner is exactly the gap
+# `backend/v2/ml_impact.py` was written to close.
+
+models:
+  - name: user_order_features
+    description: >
+      Per-user order features. Consumed directly by the churn model in
+      substrate/ml/train_churn_model.py — this is the ML terminus of the
+      hero-path lineage.
+    # Under `config` deliberately — see the note in staging/schema.yml: a
+    # top-level `tags:` key is accepted by dbt and then ignored.
+    config:
+      meta:
+        owner: datahub
+        business_owner: datahub
+      tags:
+        - devguard_hero_path
+        - ml_feature_table
+    columns:
+      - name: user_id
+        description: >
+          Join key and row identity. The reference incident renames this column
+          upstream; this test is what turns that rename into a failure signal.
+        tests: [unique, not_null]
+      - name: order_count
+        description: Number of orders placed by the user. Model feature.
+        tests: [not_null]
+      - name: lifetime_value_cents
+        description: Sum of order value in minor units. Model feature.
+        tests: [not_null]
+      - name: avg_order_cents
+        description: Mean order value in minor units. Model feature.
+        tests: [not_null]
