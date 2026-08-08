@@ -44,7 +44,7 @@ Everything in the table below marked **New** was authored in that window.
 | All evidence | `evidence/` | Every proof pack and captured artifact |
 | Evaluation + ablation results | `examples/` | Fault-injection suite, retrieval ablation |
 | Verification and demo scripts | `scripts/` | Least-privilege verifier, injection demo, replay builder, loop runners |
-| Test suite | `tests/` | 1041 tests |
+| Test suite | `tests/` | 1101 tests |
 
 ### Pre-existing — carried over and disclosed
 
@@ -102,7 +102,7 @@ is not worked around anywhere.
 ## 5 · Verification
 
 ```bash
-make test                # 1041 tests
+make test                # 1101 tests
 make verify              # everything CI runs
 make verify-replay-ui    # the demonstration UI, in a real browser
 ```
