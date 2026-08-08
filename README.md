@@ -18,7 +18,7 @@ related asset starts from more knowledge than the last one.
 
 [![CI](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/akashbichukale111/DevGuard-Enterprise/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-1037%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-1041%20passing-brightgreen.svg)](tests/)
 [![DataHub](https://img.shields.io/badge/DataHub-v1.6.0-1890FF.svg)](https://datahubproject.io/)
 [![MCP](https://img.shields.io/badge/MCP-mcp--server--datahub%400.6.0-6E56CF.svg)](https://modelcontextprotocol.io/)
 [![SigNoz](https://img.shields.io/badge/SigNoz-v0.135.0-E75536.svg)](https://signoz.io/)
@@ -29,15 +29,32 @@ related asset starts from more knowledge than the last one.
 
 ---
 
+> ### Reviewing this project? Start here.
+>
+> | Time | Do this | You will see |
+> |---|---|---|
+> | **60 s** | `cd frontend && npm ci && npm run dev` → <http://localhost:3000/command> | A real recorded incident replaying end to end. No DataHub, no database, no API key, no backend, no Python. |
+> | **5 min** | **[docs/JUDGE_WALKTHROUGH.md](docs/JUDGE_WALKTHROUGH.md)** | The four runs worth your time, and how to check any claim on screen against a file on disk. |
+> | **15 min** | **[docs/JUDGING_MATRIX.md](docs/JUDGING_MATRIX.md)** | Every shipped capability mapped to the artifact that proves it — **including where each row is weaker than it looks**. Its paths and numbers are build-enforced by [`tests/test_judging_matrix.py`](tests/test_judging_matrix.py). |
+>
+> **The three things worth knowing before you score, stated up front rather than buried:**
+> no recorded run reached a model, so model reasoning quality is unproven ([why](docs/LLM_EGRESS_BLOCKED.md));
+> the retrieval ablation is a **negative** result and is published anyway;
+> and semantic retrieval is degraded to a lexical fallback. All three are in [Limitations](#limitations).
+
+---
+
 <details>
 <summary><b>Contents</b></summary>
 
-**Start here** &nbsp; [See it in 60 seconds](#see-it-in-60-seconds) &nbsp;·&nbsp; [The platform](#the-platform--three-modules-one-evidence-model) &nbsp;·&nbsp; [Quick start](#quick-start) &nbsp;·&nbsp; [Installation](#installation)  
+**Start here** &nbsp; [See it in 60 seconds](#see-it-in-60-seconds) &nbsp;·&nbsp; [The platform](#the-platform--three-modules-one-evidence-model) &nbsp;·&nbsp; [Quick start](#quick-start) &nbsp;·&nbsp; [Installation](#installation) &nbsp;·&nbsp; [Documentation map](#documentation-map)  
 **What it does** &nbsp; [Overview](#overview) &nbsp;·&nbsp; [The problem](#the-problem) &nbsp;·&nbsp; [How it works](#how-it-works) &nbsp;·&nbsp; [What it writes back to DataHub](#what-it-writes-back-to-datahub) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Architecture](#architecture)  
+**DataHub** &nbsp; [How DataHub is reached](#how-datahub-is-reached--mcp-over-stdio) &nbsp;·&nbsp; [Catalog reasoning matrix](#what-devguard-reasons-about-from-the-catalog) &nbsp;·&nbsp; [Write-back](#the-write-back)  
+**AI** &nbsp; [Agent inventory](#how-it-works) &nbsp;·&nbsp; [Model-backed vs deterministic](#model-backed-vs-deterministic--and-why-the-split-is-the-design) &nbsp;·&nbsp; [Evidence model](#the-evidence-model)  
 **The modules** &nbsp; [Code Scanner](#code-scanner) &nbsp;·&nbsp; [Nexus Commander](#nexus-commander) &nbsp;·&nbsp; [Demo](#demo--replay-a-real-recorded-run)  
-**Proof** &nbsp; [Evidence](#evidence) &nbsp;·&nbsp; [Evaluation](#evaluation) &nbsp;·&nbsp; [Benchmarks](#benchmarks) &nbsp;·&nbsp; [Examples](#examples) &nbsp;·&nbsp; [Reproducibility](#reproducibility) &nbsp;·&nbsp; [Screenshots](#screenshots)  
-**Operating it** &nbsp; [Deployment](#deployment) &nbsp;·&nbsp; [Security model](#security-model) &nbsp;·&nbsp; [Troubleshooting](#troubleshooting) &nbsp;·&nbsp; [FAQ](#faq)  
-**Project** &nbsp; [Technology stack](#technology-stack) &nbsp;·&nbsp; [Project structure](#project-structure) &nbsp;·&nbsp; [Limitations](#limitations) &nbsp;·&nbsp; [Roadmap](#roadmap) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [AI-assisted development](#ai-assisted-development) &nbsp;·&nbsp; [License](#license)  
+**Proof** &nbsp; [Evidence](#evidence) &nbsp;·&nbsp; [Replay system](#the-replay-system) &nbsp;·&nbsp; [Evaluation](#evaluation) &nbsp;·&nbsp; [Benchmarks](#benchmarks) &nbsp;·&nbsp; [Examples](#examples) &nbsp;·&nbsp; [Testing](#testing) &nbsp;·&nbsp; [Reproducibility](#reproducibility) &nbsp;·&nbsp; [Screenshots](#screenshots)  
+**Operating it** &nbsp; [Deployment](#deployment) &nbsp;·&nbsp; [API overview](#api-overview) &nbsp;·&nbsp; [Security model](#security-model) &nbsp;·&nbsp; [Troubleshooting](#troubleshooting) &nbsp;·&nbsp; [FAQ](#faq)  
+**Project** &nbsp; [Technology stack](#technology-stack) &nbsp;·&nbsp; [Project structure](#project-structure) &nbsp;·&nbsp; [Limitations](#limitations) &nbsp;·&nbsp; [Roadmap](#roadmap) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [AI-assisted development](#ai-assisted-development) &nbsp;·&nbsp; [References](#references) &nbsp;·&nbsp; [License](#license)  
 
 </details>
 
@@ -63,9 +80,9 @@ the same thing as a static site instead — the form the hosted demo is deployed
 cd frontend && NEXT_OUTPUT=export npm run build   # → frontend/out/
 ```
 
-![The Command Center replaying a completed remediation loop — nine agents, the evidence ledger, and the five write-back artifacts that landed in DataHub](evidence/d10/screenshots/d6-loop-pass2.png)
+![The Command Center replaying a completed remediation loop — the handoff rail, a 30-item evidence ledger, the column-level blast radius terminating at the churn model, the owner-routed approval, and the five write-back artifacts that landed in DataHub](evidence/d10/screenshots/d6-loop-pass2.png)
 
-<sub>*Every number on this screen is read out of a proof pack. Every evidence chip opens the exact captured request and response behind its claim. Values that were never measured render `N/A` with the reason attached.*</sub>
+<sub>*Run `d6-loop-pass2`: 10 handoffs, 9 MCP calls, 30 evidence items, blast radius terminating at `urn:li:mlModel:(…,devguard_churn_risk,PROD)`, and 5 write-back artifacts. Note the Diagnostician node is **`BLOCKED`** and tokens/cost read **`N/A` — no model was invoked in this run**, which the panel states in full rather than rendering a zero. Every number on this screen is read out of a proof pack; every evidence chip opens the exact captured request and response behind its claim.*</sub>
 
 ---
 
@@ -83,8 +100,6 @@ Nothing is written until recovery is verified. Then five artifacts land, idempot
 
 **And the loop closes:** on the second pass the Archivist retrieves the runbook the
 first pass wrote — four documents, straight out of the catalog.
-
----
 
 ---
 
@@ -175,13 +190,129 @@ A failure is detected from real runtime evidence, resolved to real catalog entit
 | 8 | **Magistrate** | deterministic | `get_entities` (owners, read-only) | Risk classification, autonomy policy, owner-routed approval. |
 | 9 | **Scribe** | deterministic | five mutation tools | **The only agent that writes to DataHub.** Five knowledge artifacts, idempotent, stamped. |
 
+**Two more roles appear on the Command Center's handoff rail**, which is why the
+screenshots show **eleven** nodes rather than nine. Both are real participants
+that do not own a handoff record, and the rail renders them rather than hiding
+them:
+
+| Role | Why it is on the rail but not in the loop table |
+|---|---|
+| **Sentinel** | The prompt-injection boundary ([`sentinel.py`](backend/v2/sentinel.py)). It writes proof-pack artifacts without emitting a handoff record, because the Surgeon owns the edge into it. It renders as `ran_no_record` with a duration of `None` — showing it as `idle` would be a lie about a security control that actually ran, and borrowing someone else's duration would be a fabricated measurement. |
+| **Auditor** | A terminal that appears only as a handoff's `to_agent`, never as a `from_agent`, so it owns no record of its own. It renders `IDLE` when nothing reached it. |
+
+The rail is **one node per agent, not one per handoff record**, on purpose: an
+agent that never ran is itself a fact worth showing. `AGENT_ORDER` in
+[`backend/v2/replay.py`](backend/v2/replay.py) is the rendering order.
+
+### Model-backed vs deterministic — and why the split is the design
+
 **Eight of the nine agents use no model at all.** Only the Diagnostician calls one, and it holds zero tools. That split is the design: an LLM cannot make an exit code more true, a deterministic agent cannot hallucinate, and the one agent that *does* reason cannot act.
+
+Read the two properties together and a class of failure disappears:
+
+| | Holds tools | Holds no tools |
+|---|---|---|
+| **Calls a model** | *nobody* — this quadrant is empty **by construction** | **Diagnostician** — reasons, cannot act |
+| **Calls no model** | Cartographer · Archivist · Pathfinder · Magistrate · Scribe | Watcher · Surgeon · Referee |
+
+The empty quadrant is the security property. Prompt-injected text sitting in a
+DataHub description is read by the Cartographer, fenced by
+[`sentinel.py`](backend/v2/sentinel.py), and reaches only the one agent that has
+no tool to be hijacked into calling. There is no path from catalog free-text to
+a mutation, because the agents that mutate never see a model's output as an
+instruction. `AGENT_TOOL_ALLOWLISTS` in
+[`backend/v2/handoff.py`](backend/v2/handoff.py) is the single source of truth for
+that table, and [`tests/test_agent_allowlists.py`](tests/test_agent_allowlists.py)
+(27 tests) fails the build if any agent gains a tool the docs do not list.
+
+The inference provider is **Groq**, and it is the only one integrated — there is
+no multi-provider abstraction, because one was never built. Two models are
+selected between, by severity first and telemetry second:
+
+| Constant | Model | Chosen when |
+|---|---|---|
+| `MODEL_STRONG` | `llama-3.3-70b-versatile` | severity is `high` or `critical`; always for the Validator |
+| `MODEL_CHEAP` | `llama-3.1-8b-instant` | severity is `low` or `medium` |
+
+`select_model()` in [`backend/core/ai_agent.py`](backend/core/ai_agent.py) is a
+pure severity-only function that raises on an unrecognised severity rather than
+defaulting downward — silently under-provisioning a critical scan is the one
+failure mode routing must never have. `_select_model_adaptive()` wraps it with
+recent cost trend and the CostGuardian's conservation flag, and every routing
+decision it takes is recorded in the response rather than applied invisibly.
+The client itself ([`groq_client.py`](groq_client.py)) is constructed lazily on
+first use, so the backend imports — and the whole test suite runs — with no API
+key present.
 
 > **What the committed evidence shows.** Every recorded run in this repository executed with no model reachable — all 49 handoff records carry `model=null, tokens=0`, and the Diagnostician returns `REASONER_UNAVAILABLE`. The root causes in those runs were derived deterministically from runtime evidence, and each one says so in its own artifact. The refusal path, the evidence rule and the chain validation are proven; the quality of model reasoning is not. See [Limitations](#limitations).
 
 ### The evidence rule
 
 A root cause is only valid if its chain contains **at least one `RUNTIME` evidence item and at least one `DATAHUB_GRAPH` item**. Runtime alone is an error message; graph alone is a theory. Requiring both is what makes the chain an explanation. If the chain cannot form, the Diagnostician refuses — and a refusal is recorded as a first-class outcome, not an error.
+
+### The evidence model
+
+Every fact an agent produces is a typed `Evidence` object, classified on three
+independent axes ([`backend/v2/evidence.py`](backend/v2/evidence.py)). The axes are
+separate because they answer different questions, and collapsing them into one
+"confidence" number is how provenance gets lost:
+
+| Axis | Values | The question it answers |
+|---|---|---|
+| **Source** | `RUNTIME` · `DATAHUB_GRAPH` · `DATAHUB_DOCUMENT` · `REPO_STATIC` · `DEVGUARD_INFERENCE` · `SEEDED_DEMO` | Where did this come from? |
+| **Trust** | `TRUSTED_SYSTEM` · `UNTRUSTED_TEXT` | May it reach a prompt unfenced? |
+| **Confidence** | `OBSERVED` · `DERIVED` · `INFERRED` | Was it measured, computed, or guessed? |
+
+Two of those values exist specifically so that a category of quiet dishonesty is
+impossible rather than discouraged. **`DEVGUARD_INFERENCE`** means the system
+inferred an edge the graph did not contain — the Pathfinder never emits it, so an
+inferred lineage hop can never be silently mixed in with real ones.
+**`SEEDED_DEMO`** means demonstration data, and it cannot be laundered into
+looking measured. Anything the catalog returns as free text is
+`DATAHUB_DOCUMENT` + `UNTRUSTED_TEXT` **by construction** — the model refuses to
+let it be classified as anything else — and it passes through the Sentinel before
+any agent reads it.
+
+```mermaid
+flowchart LR
+    subgraph PRODUCE["1 · Produced"]
+        RT["RUNTIME<br/>exit codes, dbt output"]
+        DG["DATAHUB_GRAPH<br/>lineage, schema, owners"]
+        DD["DATAHUB_DOCUMENT<br/>prior runbooks"]
+    end
+
+    subgraph GUARD["2 · Classified and fenced"]
+        CL["Source · Trust · Confidence"]
+        SEN["Sentinel<br/>fences UNTRUSTED_TEXT"]
+    end
+
+    subgraph VALIDATE["3 · Chain validated"]
+        RULE{"≥1 RUNTIME<br/>AND<br/>≥1 DATAHUB_GRAPH?"}
+    end
+
+    RT --> CL
+    DG --> CL
+    DD --> CL
+    CL --> SEN
+    SEN --> RULE
+
+    RULE -->|no| REF["INSUFFICIENT_EVIDENCE<br/>names the missing class<br/>loop stops, nothing written"]
+    RULE -->|yes| RC["Root cause<br/>+ chain digest"]
+
+    RC --> FIX["Fix → validate → approve<br/>→ remediate → verify"]
+    FIX --> WB["Write-back<br/>every artifact stamped<br/>with evidence IDs + digest"]
+    WB --> PP[["Proof pack"]]
+    REF --> PP
+    PP --> RPL["Replay bundle → Command Center"]
+
+    style REF stroke:#f43f5e
+    style RULE stroke:#a78bfa
+```
+
+The chain digest is what makes the write-back auditable after the fact: every
+artifact the Scribe lands carries the evidence IDs and the digest that justified
+it, so a reader in six months can ask *which facts caused this tag to exist* and
+get an answer rather than a timestamp.
 
 ### The write-back
 
@@ -230,6 +361,44 @@ This matters for three reasons a reviewer can check:
 
 Incidents are not exposed over MCP in self-hosted DataHub, so artifact 1 drops to raw
 GraphQL (`raiseIncident` / `updateIncidentStatus`) — documented rather than skipped.
+
+### What DevGuard reasons about from the catalog
+
+"Uses DataHub" can mean one search call. This is the full list of distinct
+reasoning tasks that read the catalog, what each one is for, and where to check it:
+
+| Reasoning task | Agent | Catalog surface | Why the catalog is the only place this can come from | Proof |
+|---|---|---|---|---|
+| **Entity resolution** — a string in a log (`stg_users`, `user_id`) becomes a real URN | Cartographer | `search`, `get_entities` | This is the seam where a system quietly starts analysing the wrong asset. It gets its own agent and its own failure mode: unresolvable means *say so*, never guess | [`cartographer.py`](backend/v2/agents/cartographer.py) |
+| **Schema truth** — what the catalog believes the columns are | Cartographer | `list_schema_fields` | During drift the catalog says `user_id` and the database says `customer_id`, and **the gap between them is the incident**. The agent must not "helpfully" reconcile them | [`cartographer.py`](backend/v2/agents/cartographer.py) |
+| **Prior knowledge** — has this happened before? | Archivist | `search_documents`, `grep_documents` | Runbooks a previous incident wrote. On a clean catalog the tools are *hidden by the server*, so the agent must return `DEGRADED`, not throw | [`archivist.py`](backend/v2/agents/archivist.py) · [`test_archivist_retrieval.py`](tests/test_archivist_retrieval.py) (16 tests) |
+| **Blast radius** — column-level, downstream | Pathfinder | `get_lineage` (paginated, cycle-safe) | Only the graph knows which dbt models and dashboards consume a renamed column. Grep cannot | [`pathfinder.py`](backend/v2/agents/pathfinder.py) |
+| **Path reasoning** — *how* A reaches B | Pathfinder | `get_lineage_paths_between` | The returned path's middle element is a `urn:li:query:` entity — the actual SQL. That is what ties "there is SQL touching this column" to "here is where it goes" | [`pathfinder.py`](backend/v2/agents/pathfinder.py) |
+| **ML impact** — the model at the end of the radius, read rather than counted | Pathfinder | `get_entities` on the terminal `mlModel` | `mlModelTrainingData` produces **no graph edge**, so the traversable path is `dataset → dataJob → mlModel`; the agent walks entity *types* instead of assuming the last hop is a dataset | [`ml_impact.py`](backend/v2/ml_impact.py) · [`test_ml_impact.py`](tests/test_ml_impact.py) (28 tests) |
+| **Query provenance** | Pathfinder | `get_dataset_queries` | Which SQL actually touches the failing column | [`pathfinder.py`](backend/v2/agents/pathfinder.py) |
+| **Ownership** — who must approve | Magistrate | `get_entities` (owners, read-only) | Owners come from the graph, never from config. An unowned production table with a live incident is itself a **governance finding**, reported as `UNOWNED` rather than routed to a default approver | [`magistrate.py`](backend/v2/agents/magistrate.py) |
+| **Recovery corroboration** | Referee | DataHub assertions, read-only | An independent second opinion on "is it actually fixed", from the catalog rather than from DevGuard's own test run | [`assertions.py`](backend/v2/assertions.py) · [`test_assertion_corroboration.py`](tests/test_assertion_corroboration.py) (27 tests) |
+| **Write-back** — five artifacts | Scribe | 5 mutation tools + GraphQL incidents | The loop only closes if what was learned becomes catalog state the next incident can read | [`scribe.py`](backend/v2/agents/scribe.py) · [`test_writeback_rules.py`](tests/test_writeback_rules.py) (35 tests) |
+
+Two rows carry an honest caveat: **ML impact** and **recovery corroboration** are
+implemented, tested and read-only, but **have not yet been executed against a
+live catalog** — the [judging matrix](docs/JUDGING_MATRIX.md) says so on the same
+rows, and DataHub OSS has no `reportAssertionResult` mutation, so DevGuard
+corroborates assertions without ever authoring one.
+
+**Three live-server behaviours shaped this code**, and they are worth reading as
+integration findings rather than trivia — each one is a place where the obvious
+implementation is wrong:
+
+1. There is no `Runbook` document type, so the runbook is written as `Analysis` — the nearest honest alternative, rather than inventing a type.
+2. A tag must exist before it can be applied, so the Scribe creates it first instead of assuming `add_tags` will.
+3. A string property whose value parses as a URN **breaks `searchAcrossLineage`** — which is why `devguard.last_incident_id` stores a bare id and not a URN.
+
+Two of the findings encountered along the way were verified against DataHub
+`master` and written up for upstream in [`docs/upstream/`](docs/upstream/).
+They are **prepared, not filed** — and
+[`tests/test_upstream_claims.py`](tests/test_upstream_claims.py) fails the build
+if a filing checkbox is ticked while that remains true.
 
 ---
 
@@ -298,21 +467,53 @@ That last script matters: it proves the telemetry pipeline end to end without ne
 
 ## Screenshots
 
-| SigNoz — services | SigNoz — distributed trace |
-|---|---|
-| ![SigNoz services view](docs/screenshots/signoz/01-services.png) | ![DevGuard distributed trace in SigNoz](docs/screenshots/signoz/02-distributed-trace.png) |
+Every image below is a capture of this system running — against a real SigNoz
+v0.135.0, a real DataHub Core instance, or the committed replay bundles. None is
+a mockup.
 
-| SigNoz — dashboard | SigNoz — alert rules |
-|---|---|
-| ![DevGuard dashboard in SigNoz](docs/screenshots/signoz/03-dashboard.png) | ![Alert rules loaded in SigNoz](docs/screenshots/signoz/04-alert-rules.png) |
+**The Command Center — the two runs worth comparing**
 
-| DataHub — column-level lineage | DataHub — schema after write-back |
+| Completed loop (`d6-loop-pass2`) | Refusal (`d5-refusal`) |
 |---|---|
-| ![Column-level lineage in DataHub](evidence/d2/screenshots/01-lineage.png) | ![Schema with agent-written tags](evidence/d2/screenshots/02-schema.png) |
+| [![Command Center replaying a completed loop](evidence/d10/screenshots/d6-loop-pass2.png)](evidence/d10/screenshots/d6-loop-pass2.png) | [![Command Center replaying a refusal](evidence/d10/screenshots/d5-refusal.png)](evidence/d10/screenshots/d5-refusal.png) |
+| 10 handoffs · 9 MCP calls · 30 evidence items · **5 write-back artifacts landed**. Blast radius terminates at `devguard_churn_risk` (MLMODEL, 5 hops). The prior-incident panel shows **4 runbooks retrieved from the catalog** — knowledge a previous run wrote. | `CHAIN INSUFFICIENT` · 4 evidence items, **all `RUNTIME`** · Diagnostician `REFUSED`. The panel names the missing class — **`DATAHUB_GRAPH`** — and every downstream section states *why* it is empty rather than rendering blank. |
 
-| Command Center — completed loop | Command Center — refusal |
+Put side by side these two make the central claim checkable: the same UI, the
+same pipeline, and the difference between an explanation and a refusal is
+whether the evidence chain contained both required classes. Note in **both**
+that tokens and cost read `N/A` with the reason attached — never `0`.
+
+**SigNoz — the telemetry is real and the assets ship with the repository**
+
+| Services — `devguard-backend` reporting | A stored distributed trace, 9 spans |
 |---|---|
-| ![Command Center replaying a completed loop](evidence/d10/screenshots/d6-loop-pass2.png) | ![Command Center replaying a refusal](evidence/d10/screenshots/d5-refusal.png) |
+| [![SigNoz services view showing devguard-backend](docs/screenshots/signoz/01-services.png)](docs/screenshots/signoz/01-services.png) | [![A nine-span DevGuard trace in SigNoz: scan_request to resilient_pipeline to llm_invoke to devguard_pipeline to scanner_agent](docs/screenshots/signoz/02-distributed-trace.png)](docs/screenshots/signoz/02-distributed-trace.png) |
+| Real spans arriving over OTLP/gRPC from the running application. | `scan_request → resilient_pipeline → llm_invoke → devguard_pipeline → scanner_agent`, with `cache_lookup` beside it. **This is a Scanner trace, and it is red:** 8 of its 9 spans carry errors, because the model call failed in the capture environment. It is included as-is — a green trace we did not record would be the wrong thing to show. The nine-agent Enterprise chain in a single trace is **not yet captured**; see [Limitations](#limitations). |
+
+| Dashboard — [`signoz/dashboard.json`](signoz/dashboard.json), imported | Alert rules — [`signoz/alerts/`](signoz/alerts/), applied and `OK` |
+|---|---|
+| [![The DevGuard dashboard rendering in SigNoz](docs/screenshots/signoz/03-dashboard.png)](docs/screenshots/signoz/03-dashboard.png) | [![Three DevGuard alert rules loaded in SigNoz, all showing OK](docs/screenshots/signoz/04-alert-rules.png)](docs/screenshots/signoz/04-alert-rules.png) |
+| The committed dashboard definition, rendering against SigNoz v0.135.0. | All three rules the repository ships, loaded and healthy: `devguard-circuit-breaker-flapping` (critical), `devguard-llm-cost-budget` and `devguard-llm-error-burst` (warning) — one file each in [`signoz/alerts/`](signoz/alerts/), installed and verified by [`scripts/apply_signoz_assets.sh`](scripts/apply_signoz_assets.sh). |
+
+**DataHub — the substrate as the catalog holds it**
+
+| `user_order_features` — the ML feature table, ingested | The same entity's Lineage tab |
+|---|---|
+| [![The user_order_features model in DataHub Core, showing seven ingested columns and the dbt view definition](evidence/d2/screenshots/02-schema.png)](evidence/d2/screenshots/02-schema.png) | [![The DataHub lineage explorer open on user_order_features](evidence/d2/screenshots/01-lineage.png)](evidence/d2/screenshots/01-lineage.png) |
+| Seven columns and the dbt view definition, ingested by the recipes in [`recipes/`](recipes/) — not authored by hand. This is the terminus of the blast radius. | The lineage explorer on the same entity. **These two were captured on a clean catalog before any write-back**, which is why the side panel reads *No tags yet* and the graph is unpopulated. |
+
+> **Read those two honestly.** They show the *substrate*, not the write-back —
+> and the lineage canvas did not render its edges at capture time. The proof of
+> column-level lineage is not this screenshot; it is the ingested aspect itself,
+> where `fineGrainedLineages` carries `downstreamType: FIELD`:
+> [`02-upstreamLineage-features.json`](evidence/d2/02-upstreamLineage-features.json) ·
+> [`03-upstreamLineage-dbt-features.json`](evidence/d2/03-upstreamLineage-dbt-features.json) ·
+> [`04-lineage-chain.json`](evidence/d2/04-lineage-chain.json).
+> For **written** tags and descriptions, the artifact the server returned is
+> [`artifact3-add_tags.json`](evidence/proof-pack/d6-loop-pass2/scribe/artifact3-add_tags.json),
+> and the rendered result is the write-back panel in the Command Center capture above.
+
+<sub>Screenshots live in [`evidence/d10/screenshots/`](evidence/d10/screenshots/), [`evidence/d2/screenshots/`](evidence/d2/screenshots/) and [`docs/screenshots/signoz/`](docs/screenshots/signoz/). Click any image for the full-resolution capture. The Command Center images are reproducible on any machine — `make demo`, then open the run picker; the SigNoz and DataHub images need their respective stacks running, which is why they are captured rather than regenerated in CI. A post-write-back catalog capture is the one screenshot this repository is missing, and it is listed in [Limitations](#limitations) rather than substituted for.</sub>
 
 ---
 
@@ -373,7 +574,7 @@ pip install -r requirements.txt
 cd frontend && npm ci && cd ..
 
 make doctor    # reports exactly what is present and what is missing
-make test      # 1037 tests — no key, no collector, no network
+make test      # 1041 tests — no key, no collector, no network
 make replay    # build replay bundles from the committed proof packs
 ```
 
@@ -401,6 +602,56 @@ Full instructions, including the DataHub catalog and the data substrate, are in 
 | **With SigNoz** | Traces, dashboard, alerts | + a SigNoz deployment |
 
 Each path is documented step by step in **[docs/INSTALLATION.md](docs/INSTALLATION.md)**; deployment topologies are in **[DEPLOYMENT.md](DEPLOYMENT.md)**.
+
+---
+
+## Documentation map
+
+Every document in this repository, what it is for, and who it is for. There is
+one page per concern — where two would have overlapped, they were merged rather
+than cross-published.
+
+**Evaluating the project**
+
+| Document | Read it for |
+|---|---|
+| [docs/JUDGE_WALKTHROUGH.md](docs/JUDGE_WALKTHROUGH.md) | Five minutes, no infrastructure. The four runs worth your time. |
+| [docs/JUDGING_MATRIX.md](docs/JUDGING_MATRIX.md) | Every capability → the artifact that proves it → **where the row is weaker than it looks**. Build-enforced. |
+| [docs/ARCHITECTURE_REVIEW.md](docs/ARCHITECTURE_REVIEW.md) | An independent component-by-component critique, reverse-engineered from source. Includes what scores badly. |
+| [docs/LLM_EGRESS_BLOCKED.md](docs/LLM_EGRESS_BLOCKED.md) | Proof that the missing model runs are a network-egress cause, not a missing credential. |
+| [docs/DEVPOST.md](docs/DEVPOST.md) | The submission copy. |
+| [DISCLOSURE.md](DISCLOSURE.md) | What was authored when, and what the evidence does and does not show. |
+
+**Understanding the engineering**
+
+| Document | Read it for |
+|---|---|
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Component-by-component detail: the evidence type system, the handoff contract, agent internals. |
+| [docs/API.md](docs/API.md) | Every endpoint, error semantics, and configuration variable. |
+| [SECURITY.md](SECURITY.md) | Threat model, the mutation allowlist, least-privilege verification, disclosure policy. |
+| [docs/MCP_DECISION.md](docs/MCP_DECISION.md) | Why the SigNoz MCP path is designed but not demonstrated — the trade-off, written down. |
+| [docs/upstream/](docs/upstream/) | Two findings verified against DataHub `master`, prepared for upstream. |
+
+**Running it**
+
+| Document | Read it for |
+|---|---|
+| [docs/INSTALLATION.md](docs/INSTALLATION.md) | Four install paths, step by step. |
+| [DEPLOYMENT.md](DEPLOYMENT.md) | Deployment topologies and host-by-host instructions. |
+| [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md) | Every command that runs on a clean clone, with expected output. |
+| [DEMO.md](DEMO.md) | The recording walkthrough. |
+
+**Contributing and governance**
+
+| Document | Read it for |
+|---|---|
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Development setup and the checks that must pass. |
+| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Community expectations. |
+| [CHANGELOG.md](CHANGELOG.md) | What changed, in Keep a Changelog form. |
+| [LICENSE](LICENSE) | Apache-2.0. |
+
+**Generated results** — [examples/eval/](examples/eval/) ·
+[examples/ablation/](examples/ablation/) · [evidence/](evidence/)
 
 ---
 
@@ -432,7 +683,7 @@ Each path is documented step by step in **[docs/INSTALLATION.md](docs/INSTALLATI
 - Hash-chained, tamper-evident audit trail
 
 **Engineering**
-- 1037 tests running in CI on every push with no key, no collector and no network
+- 1041 tests running in CI on every push with no key, no collector and no network
 - Secret scanning over the working tree *and* the full git history
 - Dependency advisory reporting on every push
 - `make doctor` preflight that names every missing prerequisite and how to satisfy it
@@ -580,6 +831,60 @@ The replay UI is built from exactly these files, so what a reviewer sees on scre
 
 ---
 
+## The replay system
+
+The reason a reviewer can see a real DataHub incident loop without installing
+DataHub is that **the recording and the rendering are separate concerns**. A run
+against a live catalog writes a proof pack; a compiler turns proof packs into
+bundles; the UI reads only bundles. Nothing in the second and third stages can
+reach a network.
+
+```mermaid
+flowchart LR
+    subgraph LIVE["Recorded once — needs the full stack"]
+        RUN["scripts/run_d6_loop.py<br/>live DataHub + Postgres + dbt"]
+        RUN --> PACK[["evidence/proof-pack/&lt;run-id&gt;/<br/>every request, response,<br/>evidence item, handoff, write-back"]]
+    end
+
+    subgraph BUILD["Compiled — needs only Python"]
+        PACK --> BR["scripts/build_replay.py<br/>backend/v2/replay.py"]
+        BR --> BUN[["frontend/public/replay/*.json<br/>7 bundles + manifest.json"]]
+    end
+
+    subgraph SERVE["Replayed — needs nothing"]
+        BUN --> UI["/command<br/>Command Center"]
+        UI --> STATIC["NEXT_OUTPUT=export<br/>→ frontend/out/"]
+    end
+
+    PACK -.->|rebuilt and diffed<br/>on every push| CI{{"CI drift guard"}}
+    BUN -.-> CI
+
+    style CI stroke:#f43f5e
+    style SERVE stroke:#a78bfa
+```
+
+Four properties make this trustworthy rather than merely convenient:
+
+| Property | How it is enforced |
+|---|---|
+| **Bundles cannot drift from their source** | CI rebuilds every bundle and diffs it against what is committed. `built_at` is excluded — it is per-build provenance, so comparing it would fail on every push regardless. |
+| **A replay cannot be mistaken for a live run** | A `REPLAY OF RECORDED RUN — NOT LIVE` banner sits above the incident header and cannot be dismissed. |
+| **Unmeasured values cannot render as zero** | The bundle carries a `missing` block with a reason per field; the UI renders `N/A` and the reason. |
+| **A dead link is worse than no link** | `--datahub-url` is **off by default**, so bundles carry bare URNs unless the capture host is known to be reachable. |
+| **The claim is checked in a browser, not asserted** | `make verify-replay-ui` drives the built static site and runs 14 checks. |
+
+The bundles are committed rather than generated at deploy time, because the
+published replay URL has to build on a static host with no Python toolchain.
+That trades a drift risk for a deployment guarantee — and the drift risk is the
+one CI can close, which is why it was the acceptable side of the trade.
+
+`ablation`, `eval` and `security` packs are deliberately **excluded** from bundle
+compilation: they are measurement sweeps and security demos, not single
+incidents, and half-populating an incident view with them would be misleading.
+They have their own renderings under [`examples/`](examples/).
+
+---
+
 ## Evaluation
 
 **Fault-injection suite** — 7 scripted faults, each really injected into a real PostgreSQL, each followed by a real `dbt build`, each classified from real output, each reverted afterwards.
@@ -630,8 +935,8 @@ is committed.
 
 | Path | What is in it |
 |---|---|
-| [`evidence/proof-pack/`](evidence/proof-pack/) | 10 recorded runs. Each holds every MCP request and response, evidence items, agent handoffs, write-back payloads and the returned URNs. |
-| [`frontend/public/replay/`](frontend/public/replay/) | 8 replay bundles built from those packs — what the Command Center reads. CI fails if they drift from their source. |
+| [`evidence/proof-pack/`](evidence/proof-pack/) | **7 recorded loop runs**, plus [10 ablation runs](evidence/proof-pack/ablation/), the [fault-injection output](evidence/proof-pack/eval/) and the [security captures](evidence/proof-pack/security/). Each run holds every MCP request and response, evidence items, agent handoffs, write-back payloads and the returned URNs. |
+| [`frontend/public/replay/`](frontend/public/replay/) | **7 replay bundles** built from those runs, plus a [`manifest.json`](frontend/public/replay/manifest.json) index — what the Command Center reads. CI fails if they drift from their source. |
 | [`examples/eval/`](examples/eval/) | Fault-injection suite results, per-fault, including the negative control. |
 | [`examples/ablation/`](examples/ablation/) | Retrieval on/off study, N=5 per arm, with raw per-run data. |
 | [`evidence/d10/screenshots/`](evidence/d10/screenshots/) | Command Center captures of a completed loop and a refusal. |
@@ -650,13 +955,54 @@ Open any of them in the Command Center with the run picker in the top right.
 
 ---
 
+## Testing
+
+**1041 tests, 52 files, no API key, no collector, no network, no database.** That
+constraint is not a convenience — it is what makes the suite a reviewer's tool
+rather than the author's. CI runs it on every push in exactly the state a clean
+clone is in.
+
+```bash
+make test          # the whole suite
+python -m pytest tests/test_agent_allowlists.py -v    # one area
+```
+
+| Area | What it pins down | Tests |
+|---|---|---|
+| **Scanner pipeline** | Reflection-loop convergence, language routing, hostile ZIP/repo input, response contracts, cache round-trip, state eviction, failure diagnosis surfacing | **196** |
+| **DataHub integration** | MCP tool contract, paginated cycle-safe lineage, ML-model impact, assertion corroboration, write-back rules and idempotency, preflight states, mutation scoping | **189** |
+| **Evaluation, replay & doc integrity** | Replay-bundle compilation, judging-matrix paths and figures, fault-injection scoring, ablation harness, upstream-claim honesty | **187** |
+| **Security** | Least-privilege claims, API-key auth, Sentinel fencing, prompt-injection boundary, proof-pack redaction, rate limiting, hash-chained audit | **178** |
+| **Observability & resilience** | Telemetry fail-safe, circuit breaker, fallback, cost accounting, adaptive routing floor, measured-vs-synthetic provenance | **152** |
+| **Agents, evidence & governance** | Per-agent tool allowlists, evidence typing and chain rule, structural refusal, runtime evidence, approval gate | **137** |
+
+Several of these are unusual enough to call out, because they test **honesty
+properties** rather than behaviour — a category most suites do not have:
+
+| Test | The property it defends |
+|---|---|
+| [`test_judging_matrix.py`](tests/test_judging_matrix.py) (56) | The submission document cannot cite a path that does not resolve or a test count larger than the suite. It also fails if the *Honest limits* section is ever deleted — so the document cannot quietly become marketing. |
+| [`test_upstream_claims.py`](tests/test_upstream_claims.py) (13) | Fails if an upstream filing checkbox is ticked while the finding is not actually filed. |
+| [`test_measured_error_rate.py`](tests/test_measured_error_rate.py) (21) | An unmeasured value must render `N/A` with a reason; it may not become a plausible zero. |
+| [`test_least_privilege_claims.py`](tests/test_least_privilege_claims.py) (7) | The docs may not claim more privilege denials than the committed artifact proves. This test exists because the docs once claimed seven and the artifact showed four. |
+| [`test_god_mode_provenance.py`](tests/test_god_mode_provenance.py) (10) | A payload mixing measured and synthetic fields must badge `partial` — never `live`. |
+| [`test_replay_bundle.py`](tests/test_replay_bundle.py) (48) | What the UI renders and what is on disk cannot diverge. |
+
+To regenerate the per-area figures after adding tests:
+
+```bash
+python -m pytest tests/ --collect-only -q | grep -E '^tests/.*: [0-9]+$'
+```
+
+---
+
 ## Reproducibility
 
 Everything below runs on a clean clone with **no API key, no catalog, no collector and no network**:
 
 ```bash
 make doctor              # what is present, what is missing, what to do about it
-make test                # 1037 tests
+make test                # 1041 tests
 make replay              # replay bundles from the committed proof packs
 make replay-build        # static export of the Command Center
 make verify-replay-ui    # drive the built site in a real browser and assert
@@ -702,7 +1048,7 @@ DevGuard-Enterprise/
 │   └── components/
 ├── evidence/                proof packs and captured artifacts
 ├── examples/                ablation study, evaluation results
-├── tests/                   1037 tests
+├── tests/                   1041 tests
 ├── scripts/                 verification, reproduction and demo scripts
 ├── substrate/               PostgreSQL seed, dbt project, ML model
 ├── recipes/                 DataHub ingestion recipes
@@ -724,6 +1070,114 @@ DevGuard-Enterprise/
 | Substrate | `substrate/docker-compose.yml` | PostgreSQL for the demonstration dataset |
 
 Container images are defined by `backend/Dockerfile` and `frontend/Dockerfile`; `docker-compose.yml` wires the local stack. Step-by-step instructions: **[DEPLOYMENT.md](DEPLOYMENT.md)**.
+
+### Deployment architecture
+
+The topology follows the same split the replay system does: **the flagship module
+has no runtime dependency at all**, so it deploys as static files, and everything
+that needs a backend degrades independently of it.
+
+```mermaid
+flowchart TB
+    subgraph EDGE["Static host — Vercel / Netlify · no server runtime"]
+        OUT["frontend/out/<br/>NEXT_OUTPUT=export<br/>HTML · JS · replay/*.json · monaco/"]
+        CC["/command — Command Center"]
+        SCN["/scanner"]
+        NEX["/nexus"]
+    end
+
+    subgraph APP["Container host — Render / Railway · backend/Dockerfile"]
+        API["FastAPI — backend.main:app<br/>13 app routes + 5 simulator routes<br/>healthCheckPath: /slo-status"]
+        RL["Rate limiter · API-key auth · CORS allowlist"]
+        RL --> API
+    end
+
+    subgraph STATE["State — no database"]
+        MEM["In-process TTL + count eviction"]
+        AUD["data/audit_log.jsonl<br/>hash-chained"]
+        RDS[("Redis — optional<br/>content-addressed cache<br/>fails open")]
+    end
+
+    subgraph CATALOG["Catalog — DataHub Core"]
+        MCP["mcp-server-datahub@0.6.0<br/>subprocess, JSON-RPC over stdio"]
+        GQL["GraphQL — incidents only"]
+        NOTE["METADATA_SERVICE_AUTH_ENABLED=true<br/>MANDATORY"]
+    end
+
+    subgraph OBS["Observability"]
+        COL["OTel collector"]
+        SZ[("SigNoz v0.135.0<br/>dashboard + 3 alert rules")]
+    end
+
+    CC -->|"fetch committed JSON<br/>NO backend, NO key"| OUT
+    SCN -->|POST /scan| RL
+    NEX -->|POST /god-mode/simulate/*| RL
+
+    API --> MEM
+    API --> AUD
+    API --> RDS
+    API -->|"POST /scan only"| GROQ[(Groq API)]
+    API --> COL
+    COL --> SZ
+
+    V2["backend/v2 — the nine agents<br/>run as scripts, not as a web request"] --> MCP
+    V2 --> GQL
+    V2 -->|writes| PACKS[["evidence/proof-pack/"]]
+    PACKS -->|"make replay"| OUT
+
+    style CC stroke:#a78bfa
+    style NOTE stroke:#f43f5e
+    style EDGE stroke:#a78bfa
+```
+
+Three things in that picture are load-bearing and easy to miss:
+
+| | Why it matters |
+|---|---|
+| **The agent loop is not a web endpoint.** | `backend/v2` runs as scripts (`scripts/run_d6_loop.py`), writing proof packs. It is not reachable over HTTP, so no request can trigger a catalog mutation. |
+| **There is no database.** | State is in-process with eviction, an append-only hash-chained JSONL audit log, optional Redis that fails open, and committed JSON evidence. Correct for this scope, and named as the largest production gap in [the architecture review](docs/ARCHITECTURE_REVIEW.md). |
+| **`METADATA_SERVICE_AUTH_ENABLED=true` is mandatory.** | The DataHub quickstart ships it `false`, under which Access Policies are **not enforced at all** and every least-privilege check silently passes. See [Security model](#security-model). |
+
+Deployment configuration is committed and resolved, not described:
+[`render.yaml`](render.yaml) · [`vercel.json`](vercel.json) ·
+[`netlify.toml`](netlify.toml) · [`docker-compose.yml`](docker-compose.yml) ·
+[`otel-collector-config.yaml`](otel-collector-config.yaml) ·
+[`versions.env`](versions.env).
+
+---
+
+## API overview
+
+The backend is a FastAPI application. It **starts and serves every endpoint below
+without an API key** — only `POST /scan` and its two siblings need one, and they
+fail with a clear error rather than at import time.
+
+```bash
+python -m uvicorn backend.main:app --port 8000
+```
+
+Interactive schema at `/docs` (Swagger), `/redoc`, and `/openapi.json`.
+
+| Group | Endpoints | Auth | Notes |
+|---|---|---|---|
+| **Scanning** | `POST /scan` · `POST /scan/zip` · `POST /scan/repository` | opt-in key **+ rate limited** | The three that spend real model calls. 20 req / 60 s per client by default. |
+| **Scan lifecycle** | `GET /scan/{id}` · `GET /scan/project/{id}` | open | Short-lived handles — in-process state is evicted, not accumulated. The audit log is the durable record. |
+| **Governance gate** | `POST /scan/{id}/approve` · `POST /scan/{id}/reject` | opt-in key | `critical` / `high` findings do not finalise without a decision, and the decision is written to the audit trail. |
+| **Streaming** | `WS /ws/scan/{id}` | open | Span events, buffered per scan so a late client still receives what it missed. |
+| **Audit** | `GET /audit-log` · `GET /audit-log/verify` | open | Hash-chained; `verify` recomputes the chain and names the first entry that fails. Runs in a worker thread so a large log cannot block the loop. |
+| **Operations** | `GET /slo-status` · `GET /telemetry-status` · `GET /languages` | open | `/slo-status` answers **even when the collector is unreachable** — telemetry is fail-safe, and that is regression-tested. |
+| **Simulators** | `POST /god-mode/simulate/{scenario}` ×5 | open | Drives the Nexus panels. Every response is badged with its real provenance. |
+
+Four conventions run across the whole surface and are worth knowing before
+reading any single endpoint:
+
+- **Honest nulls.** A field that could not be measured is `null` with a reason beside it. The API never substitutes a plausible zero.
+- **Provenance.** Anything that could come from more than one source carries `data_source`, and it is never `live` unless the value genuinely came from a live dependency.
+- **Trace propagation.** Pass a W3C `traceparent` and it flows through the pipeline onto every child span.
+- **Reads stay open in both auth modes**, deliberately: 401-ing or throttling a liveness probe is how a healthy service gets marked unhealthy.
+
+Full request/response shapes, error semantics and every configuration variable:
+**[docs/API.md](docs/API.md)**.
 
 ---
 
@@ -786,6 +1240,7 @@ Stated plainly, because a claim a reviewer can disprove costs more than the feat
 - **The scanner's accuracy benchmark has never been run to an artifact**, so no accuracy figure is published anywhere. The UI shows "accuracy not measured" until one exists, and that artifact is the only route by which a number can reach the API or the UI.
 - **Container images are defined but not built end to end** in the capture environment, whose egress policy blocks the Debian and PyPI mirrors the builds need. Run the backend and frontend directly if you hit the same.
 - **The RAG store falls back to lexical overlap.** The pinned `chromadb` and `sentence-transformers` backends are not importable in this environment; retrieval remains deterministic and relevant but is not semantic.
+- **There is no post-write-back catalog screenshot.** The two DataHub UI captures in [Screenshots](#screenshots) were taken on a clean catalog before any write-back, which is why they show *No tags yet*. The write-back is proven by the server's own responses in [`d6-loop-pass2/scribe/`](evidence/proof-pack/d6-loop-pass2/scribe/) and by the Command Center's write-back panel — but the catalog UI showing the landed tag is a capture that was never taken, and a screenshot of the substrate is not a substitute for one.
 
 ---
 
@@ -896,6 +1351,27 @@ Full component attribution — what was authored in-window versus carried over, 
 - **[OpenTelemetry](https://opentelemetry.io/)** — vendor-neutral instrumentation throughout.
 - **[dbt](https://www.getdbt.com/)** — the transformation layer of the demonstration substrate.
 - **[Groq](https://groq.com/)** — inference for the model-backed agents.
+
+---
+
+## References
+
+The external specifications and projects this implementation is built against.
+Versions are pinned in [`versions.env`](versions.env) and resolved, not floating.
+
+| Reference | Used for |
+|---|---|
+| [DataHub](https://datahubproject.io/) · [docs](https://docs.datahub.com/) | The metadata platform. Column-level lineage, entities, incidents, documents, structured properties, ownership. |
+| [`mcp-server-datahub`](https://github.com/acryldata/mcp-server-datahub) | The official MCP server. Its published tool list is transcribed into [`backend/v2/mcp_contract.py`](backend/v2/mcp_contract.py) and asserted offline. |
+| [Model Context Protocol](https://modelcontextprotocol.io/) · [spec](https://spec.modelcontextprotocol.io/) | JSON-RPC 2.0 over stdio — the real handshake, captured in [`evidence/d0/`](evidence/d0/). |
+| [OpenTelemetry](https://opentelemetry.io/) | Traces, metrics and logs over OTLP/gRPC, plus the logging bridge for log-to-trace correlation. |
+| [SigNoz](https://signoz.io/) | Trace storage and alerting. Dashboard and rules ship in [`signoz/`](signoz/). |
+| [Groq](https://groq.com/) | Inference for the one model-backed agent and the Scanner pipeline. |
+| [dbt](https://www.getdbt.com/) | The transformation layer of the demonstration substrate. |
+| [FastAPI](https://fastapi.tiangolo.com/) · [Next.js](https://nextjs.org/) | Backend and frontend frameworks. |
+| [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) · [Semantic Versioning](https://semver.org/spec/v2.0.0.html) | The form [CHANGELOG.md](CHANGELOG.md) follows. |
+| [Contributor Covenant](https://www.contributor-covenant.org/) | The basis of [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). |
+| [CWE](https://cwe.mitre.org/) | The weakness taxonomy the Code Scanner classifies against. |
 
 ---
 

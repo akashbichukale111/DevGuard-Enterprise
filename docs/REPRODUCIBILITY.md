@@ -14,7 +14,7 @@ No API key, no catalog, no collector, no network. These run on a clean clone.
 | Command | What it proves | Time |
 |---|---|---|
 | `make doctor` | What is present and what is missing | seconds |
-| `make test` | 676 tests across agents, evidence, security, replay | ~30 s |
+| `make test` | 1041 tests across agents, evidence, security, replay | ~2.5 min |
 | `make replay` | Replay bundles build from the committed proof packs | seconds |
 | `make replay-build` | The Command Center exports as a static site | ~1 min |
 | `make verify-replay-ui` | The built site behaves as claimed, in a real browser | ~1 min |
@@ -26,7 +26,7 @@ No API key, no catalog, no collector, no network. These run on a clean clone.
 
 ```
 $ make test
-676 passed
+1041 passed
 
 $ make replay
 [ok]   d6-loop-pass2         30 evidence   32 artifacts    159.5 KiB

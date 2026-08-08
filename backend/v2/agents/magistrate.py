@@ -4,6 +4,15 @@ magistrate.py — the Magistrate: risk class, owners from the graph, approval ro
 Role: *"Magistrate | deterministic + LLM | `get_entities` (owners) read-only |
 Risk classification, autonomy policy, owner-routed approval."*
 
+NOTE ON THAT ROLE LINE: it is quoted from the original spec and it is the one
+part of it this implementation does not follow. **The Magistrate makes no model
+call.** Risk class comes from `AUTONOMY_POLICY` and owners come from the graph;
+every handoff it emits is stamped `tokens=0, model=None`, and `diagnostician.py`
+is the only agent module that imports an inference client at all. Routing an
+approval decision through a language model would put a probabilistic step in
+front of a governance gate, which is exactly the thing the nine-agent split
+exists to prevent. The docs describe it as deterministic because it is.
+
 The autonomy policy requires *"a written table: risk class → allowed action → who approves.
 HIGH/CRITICAL always requires the named owner."* `AUTONOMY_POLICY` below **is**
 that table — the same object the docs render and the code branches on, so the
