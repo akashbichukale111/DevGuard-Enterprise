@@ -51,8 +51,12 @@ Key architectural decisions, each defended inline:
 # SigNoz dashboard, so per-agent breakdown is read off the `agent` attribute
 # on these same counters instead of a parallel set of counters.
 #
-# TODO: swap Groq for GPT-5.6 — every `groq_client...` call and every model
-# string in MODEL_* constants below is the swap point.
+# PROVIDER SWAP POINT: Groq is the only provider this project integrates. If a
+# future change needs a different one, the surface to replace is narrow and
+# fully enumerated here — every `groq_client...` call site, plus the model
+# strings in the MODEL_* constants below. There is deliberately no provider
+# abstraction layer: one is not needed for one provider, and an unused
+# indirection would be a worse thing to maintain than a named swap point.
 """
 
 from __future__ import annotations
@@ -92,7 +96,8 @@ from backend.core.telemetry import (  # noqa: F401  (assumed to exist)
     LLM_TOKENS_TOTAL_COUNTER,
 )
 
-# Assumed injected/imported async client. Placeholder for GPT-5.6.
+# The async Groq client, built lazily on first use so importing this module
+# never requires a key. See groq_client.py for why that matters.
 from groq_client import groq_client  # type: ignore  # noqa: F401
 
 # SELF-OBSERVATION: local, dependency-free shadow cost recorder. Lets
@@ -281,9 +286,10 @@ def _model_facing_schema(model_cls) -> dict:
 # catastrophic, false negatives on lows are cheap. So we spend compute exactly
 # where the downside is worst.
 
-# TODO: swap Groq for GPT-5.6
-MODEL_CHEAP = "llama-3.1-8b-instant"       # -> GPT-5.6-mini equivalent
-MODEL_STRONG = "llama-3.3-70b-versatile"   # -> GPT-5.6 (full) equivalent
+# Both models are Groq-hosted. See the provider swap point in the module
+# docstring if these ever need to change.
+MODEL_CHEAP = "llama-3.1-8b-instant"       # low / medium severity
+MODEL_STRONG = "llama-3.3-70b-versatile"   # high / critical severity, and always the Validator
 
 # The Validator always uses the strong model regardless of severity: a weak
 # critic that rubber-stamps bad fixes defeats the entire self-healing loop.
@@ -441,7 +447,7 @@ async def _call_llm(
         kwargs["response_format"] = {"type": "json_object"}
 
     try:
-        # TODO: swap Groq for GPT-5.6
+        # The single provider call site for the whole scanner pipeline.
         resp = await groq_client.chat.completions.create(**kwargs)
     except Exception as exc:  # noqa: BLE001 — deliberate: normalize ALL SDK errors
         # Log the provider's own error before normalising it away. Without

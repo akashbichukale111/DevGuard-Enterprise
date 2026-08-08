@@ -31,7 +31,7 @@ interface RetryAttempt {
 }
 
 interface ModelRouting {
-  tier: string; // e.g. "gpt-4o (high-severity tier)"
+  tier: string; // e.g. "llama-3.3-70b-versatile (high-severity tier)"
   reason: string; // severity-based justification
 }
 
