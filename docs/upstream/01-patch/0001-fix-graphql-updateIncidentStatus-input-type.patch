@@ -1,0 +1,164 @@
+From b406e26ce6ad2db36ffc392024e6afcf84ab46d2 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 8 Aug 2026 17:07:04 +0000
+Subject: [PATCH] fix(graphql): bind updateIncidentStatus to the input type its
+ schema declares
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+updateIncidentStatus declares IncidentStatusInput! in incident.graphql but its
+resolver binds UpdateIncidentStatusInput, a second input type with an identical
+field set. bindArgument deserializes the raw argument map into whichever class
+it is handed, so the mismatch is invisible at runtime — today. It stops being
+invisible the moment either type gains a field the other lacks: the mutation
+would silently drop it, with no compile error and no schema validation error,
+because each half remains independently valid.
+
+The rest of the codebase already agrees on IncidentStatusInput. It is the
+mutation's declared argument type, the type of RaiseIncidentInput.status and
+UpdateIncidentInput.status, the parameter of IncidentUtils.mapIncidentStatus,
+and the type used by three resolver tests. UpdateIncidentStatusInput was
+referenced from exactly one file, the resolver changed here.
+
+The resolver now binds IncidentStatusInput, matching the schema and its sibling
+mapIncidentStatus, which performs the same state/stage/message mapping. The
+now-genuinely-unreferenced type is removed.
+
+This direction was chosen deliberately. The schema is the wire contract, so
+clients already have to send IncidentStatusInput; aligning the resolver to the
+schema is invisible to every working client, whereas changing the schema to
+UpdateIncidentStatusInput would break any client naming the type in a variable
+definition. Ordering matters within the change: graphql-java-codegen generates
+a class for every declared type and the output is built rather than committed,
+so deleting the schema type before switching the resolver would break
+compileJava.
+
+Also corrected in docs/incidents/incidents.md, which disagreed with the schema
+in three ways: it documented the argument as UpdateIncidentStatusInput!, the
+return type as String where the schema says Boolean, and omitted the stage
+field that the type carries and the resolver reads. A user following it wrote a
+mutation the server rejects, naming a type the documentation told them to use.
+
+One typo in the docstring of the surviving type: "stage ofthe incident". It was
+the only such instance in the file.
+---
+ .../UpdateIncidentStatusResolver.java         |  6 +++---
+ .../src/main/resources/incident.graphql       | 20 +------------------
+ docs/how/updating-datahub.md                  |  2 ++
+ docs/incidents/incidents.md                   | 15 +++++++++-----
+ 4 files changed, 16 insertions(+), 27 deletions(-)
+
+diff --git a/datahub-graphql-core/src/main/java/com/linkedin/datahub/graphql/resolvers/incident/UpdateIncidentStatusResolver.java b/datahub-graphql-core/src/main/java/com/linkedin/datahub/graphql/resolvers/incident/UpdateIncidentStatusResolver.java
+index aa1bd851..0853cbd4 100644
+--- a/datahub-graphql-core/src/main/java/com/linkedin/datahub/graphql/resolvers/incident/UpdateIncidentStatusResolver.java
++++ b/datahub-graphql-core/src/main/java/com/linkedin/datahub/graphql/resolvers/incident/UpdateIncidentStatusResolver.java
+@@ -17,7 +17,7 @@ import com.linkedin.datahub.graphql.concurrency.GraphQLConcurrencyUtils;
+ import com.linkedin.datahub.graphql.exception.AuthorizationException;
+ import com.linkedin.datahub.graphql.exception.DataHubGraphQLErrorCode;
+ import com.linkedin.datahub.graphql.exception.DataHubGraphQLException;
+-import com.linkedin.datahub.graphql.generated.UpdateIncidentStatusInput;
++import com.linkedin.datahub.graphql.generated.IncidentStatusInput;
+ import com.linkedin.entity.client.EntityClient;
+ import com.linkedin.incident.IncidentInfo;
+ import com.linkedin.incident.IncidentStage;
+@@ -44,8 +44,8 @@ public class UpdateIncidentStatusResolver implements DataFetcher<CompletableFutu
+       throws Exception {
+     final QueryContext context = environment.getContext();
+     final Urn incidentUrn = Urn.createFromString(environment.getArgument("urn"));
+-    final UpdateIncidentStatusInput input =
+-        bindArgument(environment.getArgument("input"), UpdateIncidentStatusInput.class);
++    final IncidentStatusInput input =
++        bindArgument(environment.getArgument("input"), IncidentStatusInput.class);
+     return GraphQLConcurrencyUtils.supplyAsync(
+         () -> {
+ 
+diff --git a/datahub-graphql-core/src/main/resources/incident.graphql b/datahub-graphql-core/src/main/resources/incident.graphql
+index 303daac2..d82ef2e6 100644
+--- a/datahub-graphql-core/src/main/resources/incident.graphql
++++ b/datahub-graphql-core/src/main/resources/incident.graphql
+@@ -439,7 +439,7 @@ input IncidentStatusInput {
+   state: IncidentState!
+ 
+   """
+-  The lifecycle stage ofthe incident
++  The lifecycle stage of the incident
+   """
+   stage: IncidentStage
+ 
+@@ -449,24 +449,6 @@ input IncidentStatusInput {
+   message: String
+ }
+ 
+-"""
+-Input required to update status of an existing incident
+-"""
+-input UpdateIncidentStatusInput {
+-  """
+-  The new state of the incident
+-  """
+-  state: IncidentState!
+-  """
+-  Optional - The new lifecycle stage of the incident
+-  """
+-  stage: IncidentStage
+-  """
+-  An optional message associated with the new state
+-  """
+-  message: String
+-}
+-
+ extend type Dataset {
+   """
+   Incidents associated with the Dataset
+diff --git a/docs/how/updating-datahub.md b/docs/how/updating-datahub.md
+index b12dab11..6f93b680 100644
+--- a/docs/how/updating-datahub.md
++++ b/docs/how/updating-datahub.md
+@@ -55,6 +55,8 @@ Requirements:
+ 
+ - #18944 **(GMS / Domain-scoped create & domain writes)** Ingest-time authorization now evaluates domain-scoped **Create Entity** / **Edit Entity** policies against **proposed** `domains` when establishing domains on a new entity or on an entity that has no `domains` aspect yet (`DomainWriteAuthorizationValidator`, plus proposed-domain seeding on RestLi/OpenAPI ingest). Domain-separated writers must include matching `domains` in the create (or first domains) write. Unscoped elevated ingestion policies are unchanged. Toggle via `metadataChangeProposal.validation.aspectAuthorization.domainWrite.enabled` (default `true`). **Action:** Domain-scoped write policies no longer need a separate unscoped create policy for the initial write when domains are proposed in-batch; update docs/runbooks that assumed domain filters could not authorize create.
+ 
++- **(GraphQL / Incidents)** The unreferenced input type `UpdateIncidentStatusInput` has been removed from the GraphQL schema. `updateIncidentStatus` has always declared `IncidentStatusInput!` as its argument type, so the removed type could never be named by a valid operation — a variable definition using it already failed validation. Its resolver bound the removed type internally, which worked only because the two were structurally identical; it now binds `IncidentStatusInput`, matching the schema and the sibling `IncidentUtils.mapIncidentStatus`. **Action:** none for any working client. Code generators that emit a class per declared type — referenced or not — will emit one class fewer.
++
+ - #18944 **(GMS / Domain-scoped Edit on `domains` PATCH)** `ChangeType.PATCH` always requires **Edit Entity** (never Create Entity). Domain-scoped Edit on a `domains` PATCH must allow **both** the before and after domain membership when domains already exist; when establishing first domains via PATCH, Edit is matched against the after domains only. Sync requests re-check inside the DB transaction after patch apply; async MCE consume skips user domain auth (authorized on the API thread before Kafka). **Action:** Grant Edit on both source and destination domains before moving assets between domains with a domains PATCH.
+ 
+ ### Known Issues
+diff --git a/docs/incidents/incidents.md b/docs/incidents/incidents.md
+index db800ac0..34480a96 100644
+--- a/docs/incidents/incidents.md
++++ b/docs/incidents/incidents.md
+@@ -314,20 +314,25 @@ type Mutation {
+       """
+       Input required to update the state of an existing incident
+       """
+-      input: UpdateIncidentStatusInput!): String
++      input: IncidentStatusInput!): Boolean
+ }
+ 
+ """
+-Input required to update status of an existing incident
++Input required to update the status of an existing incident
+ """
+-input UpdateIncidentStatusInput {
++input IncidentStatusInput {
+   """
+-  The new state of the incident
++  The state of the incident
+   """
+   state: IncidentState!
+ 
+   """
+-  An optional message associated with the new state
++  The lifecycle stage of the incident
++  """
++  stage: IncidentStage
++
++  """
++  An optional message associated with the status
+   """
+   message: String
+ }
+-- 
+2.43.0
+

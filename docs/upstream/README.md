@@ -7,9 +7,18 @@ point where filing is a copy-paste, and each ends with a checklist whose last
 two items — *search for a duplicate* and *file* — are deliberately unticked.
 Claiming a contribution that does not exist would be worse than making none.
 
+Finding 01 now also carries a **complete patch**, in
+[`01-patch/`](01-patch/): the diff against `master` @ `f4fda77c` (verified to
+apply cleanly to a pristine checkout) and a written-out
+[pull request](01-patch/PULL_REQUEST.md) following DataHub's own PR title
+format. It is unfiled for two concrete reasons, both stated there: the
+duplicate search needs the upstream issues API, and the Java half has not been
+compiled — `./gradlew :datahub-graphql-core:compileJava` cannot resolve
+`com.linkedin.pegasus` from this sandbox.
+
 | # | Finding | Target | Type | Verified |
 |---|---|---|---|---|
-| [01](01-incident-status-input-duplicate.md) | `UpdateIncidentStatusInput` declared but never referenced | `datahub-project/datahub` | Schema cleanup | Against `master` |
+| [01](01-incident-status-input-duplicate.md) | `updateIncidentStatus` declares one input type and binds another | `datahub-project/datahub` | Correctness + docs | Against `master` @ `f4fda77c` |
 | [02](02-quickstart-policies-silently-unenforced.md) | Access Policies silently unenforced under the quickstart default | `datahub-project/datahub` | Documentation | Against a running stack; **re-confirmed on v1.7.0** |
 
 ## Why these two and not more
@@ -19,6 +28,16 @@ someone who has never seen this repository. That is the bar. A list of
 speculative improvements would be longer and worth less — an upstream
 maintainer's time is the scarce resource, and an issue that cannot be
 reproduced from its own text consumes it without repaying it.
+
+**Finding 01 was re-verified against a full clone and changed as a result.** It
+had been checked by grepping `datahub-graphql-core/src/main/resources/` only,
+which showed `UpdateIncidentStatusInput` referenced nowhere and led to a
+proposed fix of *delete it*. A repository-wide search shows a Java resolver
+binds that type, so the original patch would not have compiled. The real defect
+is larger — schema, resolver and published docs each name a different input type
+— and the corrected document says so, keeps the superseded reasoning visible,
+and states plainly that the new patch has not been compiled either. Filing a
+confidently wrong patch costs a maintainer more than filing nothing.
 
 Two candidates were considered and rejected:
 
