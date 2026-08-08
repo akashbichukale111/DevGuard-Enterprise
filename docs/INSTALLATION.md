@@ -43,7 +43,7 @@ packs, and does need Python.
 Verify it does what it claims:
 
 ```bash
-make test                # 676 tests
+make test                # 1041 tests
 make verify-replay-ui    # drives the built site in a real browser
 ```
 

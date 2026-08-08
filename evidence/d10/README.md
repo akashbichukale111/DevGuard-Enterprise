@@ -5,7 +5,7 @@ backend, no catalog, no database and no API key.
 
 **Result: built and verified in a real browser against the real static export.
 14/14 UI checks pass, 48 bundle tests pass, and the full suite stays green at
-676 tests.**
+1041 tests.**
 
 ## The bundle
 
