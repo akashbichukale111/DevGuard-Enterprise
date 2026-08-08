@@ -369,6 +369,24 @@ live catalog"*. They have now been executed:
   substrate had an owner, so the only truthful answer it could have given was
   `UNOWNED`.
 
+Both are visible on one screen. This is the live run — `d6-live-v170`, the pack
+written against v1.7.0 — replayed in the Command Center:
+
+[![The Command Center showing the live v1.7.0 run: the ten-agent handoff rail, a 27-item evidence ledger marked CHAIN SUFFICIENT, the blast radius terminating at the churn model, owner-routed approval, and the five write-back artifacts](docs/screenshots/command-center/01-command-center-live-run.png)](docs/screenshots/command-center/01-command-center-live-run.png)
+
+<sub>*Run `d6-live-v170` — incident `D6103503` on `devguard.raw.users`, 12.15 s
+end to end. **Blast radius:** 7 entities at dataset level, terminating at
+`urn:li:mlModel:(urn:li:dataPlatform:mlflow,devguard_churn_risk,PROD)` — the
+`reaches_ml_model` claim above, on screen. **Approval:** `LOW` risk →
+`NAMED_OWNER`, routed to `urn:li:corpuser:datahub` read from the graph.
+**Write-back:** five artifacts, four `WRITTEN` and one `ALREADY PRESENT` — the
+ownership signal was already correct, and the panel says so rather than
+reporting a write it did not perform. **Catalog surface:** 8 of 8 negotiated
+tools used across 9 calls. **And the honest gaps:** the Diagnostician node reads
+`BLOCKED`, root cause is marked `REASONER UNAVAILABLE` and derived
+deterministically from runtime evidence, tokens and cost read `N/A` with the
+reason attached, and a closing panel enumerates what this run did not capture.*</sub>
+
 Ownership, tags and glossary terms are now declared in the **dbt project** and
 mapped in by DataHub's own `meta_mapping` ([`recipes/dbt.yml`](recipes/dbt.yml)),
 so catalog governance is reproducible from a clone and reviewable in a diff. An
