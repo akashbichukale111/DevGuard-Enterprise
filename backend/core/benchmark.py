@@ -26,8 +26,8 @@ Matching semantics (per snippet):
 We treat CWE-level detection as the unit of measure, which is stricter and more
 honest than "did it find *anything*".
 
-# TODO: swap Groq for GPT-5.6 — no changes here; benchmark is model-agnostic
-# and reruns automatically against whatever run_scanner is wired to.
+This harness is model-agnostic: it reruns against whatever `run_scanner` is
+wired to and needs no change if the model behind it does.
 """
 
 from __future__ import annotations

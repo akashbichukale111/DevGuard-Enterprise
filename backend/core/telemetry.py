@@ -126,7 +126,8 @@ SHUTDOWN_GRACE_SECONDS = float(os.getenv("DEVGUARD_TELEMETRY_SHUTDOWN_GRACE", "6
 # incident on a dashboard, coarse enough to not hammer the collector.
 METRIC_EXPORT_INTERVAL_MS = int(os.getenv("OTEL_METRIC_EXPORT_INTERVAL_MS", "15000"))
 
-# GenAI system identifier for semantic-convention attributes. TODO: swap Groq for GPT-5.6.
+# GenAI system identifier for OpenTelemetry semantic-convention attributes.
+# Overridable so the attribute stays truthful if the provider ever changes.
 GENAI_SYSTEM = os.getenv("DEVGUARD_GENAI_SYSTEM", "groq")
 
 
